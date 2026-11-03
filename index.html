@@ -5987,6 +5987,7 @@ function deleteLib(id) {
  *    서버 폴더 저장은 사무실 PC의 "전자결재_서버동기화.ps1"이 맡습니다(아래 "서버 폴더 자동 저장" 참고).
  * ============================================================ */
 var AP_APPROVE_PIN = '1004';   // 안전팀장 결재(승인·반려·삭제) 비밀번호
+var AP_PIN_OFF = true;         // 잠시 비밀번호 없이 결재 (다시 쓰려면 false 로)
 var AP_ROWS = [];
 var AP_UI = { tab: 'write', cat: '', viewId: null };
 
@@ -6492,6 +6493,7 @@ function renderApView() {
 }
 /** 안전팀장 비밀번호 확인 창. 맞으면 true, 취소하면 false */
 function apAskPin(what) {
+  if (AP_PIN_OFF) return Promise.resolve(true);
   return new Promise(function (resolve) {
     var bg = document.createElement('div');
     bg.className = 'ap-sigbg';
