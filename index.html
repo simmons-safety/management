@@ -8112,6 +8112,10 @@ function startRealtime() {
     .subscribe(function (status) {
       if (status === 'SUBSCRIBED') setSync('실시간 연결됨', 'ok');
     });
+  // visit.html 이 제출 직후 보내는 "새 제출" 신호 → 방문 기록대장 즉시 갱신
+  RPC.db.channel('visit-pledges-live')
+    .on('broadcast', { event: 'submitted' }, function () { if (VISIT_LOG_UNLOCKED) loadVisitLog(); })
+    .subscribe();
 }
 
 /* ============================================================

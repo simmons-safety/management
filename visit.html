@@ -193,6 +193,13 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
   var db = window.supabase ? window.supabase.createClient(cfg.url, cfg.anonKey, {
     auth: { persistSession: false, autoRefreshToken: false }
   }) : null;
+  // 제출 직후 "새 제출" 신호만 보냅니다(내용 없음) → 열려 있는 방문 기록대장이 바로 다시 불러옵니다.
+  var live = db ? db.channel('visit-pledges-live') : null;
+  if (live) live.subscribe();
+  function notifySubmitted() {
+    if (!live) return;
+    try { live.send({ type: 'broadcast', event: 'submitted', payload: {} }); } catch (e) { console.warn('[visit] 알림 전송 실패', e); }
+  }
 
   function reset() {
     ['vsName', 'vsCompany', 'vsPhone', 'vsCar'].forEach(function (id) { $(id).value = ''; });
@@ -220,6 +227,7 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
     // 방문자 페이지는 저장(insert)만 합니다. 목록을 읽어 오는 코드는 두지 않습니다.
     db.from('visit_pledges').insert(v).then(function (res) {
       if (res.error) throw res.error;
+      notifySubmitted();
       reset();
       $('formView').hidden = true;
       $('doneView').hidden = false;
