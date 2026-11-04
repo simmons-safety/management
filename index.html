@@ -1368,6 +1368,22 @@ window.AI_CONFIG = {
   .sdy-item .ph{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
   .sdy-item .ph .thumb{width:96px;height:72px;object-fit:cover}
   .sdy-item .ft{display:flex;justify-content:space-between;align-items:center;font-size:11.5px}
+  /* 여러 장 첨부 칸 : 끌어다 놓기 · 미리보기 */
+  input.dz-input{position:absolute !important;width:1px !important;height:1px !important;opacity:0 !important;pointer-events:none;overflow:hidden}
+  .dz{display:flex;flex-direction:column;gap:8px}
+  .dz-drop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;border:1.5px dashed #c9c9c9;border-radius:14px;background:#fff;cursor:pointer;transition:border-color .15s,background .15s}
+  .dz-drop:hover,.dz-drop:focus-visible{border-color:#000;outline:none}
+  .dz-drop.over{border-color:#000;border-style:solid;background:#f4f4f4}
+  .dz-drop b{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#000;color:#fff;font-size:16px;font-weight:600;flex:none}
+  .dz-drop span{font-size:13px;font-weight:600;color:var(--ink)}
+  .dz-drop em{font-style:normal;font-size:11.5px;color:var(--ink3)}
+  .dz-list{display:flex;flex-wrap:wrap;gap:8px}
+  .dz-list:empty{display:none}
+  .dz-it{position:relative;display:inline-flex;align-items:center;gap:6px;border:1px solid #e3e3e3;border-radius:10px;background:#fff;padding:6px 26px 6px 10px;font-size:11.5px;max-width:220px}
+  .dz-it span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dz-it.img{padding:0;width:84px;height:64px;overflow:hidden}
+  .dz-it.img img{width:100%;height:100%;object-fit:cover;display:block}
+  .dz-it button{all:unset;position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;font-size:10px;text-align:center;line-height:18px;cursor:pointer}
   /* 업무 수행 평가 (현장 플랫폼 연동) — 플랫폼 관리자 모드와 같은 모양 */
   .scot{width:100%;min-width:1080px;border-collapse:collapse;font-size:12.5px;background:transparent}
   .scot th{font-size:10.5px;font-weight:600;color:var(--ink3);padding:8px 4px;border-bottom:1px solid var(--ink);text-align:center;line-height:1.35;vertical-align:bottom}
@@ -7785,6 +7801,94 @@ function renderPfDetail() {
 }
 
 /* ============================================================
+ *  여러 장 첨부 칸 꾸미기 : 끌어다 놓기 · 여러 번 골라도 누적 · 미리보기 · 개별 삭제
+ *  input[type=file][multiple] 를 찾아 자동 적용합니다 (나중에 그려지는 양식도 MutationObserver 로).
+ *  고른 파일은 DataTransfer 로 input.files 에 다시 넣으므로, 저장 코드는 지금처럼 input.files 를 읽으면 됩니다.
+ *  제외 : hidden 인 칸, data-nodz 가 붙은 칸 (자체 목록을 쓰는 중처법 증빙 등)
+ * ============================================================ */
+function dzAccepts(inp, f) {
+  var acc = (inp.getAttribute('accept') || '').split(',').map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
+  if (!acc.length) return true;
+  var name = (f.name || '').toLowerCase(), type = (f.type || '').toLowerCase();
+  return acc.some(function (a) {
+    if (a.charAt(0) === '.') return name.slice(-a.length) === a;
+    if (/\/\*$/.test(a)) return type.indexOf(a.slice(0, -1)) === 0;
+    return type === a;
+  });
+}
+function dzEnhance(inp) {
+  if (!inp || inp.dataset.dz || inp.dataset.nodz || inp.hidden || !inp.multiple || typeof DataTransfer === 'undefined') return;
+  inp.dataset.dz = '1';
+  var store = [], urls = [];
+  var box = document.createElement('div');
+  box.className = 'dz';
+  box.innerHTML = '<div class="dz-drop" tabindex="0" role="button"><b>＋</b><span>' +
+    (/image/.test(inp.getAttribute('accept') || '') ? '사진' : '파일') + '을 끌어다 놓거나 눌러서 선택</span><em>여러 개 한 번에 · 여러 번 나눠 추가 가능</em></div><div class="dz-list"></div>';
+  inp.parentNode.insertBefore(box, inp.nextSibling);
+  inp.classList.add('dz-input');
+  var drop = box.querySelector('.dz-drop'), list = box.querySelector('.dz-list');
+  function sync() {
+    var dt = new DataTransfer();
+    store.forEach(function (f) { dt.items.add(f); });
+    inp.files = dt.files;
+    draw();
+  }
+  function draw() {
+    urls.forEach(function (u) { URL.revokeObjectURL(u); }); urls = [];
+    list.innerHTML = store.map(function (f, i) {
+      var img = /^image\//.test(f.type);
+      var u = img ? URL.createObjectURL(f) : ''; if (u) urls.push(u);
+      return '<span class="dz-it' + (img ? ' img' : '') + '" title="' + esc(f.name) + '">' +
+        (img ? '<img src="' + u + '" alt="">' : '<i>📎</i><span>' + esc(f.name) + '</span>') +
+        '<button type="button" data-dzrm="' + i + '" aria-label="빼기">✕</button></span>';
+    }).join('');
+    drop.classList.toggle('has', store.length > 0);
+    drop.querySelector('em').textContent = store.length ? store.length + '개 선택됨 · 더 끌어다 놓거나 눌러서 추가' : '여러 개 한 번에 · 여러 번 나눠 추가 가능';
+  }
+  function add(files) {
+    var bad = 0;
+    [].forEach.call(files || [], function (f) {
+      if (!dzAccepts(inp, f)) { bad++; return; }
+      var dup = store.some(function (x) { return x.name === f.name && x.size === f.size && x.lastModified === f.lastModified; });
+      if (!dup) store.push(f);
+    });
+    if (bad) toast(bad + '개는 올릴 수 없는 형식이라 뺐습니다.', 'warn');
+    sync();
+  }
+  inp.addEventListener('change', function () {
+    if (inp._dzSelf) return;
+    var picked = [].slice.call(inp.files || []);
+    add(picked);
+  });
+  drop.addEventListener('click', function () { inp.click(); });
+  drop.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); } });
+  ['dragenter', 'dragover'].forEach(function (ev) { box.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
+  ['dragleave', 'drop'].forEach(function (ev) { box.addEventListener(ev, function (e) { e.preventDefault(); if (ev === 'drop' || !box.contains(e.relatedTarget)) drop.classList.remove('over'); }); });
+  box.addEventListener('drop', function (e) { if (e.dataTransfer && e.dataTransfer.files.length) add(e.dataTransfer.files); });
+  list.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-dzrm]'); if (!b) return;
+    store.splice(+b.dataset.dzrm, 1); sync();
+  });
+  // 저장 후 양식이 input.value = '' 로 비우면 목록도 비웁니다
+  inp._dzCheck = function () { if (store.length && (!inp.files || !inp.files.length)) { store = []; draw(); } };
+}
+function dzScan(root) {
+  [].forEach.call((root || document).querySelectorAll('input[type="file"][multiple]'), dzEnhance);
+}
+(function () {
+  function start() {
+    dzScan(document);
+    new MutationObserver(function (ms) {
+      ms.forEach(function (m) { [].forEach.call(m.addedNodes, function (n) { if (n.nodeType === 1) { if (n.matches && n.matches('input[type="file"][multiple]')) dzEnhance(n); else if (n.querySelectorAll) dzScan(n); } }); });
+    }).observe(document.body, { childList: true, subtree: true });
+    setInterval(function () { [].forEach.call(document.querySelectorAll('input.dz-input'), function (i) { if (i._dzCheck) i._dzCheck(); }); }, 700);
+    // 끌어다 놓은 파일이 칸 밖에 떨어져도 브라우저가 그 파일을 열어 버리지 않도록
+    ['dragover', 'drop'].forEach(function (ev) { window.addEventListener(ev, function (e) { if (!e.target.closest || !e.target.closest('.dz, .ap-drop, [data-dropzone]')) e.preventDefault(); }); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+
+/* ============================================================
  *  업무 수행 평가 (중대재해처벌법 05) — 현장 플랫폼 관리감독자 월간활동 연동 (읽기 · 쓰기)
  *  플랫폼 관리자 모드의 "개인별 평가 점수 · 개인별 월간 이행 현황"과 같은 DB 행을 씁니다.
  *    · 점수 : supervisor_activities  ym='YYYY-SC', item='score#항목', extra.score=10|7|4, content=내용
@@ -9017,7 +9121,7 @@ function csaOpen(no) {
       }).join('') + '</div>' +
     '<div class="csam-sec"><div class="t">기입 내용</div><div class="form" style="grid-template-columns:1fr 1fr">' + f.fields.map(field).join('') + '</div></div>' +
     '<div class="csam-sec"><div class="t">증빙 자료</div><div class="csam-files" id="csamFiles"></div>' +
-      '<input type="file" id="csamFileIn" multiple style="margin-top:8px"></div>' +
+      '<input type="file" id="csamFileIn" multiple data-nodz="1" style="margin-top:8px"></div>' +
     '<div class="csam-sec"><div class="form" style="grid-template-columns:1fr 2fr">' +
       '<div class="f"><label>상태</label><select id="csamSt">' + CSA_STATUS.map(function (s) { return '<option' + (s === r.status ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select></div>' +
       '<div class="f"><label>비고</label><input type="text" id="csamNote" value="' + esc(r.note || '') + '"></div></div>' +
