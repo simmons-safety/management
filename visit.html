@@ -56,6 +56,8 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
   .chk input{flex:none;width:20px;height:20px;margin:1px 0 0;accent-color:var(--ink)}
   .chk:has(input:checked){border-color:var(--ink);background:#fff}
   .radios .chk{margin-top:8px}
+  .chk.remember{margin-top:16px;padding:13px 16px;font-size:14px}
+  .chk.remember small{display:block;margin-top:3px;font-size:12px;line-height:1.5;color:var(--ink3)}
   em{font-style:normal;color:var(--human)}
   .err{margin:10px 0 0;font-size:12.5px;color:var(--human);line-height:1.6}
   .fields{display:grid;gap:16px}
@@ -141,6 +143,7 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
         <div class="f"><label for="vsPhone">연락처 <em>*</em></label><input type="tel" id="vsPhone" autocomplete="tel" inputmode="tel" placeholder="예) 010-1234-5678"></div>
         <div class="f"><label for="vsCar">차량번호 <em>*</em></label><input type="text" id="vsCar" placeholder="예) 12가 3456 (차량 없으면 '없음')"></div>
       </div>
+      <label class="chk remember"><input type="checkbox" id="vsRemember"> <span>이 기기에 내 정보 저장 <small>다음 방문 때 이름 · 업체명 · 연락처 · 차량번호가 자동으로 입력됩니다. 공용 기기에서는 체크하지 마세요.</small></span></label>
       <button class="submit" id="btnSubmit">제출</button>
       <button class="clear" id="btnClear">양식 지우기</button>
     </section>
@@ -201,11 +204,34 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
     try { live.send({ type: 'broadcast', event: 'submitted', payload: {} }); } catch (e) { console.warn('[visit] 알림 전송 실패', e); }
   }
 
-  function reset() {
+  /* "이 기기에 내 정보 저장" : 이름 · 업체명 · 연락처 · 차량번호만 이 기기(브라우저)에 남깁니다.
+   * 서버로 보내지 않으며, 서약 · 개인정보 동의는 방문할 때마다 새로 체크해야 합니다. */
+  var SAVE_KEY = 'simmons.visit.me';
+  var SAVE_FIELDS = [['name', 'vsName'], ['company', 'vsCompany'], ['phone', 'vsPhone'], ['car_no', 'vsCar']];
+  function loadSaved() {
+    try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { return null; }
+  }
+  function fillSaved() {
+    var s = loadSaved();
+    $('vsRemember').checked = !!s;
+    if (s) SAVE_FIELDS.forEach(function (f) { if (s[f[0]]) $(f[1]).value = s[f[0]]; });
+  }
+  function storeSaved(v) {
+    try {
+      if ($('vsRemember').checked) {
+        var o = {}; SAVE_FIELDS.forEach(function (f) { o[f[0]] = v[f[0]]; });
+        localStorage.setItem(SAVE_KEY, JSON.stringify(o));
+      } else localStorage.removeItem(SAVE_KEY);
+    } catch (e) { /* 저장소를 쓸 수 없는 브라우저(사생활 보호 모드 등)는 그냥 넘어갑니다 */ }
+  }
+
+  /** noFill : "작성 내용 지우기" 처럼 저장된 정보도 다시 채우지 않고 비울 때 */
+  function reset(noFill) {
     ['vsName', 'vsCompany', 'vsPhone', 'vsCar'].forEach(function (id) { $(id).value = ''; });
     $('vsRules').checked = false;
     document.querySelectorAll('input[name="vsPrivacy"]').forEach(function (r) { r.checked = false; });
     $('vsDenyMsg').hidden = true;
+    if (noFill !== true) fillSaved();
   }
 
   function submit() {
@@ -228,6 +254,7 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
     db.from('visit_pledges').insert(v).then(function (res) {
       if (res.error) throw res.error;
       notifySubmitted();
+      storeSaved(v);
       reset();
       $('formView').hidden = true;
       $('doneView').hidden = false;
@@ -240,7 +267,12 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
   }
 
   $('btnSubmit').onclick = submit;
-  $('btnClear').onclick = function () { if (confirm('작성 중인 내용을 지울까요?')) reset(); };
+  fillSaved();
+  // 저장해 둔 상태에서 체크를 풀면 바로 지웁니다
+  $('vsRemember').onchange = function () {
+    if (!this.checked) { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
+  };
+  $('btnClear').onclick = function () { if (confirm('작성 중인 내용을 지울까요?')) reset(true); };
   $('btnAgain').onclick = function () { $('doneView').hidden = true; $('formView').hidden = false; toTop(); };
   document.querySelectorAll('input[name="vsPrivacy"]').forEach(function (r) {
     r.onchange = function () { $('vsDenyMsg').hidden = this.value !== 'N'; };
