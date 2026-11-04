@@ -5988,6 +5988,7 @@ function deleteLib(id) {
  * ============================================================ */
 var AP_APPROVE_PIN = '1004';   // 안전팀장 결재(승인·반려·삭제) 비밀번호
 var AP_PIN_OFF = true;         // 잠시 비밀번호 없이 결재 (다시 쓰려면 false 로)
+var AP_DELETE_PIN = '8587';    // 문서 삭제 비밀번호 (결재 비밀번호를 꺼 둬도 항상 묻습니다)
 var AP_ROWS = [];
 var AP_UI = { tab: 'write', cat: '', viewId: null };
 
@@ -6425,7 +6426,8 @@ function apRowHtml(r, withForm) {
     (withForm ? '<td class="dim">' + esc(r.form) + '</td>' : '') +
     '<td class="k"><a href="#" class="ap-tlink" data-apview="' + r.id + '">' + esc(r.title) + '</a></td><td>' + esc(r.author_name) + '</td>' +
     '<td><span class="ap-st" data-st="' + esc(r.status) + '">' + esc(r.status) + '</span></td>' +
-    '<td><button class="reset ap-sbtn" data-apview="' + r.id + '">보기</button></td></tr>';
+    '<td style="white-space:nowrap"><button class="reset ap-sbtn" data-apview="' + r.id + '">보기</button> ' +
+    '<button class="reset ap-sbtn" data-apdel="' + r.id + '">삭제</button></td></tr>';
 }
 function apFiltered() {
   var q = $('apRecQ').value.trim().toLowerCase(), from = $('apRecFrom').value, to = $('apRecTo').value, st = $('apRecSt').value;
@@ -6439,7 +6441,7 @@ function apFiltered() {
 function renderApLists() {
   var pend = AP_ROWS.filter(function (r) { return r.status === '결재대기'; });
   $('apPendCnt').textContent = pend.length;
-  var cols = [{ t: '작성일', w: '92px' }, { t: '양식', w: '170px' }, { t: '제목' }, { t: '작성자', w: '80px' }, { t: '상태', w: '76px' }, { t: '', w: '60px' }];
+  var cols = [{ t: '작성일', w: '92px' }, { t: '양식', w: '170px' }, { t: '제목' }, { t: '작성자', w: '80px' }, { t: '상태', w: '76px' }, { t: '', w: '116px' }];
   $('apBoxList').innerHTML = pend.length ? tbl(cols, pend.map(function (r) { return apRowHtml(r, true); }), 640)
     : '<div class="empty"><b>결재 대기 문서가 없습니다</b>상신된 문서가 여기에 표시됩니다.</div>';
 
@@ -6491,14 +6493,16 @@ function renderApView() {
       '<button class="reset" data-appdf="' + r.id + '">PDF 내려받기</button><button class="reset" id="btnApPrint">인쇄</button><button class="reset" id="btnApClose">닫기</button>' +
     '</div>';
 }
-/** 안전팀장 비밀번호 확인 창. 맞으면 true, 취소하면 false */
-function apAskPin(what) {
-  if (AP_PIN_OFF) return Promise.resolve(true);
+/** 비밀번호 확인 창. 맞으면 true, 취소하면 false. pin 을 안 주면 안전팀장 결재 비밀번호를 씁니다. */
+function apAskPin(what, pin) {
+  if (!pin && AP_PIN_OFF) return Promise.resolve(true);
+  pin = pin || AP_APPROVE_PIN;
   return new Promise(function (resolve) {
     var bg = document.createElement('div');
     bg.className = 'ap-sigbg';
-    bg.innerHTML = '<div class="ap-sigbox" role="dialog" aria-label="안전팀장 비밀번호" style="max-width:340px">' +
-      '<h3>안전팀장 비밀번호</h3><p>' + esc(what) + ' 하려면 비밀번호를 입력해 주세요.</p>' +
+    var head = pin === AP_DELETE_PIN ? '삭제 비밀번호' : '안전팀장 비밀번호';
+    bg.innerHTML = '<div class="ap-sigbox" role="dialog" aria-label="' + head + '" style="max-width:340px">' +
+      '<h3>' + head + '</h3><p>' + esc(what) + ' 하려면 비밀번호를 입력해 주세요.</p>' +
       '<input type="password" class="ap-pinin" autocomplete="off" inputmode="numeric" style="width:100%">' +
       '<div class="ap-sigbtns"><span style="flex:1"></span>' +
       '<button class="reset" data-pin="cancel">취소</button><button class="reset go" data-pin="ok">확인</button></div></div>';
@@ -6507,8 +6511,8 @@ function apAskPin(what) {
     setTimeout(function () { inp.focus(); }, 0);
     function done(v) { bg.remove(); resolve(v); }
     function check() {
-      if (inp.value === AP_APPROVE_PIN) { done(true); return; }
-      toast('안전팀장 비밀번호가 맞지 않습니다.', 'err'); inp.value = ''; inp.focus();
+      if (inp.value === pin) { done(true); return; }
+      toast(head + '가 맞지 않습니다.', 'err'); inp.value = ''; inp.focus();
     }
     inp.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') check();
@@ -6549,11 +6553,12 @@ function apDecideSigned(r, status, reason, sig) {
     apScrollTop();
   }).catch(function (e) { toast('결재 실패: ' + ((e && e.message) || e), 'err'); });
 }
-function deleteAp() {
-  var id = AP_UI.viewId, r = AP_ROWS.filter(function (x) { return x.id === id; })[0];
+function deleteAp(id) {
+  id = id || AP_UI.viewId;
+  var r = AP_ROWS.filter(function (x) { return x.id === id; })[0];
   if (!r) return;
-  apAskPin('삭제').then(function (ok) {
-    if (ok && confirm('이 결재 문서를 삭제할까요? (서버 폴더에 이미 저장된 파일은 남아 있습니다)')) apDeleteNow(r);
+  apAskPin('"' + r.title + '" 문서를 삭제', AP_DELETE_PIN).then(function (ok) {
+    if (ok && confirm('이 결재 문서를 삭제할까요?\n서버 폴더(A: 드라이브)에 저장된 파일도 1분 안에 함께 삭제됩니다.')) apDeleteNow(r);
   });
 }
 function apDeleteNow(r) {
@@ -6628,6 +6633,7 @@ function bindAp() {
     var v = e.target.closest('[data-apview]'); if (v) { e.preventDefault(); openApView(v.dataset.apview); return; }
     var d = e.target.closest('[data-apdecide]'); if (d) { decideAp(d.dataset.apdecide); return; }
     if (e.target.closest('#btnApDel')) { deleteAp(); return; }
+    var dl = e.target.closest('[data-apdel]'); if (dl) { deleteAp(dl.dataset.apdel); return; }
     var pd = e.target.closest('[data-appdf]'); if (pd) { apDownloadPdf(pd.dataset.appdf, pd); return; }
     if (e.target.closest('#btnApPrint')) { printAp(); return; }
     if (e.target.closest('#btnApClose')) closeApView();
