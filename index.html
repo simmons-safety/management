@@ -1140,6 +1140,122 @@ window.AI_CONFIG = {
     .nwhero{border-radius:var(--r-l);padding:24px 20px}
     .nwhero h2{font-size:30px}
   }
+
+  /* ── 안전 현황 : "안전" 첫 화면 대시보드 (sd-) ── */
+  .sd-meta{display:flex;justify-content:space-between;align-items:baseline;gap:6px 16px;flex-wrap:wrap;margin:0 4px 14px;font-size:12.5px;color:var(--ink3)}
+  .sd-meta b{color:var(--ink);font-weight:600}
+  .sd-band{display:grid;grid-template-columns:repeat(5,1fr);background:#000;color:#fff;border-radius:var(--r-xl);overflow:hidden;margin-bottom:16px}
+  .sd-cell{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:14px;min-width:0;
+    padding:26px 26px 24px;border-left:1px solid rgba(255,255,255,.14);transition:background .18s}
+  .sd-cell:first-child{border-left:none}
+  .sd-cell:hover{background:rgba(255,255,255,.08)}
+  .sd-cell:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+  .sd-cell .l{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:600;letter-spacing:-.02em;color:rgba(255,255,255,.72)}
+  .sd-cell .l span{transition:transform .18s,color .18s}
+  .sd-cell:hover .l span{transform:translateX(3px);color:#fff}
+  .sd-cell .v{font-family:var(--fd);font-size:52px;font-weight:500;letter-spacing:-.045em;line-height:.9}
+  .sd-cell .v em{font-style:normal;font-family:var(--f);font-size:14px;font-weight:500;margin-left:4px;color:rgba(255,255,255,.62);letter-spacing:-.02em}
+  .sd-cell .bar{display:block;height:4px;border-radius:var(--pill);background:rgba(255,255,255,.18);overflow:hidden}
+  .sd-cell .bar.none{visibility:hidden}
+  .sd-cell .bar i{display:block;height:100%;background:#fff;border-radius:inherit}
+  .sd-cell .d{font-size:12px;color:rgba(255,255,255,.62)}
+  .sd-cell .d b{color:#fff;font-weight:600}
+
+  .sd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+  .sd-card{background:var(--panel2);border-radius:var(--r-xl);padding:26px 28px 28px;display:flex;flex-direction:column;gap:24px;min-width:0}
+  .sd-hd{all:unset;box-sizing:border-box;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  div.sd-hd{cursor:default}
+  .sd-hd .en{display:block;font-family:var(--fd);font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.01em;margin-bottom:5px}
+  .sd-hd .nm{display:block;font-size:20px;font-weight:700;letter-spacing:-.045em;color:var(--ink)}
+  .sd-hd .go{flex:none;width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:15px;
+    transition:background .18s,color .18s,transform .18s}
+  .sd-hd:hover .go{background:#000;color:#fff;transform:translateX(2px)}
+  .sd-hd:focus-visible .go{outline:2px solid #000;outline-offset:2px}
+  .sd-hd .cnt{flex:none;padding:6px 12px;border-radius:var(--pill);background:#C0392B;color:#fff;font-family:var(--fd);font-size:13px;font-weight:600}
+  .sd-hd .cnt.ok{background:#fff;color:var(--ink2)}
+
+  .sd-top{display:flex;align-items:center;gap:24px}
+  .sd-ringbox{position:relative;width:108px;height:108px;flex:none}
+  .sd-ring{width:100%;height:100%;transform:rotate(-90deg)}
+  .sd-ring circle{fill:none;stroke-width:10}
+  .sd-ring .bg{stroke:#fff}
+  .sd-ring .fg{stroke:#000;stroke-linecap:round}
+  .sd-ring-v{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--fd);font-size:30px;font-weight:500;letter-spacing:-.045em}
+  .sd-ring-v em{font-style:normal;font-size:13px;margin-left:1px;color:var(--ink3)}
+  .sd-stats{display:grid;gap:9px;flex:1;min-width:0}
+  .sd-stats div{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--ink2)}
+  .sd-stats b{font-family:var(--fd);font-weight:500;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums}
+  .sd-stats .open b{color:#C0392B}
+  .sd-big{font-family:var(--fd);font-size:60px;font-weight:500;letter-spacing:-.045em;line-height:.9}
+  .sd-big em{font-style:normal;font-family:var(--f);font-size:14px;font-weight:500;margin-left:4px;color:var(--ink3)}
+  .sd-sub{display:grid;gap:6px;font-size:12.5px;color:var(--ink2)}
+  .sd-sub b{color:var(--ink);font-weight:600}
+
+  .sd-sec{font-size:11.5px;font-weight:600;color:var(--ink3);margin-bottom:8px;letter-spacing:-.01em}
+  .sd-bars{display:grid;gap:2px}
+  .sd-bar{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:minmax(0,84px) 1fr auto;align-items:center;gap:12px;
+    padding:7px 10px;margin:0 -10px;border-radius:var(--r-s);font-size:12.5px;transition:background .15s}
+  .sd-bar:hover{background:var(--hover)}
+  .sd-bar:focus-visible{outline:2px solid #000}
+  .sd-bar .l{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sd-bar .t{height:8px;border-radius:var(--pill);background:#fff;overflow:hidden}
+  .sd-bar .t i{display:block;height:100%;border-radius:inherit}
+  .sd-bar .v{font-family:var(--fd);font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+  .sd-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .sd-chip{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;gap:8px;align-items:baseline;padding:7px 14px;background:#fff;
+    border-radius:var(--pill);font-size:12px;color:var(--ink2);transition:box-shadow .15s,color .15s}
+  .sd-chip b{font-family:var(--fd);font-weight:600;color:var(--ink)}
+  .sd-chip:hover,.sd-chip:focus-visible{box-shadow:inset 0 0 0 1px #000;color:#000}
+
+  .sd-cols{display:flex;align-items:stretch;gap:8px;height:128px}
+  .sd-col{all:unset;box-sizing:border-box;cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+  .sd-col .n{font-family:var(--fd);font-size:12px;font-weight:600}
+  .sd-col .c{width:100%;max-width:34px;min-height:3px;background:#000;border-radius:6px 6px 3px 3px;transition:opacity .15s}
+  .sd-col.zero .c{background:var(--line)}
+  .sd-col.zero .n{color:var(--ink3)}
+  .sd-col .m{font-size:11px;color:var(--ink3)}
+  .sd-col.now .m{color:var(--ink);font-weight:700}
+  .sd-col:hover .c{opacity:.65}
+
+  .sd-list{display:grid;gap:2px}
+  .sd-item{all:unset;box-sizing:border-box;cursor:pointer;display:block;min-width:0;padding:10px 12px;margin:0 -12px;border-radius:var(--r-m);transition:background .15s}
+  .sd-item:hover,.sd-item:focus-visible{background:var(--hover)}
+  .sd-item .top{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink3);margin-bottom:4px}
+  .sd-item .top i{width:6px;height:6px;border-radius:50%;background:#C0392B;flex:none}
+  .sd-item .tag{padding:2px 8px;border-radius:var(--pill);background:#fff;font-size:10.5px;font-weight:600;color:var(--ink2)}
+  .sd-item .tx{display:block;font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sd-empty{font-size:12.5px;color:var(--ink3);padding:8px 0 4px;line-height:1.6}
+  .sd-more{font-size:11.5px;color:var(--ink3);margin-top:6px}
+  /* 보건 · 환경 : 4칸 띠, 2열 카드, 12개월 막대 */
+  .sd-band.b4{grid-template-columns:repeat(4,1fr)}
+  .sd-grid.c2{grid-template-columns:repeat(2,1fr)}
+  .sd-cols.dense{gap:5px}
+  .sd-cols.dense .n{font-size:10.5px;font-weight:500;color:var(--ink2);white-space:nowrap}
+
+  @media (max-width:1180px){
+    .sd-band{grid-template-columns:repeat(3,1fr)}
+    .sd-cell:nth-child(4){border-left:none}
+    .sd-cell:nth-child(n+4){border-top:1px solid rgba(255,255,255,.14)}
+    .sd-grid{grid-template-columns:repeat(2,1fr)}
+    .sd-band.b4{grid-template-columns:repeat(2,1fr)}
+    .sd-band.b4 .sd-cell{border-left:1px solid rgba(255,255,255,.14);border-top:none}
+    .sd-band.b4 .sd-cell:nth-child(2n+1){border-left:none}
+    .sd-band.b4 .sd-cell:nth-child(n+3){border-top:1px solid rgba(255,255,255,.14)}
+    .sd-cols.dense .n{display:none}
+  }
+  @media (max-width:760px){
+    .sd-band{grid-template-columns:1fr 1fr;border-radius:var(--r-l)}
+    .sd-cell{padding:20px 18px;border-left:1px solid rgba(255,255,255,.14);border-top:none}
+    .sd-cell:nth-child(2n+1){border-left:none}
+    .sd-cell:nth-child(n+3){border-top:1px solid rgba(255,255,255,.14)}
+    .sd-cell:last-child{grid-column:1/-1}
+    .sd-band.b4 .sd-cell:last-child{grid-column:auto}
+    .sd-grid.c2{grid-template-columns:1fr}
+    .sd-cell .v{font-size:38px}
+    .sd-grid{grid-template-columns:1fr;gap:10px;margin-bottom:10px}
+    .sd-card{border-radius:var(--r-l);padding:22px 18px}
+    .sd-big{font-size:46px}
+  }
 </style>
 
 </head>
@@ -1300,6 +1416,11 @@ window.AI_CONFIG = {
     </div>
   </section>
 
+  <!-- ══════════ 안전 현황 ("안전" 첫 화면 : 다섯 게시판 요약) ══════════ -->
+  <section class="bpanel" id="bd-safdash" hidden>
+    <div id="safDash"></div>
+  </section>
+
   <!-- ══════════ 안전점검 ══════════ -->
   <section class="bpanel" id="bd-safinspect" hidden>
     <div class="g-half">
@@ -1370,6 +1491,10 @@ window.AI_CONFIG = {
   </section>
 
   <!-- ══════════ 보건활동 ══════════ -->
+  <section class="bpanel" id="bd-headash" hidden>
+    <div id="heaDash"></div>
+  </section>
+
   <section class="bpanel" id="bd-heaact" hidden>
     <div class="kpis k3" id="heaActKpi"></div>
     <div class="card" style="margin-top:12px">
@@ -1407,6 +1532,10 @@ window.AI_CONFIG = {
   </section>
 
   <!-- ══════════ 폐기물 ══════════ -->
+  <section class="bpanel" id="bd-envdash" hidden>
+    <div id="envDash"></div>
+  </section>
+
   <section class="bpanel" id="bd-envwaste" hidden>
     <div class="filterbar" id="envWasteYearBar" style="margin-bottom:10px"></div>
     <div class="g-third">
@@ -3443,9 +3572,10 @@ function kpiPair(label, color, a, b, foot) {
  * ============================================================ */
 function renderDataTabs() {
   renderKpi(); renderYearPlan();
-  renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderEduPage(); renderSafDevicePage();
+  renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderEduPage(); renderSafDevicePage(); renderSafDashPage();
   renderHeaActPage(); renderHeaExamPage(); renderHeaEnvPage(); renderHeaEduPage();
   renderEnvWastePage(); renderEnvGhgPage(); renderEnvWaterPage(); renderEnvAirPage();
+  renderHeaDashPage(); renderEnvDashPage();
   renderAccident(); renderBudget();
 }
 
@@ -3480,7 +3610,7 @@ function toggleRowStatus(sheet, key, makeComplete) {
   state.statusOverrides = state.statusOverrides || {};
   var prev = state.statusOverrides[key];
   if (makeComplete) state.statusOverrides[key] = '완료'; else delete state.statusOverrides[key];
-  renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage();
+  renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderSafDashPage();
 
   var req = makeComplete
     ? RPC.db.from('status_overrides').upsert({
@@ -3493,7 +3623,7 @@ function toggleRowStatus(sheet, key, makeComplete) {
     toast(makeComplete ? '완료로 표시했습니다.' : '완료 표시를 취소했습니다.');
   }).catch(function (err) {
     if (prev === undefined) delete state.statusOverrides[key]; else state.statusOverrides[key] = prev;
-    renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage();
+    renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderSafDashPage();
     console.warn('[EHS] 완료 상태 저장 실패', err);
     toast('저장 실패: ' + ((err && err.message) || err), 'err');
   });
@@ -3505,7 +3635,7 @@ function loadStatusOverrides() {
     var map = {};
     (res.data || []).forEach(function (r) { map[r.row_key] = r.status; });
     state.statusOverrides = map;
-    renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage();
+    renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderSafDashPage();
   }).catch(function (err) {
     console.warn('[EHS] 완료 상태 조회 실패', err);
     state.statusOverrides = state.statusOverrides || {};
@@ -4026,6 +4156,509 @@ function renderSafDevicePage() {
 
   $('safDeviceKindSel').onchange = function () { state.safDeviceKind = this.value; renderSafDevicePage(); };
   $('safDeviceEquipSel').onchange = function () { state.safDeviceEquip = this.value; renderSafDevicePage(); };
+}
+
+/* ── 3-0. 현황 대시보드 : "안전" · "보건" · "환경" 첫 화면. 각 그룹 게시판을 한 페이지로 요약하고,
+ *  누르면 해당 게시판(필터 적용)으로 이동합니다 ── */
+/** 누르면 이동할 게시판과 미리 걸어 둘 필터(사업장·구분·월·부서·연도·측정일·종류)를 data-sd* 속성으로 만듭니다 */
+function sdGo(tab, o) {
+  o = o || {};
+  return ' data-sdgo="' + tab + '"' + ['site', 'kind', 'month', 'dept', 'year', 'date', 'src'].map(function (k) {
+    return o[k] ? ' data-sd' + k + '="' + esc(o[k]) + '"' : '';
+  }).join('');
+}
+function sdPct(done, total) { return total ? Math.round(done / total * 100) : 0; }
+function sdSiteColor(n) { return n === '팩토리움' ? C.ink : C.store; }
+function sdSiteName(n) { return n === '서울사무소' ? '매장' : n; }
+function sdSum(rows, field) { return rows.reduce(function (a, r) { return a + num(r[field]); }, 0); }
+/** 안전장치 "안전검사 대상" 칸 : 비어 있거나 X/해당없음 등이 아니면 대상으로 봅니다 */
+function sdIsInspTarget(v) {
+  v = String(v == null ? '' : v).trim();
+  return !!v && !/^(x|n|no|-|무|아니오|비대상|미대상|해당\s*없음|대상\s*아님)$/i.test(v);
+}
+function sdMeta(group, n) {
+  return '<div class="sd-meta"><span>' + esc(group) + ' 게시판 <b>' + n + '종</b>을 한눈에 · 항목을 누르면 해당 게시판으로 이동합니다</span>' +
+    '<span>' + ymd(new Date()).replace(/-/g, '.') + ' 기준</span></div>';
+}
+function sdBandCell(tab, label, val, unit, pct, desc) {
+  return '<button type="button" class="sd-cell"' + sdGo(tab) + '><span class="l">' + esc(label) + '<span aria-hidden="true">→</span></span>' +
+    '<span class="v">' + val + '<em>' + unit + '</em></span>' +
+    (pct === null ? '<span class="bar none"></span>' : '<span class="bar"><i style="width:' + Math.min(pct, 100) + '%"></i></span>') +
+    '<span class="d">' + desc + '</span></button>';
+}
+/** 완료율 칸 : 자료가 없으면 "—" */
+function sdRateCell(tab, label, done, total, desc) {
+  var p = sdPct(done, total);
+  return sdBandCell(tab, label, total ? p : '—', total ? '%' : '', total ? p : 0, desc || ('완료 <b>' + done + '</b> / 전체 ' + total + '건'));
+}
+function sdHead(tab, en, name) {
+  return '<button type="button" class="sd-hd"' + sdGo(tab) + ' title="' + esc(name) + ' 게시판으로 이동">' +
+    '<span><span class="en">' + esc(en) + '</span><span class="nm">' + esc(name) + '</span></span>' +
+    '<span class="go" aria-hidden="true">→</span></button>';
+}
+/** 카드 하나 : 제목(누르면 게시판) + 본문 조각들. 자료가 없으면 안내문만 */
+function sdCard(tab, en, name, hasData, parts) {
+  return '<div class="sd-card">' + sdHead(tab, en, name) +
+    (hasData ? parts.join('') : '<div class="sd-empty">아직 불러온 자료가 없습니다</div>') + '</div>';
+}
+function sdSec(title, inner) { return '<div><div class="sd-sec">' + esc(title) + '</div>' + inner + '</div>'; }
+function sdRing(p) {
+  var c = 2 * Math.PI * 42;
+  return '<div class="sd-ringbox"><svg class="sd-ring" viewBox="0 0 100 100" aria-hidden="true">' +
+    '<circle class="bg" cx="50" cy="50" r="42"></circle>' +
+    (p > 0 ? '<circle class="fg" cx="50" cy="50" r="42" stroke-dasharray="' + (c * Math.min(p, 100) / 100).toFixed(1) + ' ' + c.toFixed(1) + '"></circle>' : '') +
+    '</svg><span class="sd-ring-v"><span>' + p + '<em>%</em></span></span></div>';
+}
+/** 링 + 오른쪽 숫자 목록. stats = [[라벨, 값, 강조(빨강)?], ...] */
+function sdRingTop(p, stats) {
+  return '<div class="sd-top">' + sdRing(p) + '<div class="sd-stats">' + stats.map(function (s) {
+    return '<div' + (s[2] ? ' class="open"' : '') + '><span>' + esc(s[0]) + '</span><b>' + s[1] + '</b></div>';
+  }).join('') + '</div></div>';
+}
+/** 큰 숫자 + 오른쪽 보조 문구들(HTML) */
+function sdBigTop(val, unit, subs) {
+  return '<div class="sd-top"><span class="sd-big">' + val + '<em>' + esc(unit) + '</em></span>' +
+    '<span class="sd-sub">' + subs.map(function (s) { return '<span>' + s + '</span>'; }).join('') + '</span></div>';
+}
+function sdBar(label, pct, color, val, go) {
+  return '<button type="button" class="sd-bar"' + go + '><span class="l">' + esc(label) + '</span>' +
+    '<span class="t"><i style="width:' + Math.min(pct, 100) + '%;background:' + color + '"></i></span>' +
+    '<span class="v">' + esc(val) + '</span></button>';
+}
+function sdBars(list) { return '<div class="sd-bars">' + list.join('') + '</div>'; }
+function sdChip(label, val, go) { return '<button type="button" class="sd-chip"' + go + '>' + esc(label) + '<b>' + esc(val) + '</b></button>'; }
+function sdChips(list) { return '<div class="sd-chips">' + list.join('') + '</div>'; }
+/** 세로 막대 묶음. items = [{ label, v, text, go, now, title }] — v 로 높이를, text 로 막대 위 숫자를 그립니다 */
+function sdCols(items, dense) {
+  var max = Math.max.apply(null, items.map(function (x) { return x.v; }).concat([0])) || 1;
+  return '<div class="sd-cols' + (dense ? ' dense' : '') + '">' + items.map(function (x) {
+    return '<button type="button" class="sd-col' + (x.v ? '' : ' zero') + (x.now ? ' now' : '') + '"' + x.go +
+      (x.title ? ' title="' + esc(x.title) + '"' : '') + '>' +
+      '<span class="n">' + esc(x.text) + '</span><span class="c" style="height:' + (x.v / max * 70).toFixed(1) + '%"></span>' +
+      '<span class="m">' + esc(x.label) + '</span></button>';
+  }).join('') + '</div>';
+}
+/** 최근 순 목록 카드 (미조치 · 확인 필요). items = [{ key, date, tag, meta, text, go }] */
+function sdListCard(o) {
+  var items = o.items.slice().sort(function (a, b) { return String(b.key).localeCompare(String(a.key)); });
+  var html = '<div class="sd-card"><div class="sd-hd"><span><span class="en">' + esc(o.en) + '</span><span class="nm">' + esc(o.name) + '</span></span>' +
+    '<span class="cnt' + (items.length ? '' : ' ok') + '">' + items.length + '건</span></div>';
+  if (!o.hasData) return html + '<div class="sd-empty">아직 불러온 자료가 없습니다</div></div>';
+  if (!items.length) return html + '<div class="sd-empty">' + esc(o.emptyMsg) + '</div></div>';
+  return html + sdSec(o.sec, '<div class="sd-list">' + items.slice(0, 6).map(function (it) {
+    return '<button type="button" class="sd-item"' + it.go + '>' +
+      '<span class="top"><i></i>' + esc(it.date) + '<span class="tag">' + esc(it.tag) + '</span>' + esc(it.meta) + '</span>' +
+      '<span class="tx">' + esc(it.text || '(내용 없음)') + '</span></button>';
+  }).join('') + '</div>' +
+    (items.length > 6 ? '<div class="sd-more">외 ' + (items.length - 6) + '건 · 각 게시판에서 확인</div>' : '')) + '</div>';
+}
+/** 최근 6개월(이번 달 포함) "YYYY-MM" 목록 */
+function sdLast6Months() {
+  var now = new Date(), out = [];
+  for (var i = 5; i >= 0; i--) out.push(ymd(new Date(now.getFullYear(), now.getMonth() - i, 1)).slice(0, 7));
+  return out;
+}
+/** 연도별 자료에서 볼 연도 : 올해 자료가 있으면 올해, 없으면 가장 최근 연도 */
+function sdPickYear(years) {
+  var y = String(new Date().getFullYear());
+  return years.indexOf(y) !== -1 ? y : years.slice().sort().reverse()[0];
+}
+
+/* ---------- 안전 ---------- */
+/** 진척율이 있는 게시판(안전점검 · 위험성평가 · 회의체) : 완료율 링 + 사업장별 완료율 + 유형별 건수 */
+function sdRateCard(o) {
+  var rows = o.rows, done = rows.filter(o.doneFn).length;
+  return sdCard(o.tab, o.en, o.name, rows.length, [
+    sdRingTop(sdPct(done, rows.length), [['전체', rows.length], ['완료', done], ['미완료', rows.length - done, 1]]),
+    sdSec('사업장별 완료율', sdBars(SAF_SITES.map(function (s) {
+      var sub = rows.filter(function (r) { return r.사업장 === s.n; });
+      var d = sub.filter(o.doneFn).length;
+      return sdBar(s.label, sdPct(d, sub.length), sdSiteColor(s.n), d + '/' + sub.length, sdGo(o.tab, { site: s.n }));
+    }))),
+    sdSec(o.kindLabel, sdChips(o.kinds.map(function (k) {
+      return sdChip(k, rows.filter(function (r) { return o.kindOf(r) === k; }).length, sdGo(o.tab, { kind: k }));
+    })))
+  ]);
+}
+
+/** 교육 : 전체 건수 + 최근 6개월 막대(누르면 그 달) + 사업장별 */
+function sdEduCard() {
+  var ed = ds('교육'), months = sdLast6Months();
+  var cnt = months.map(function (m) { return ed.filter(function (r) { return safMonthOf(r.일자) === m; }).length; });
+  return sdCard('edu', 'Training', '교육', ed.length, [
+    sdBigTop(ed.length, '건', ['이번 달 <b>' + cnt[5] + '건</b>',
+      '대상 <b>' + uniq(ed.map(function (r) { return r.대상; })).filter(Boolean).length + '종</b>']),
+    sdSec('최근 6개월', sdCols(months.map(function (m, i) {
+      return { label: (+m.slice(5)) + '월', v: cnt[i], text: cnt[i], now: i === 5, go: sdGo('edu', { month: m }), title: m + ' 교육 보기' };
+    }))),
+    sdSec('사업장별', sdBars(SAF_SITES.map(function (s) {
+      var n = ed.filter(function (r) { return r.사업장 === s.n; }).length;
+      return sdBar(s.label, sdPct(n, ed.length), sdSiteColor(s.n), n + '건', sdGo('edu', { site: s.n }));
+    })))
+  ]);
+}
+
+/** 안전장치 : 전체 건수 + 설비 종류·안전검사 대상 + 구분별(많은 순) */
+function sdDeviceCard() {
+  var rows = ds('안전장치');
+  var kinds = uniq(rows.map(function (r) { return r.구분; })).filter(Boolean).map(function (k) {
+    return { k: k, n: rows.filter(function (r) { return r.구분 === k; }).length };
+  }).sort(function (a, b) { return b.n - a.n; });
+  var max = kinds.length ? kinds[0].n : 1;
+  return sdCard('safdevice', 'Safety Device', '안전장치', rows.length, [
+    sdBigTop(rows.length, '건', [
+      '설비 <b>' + uniq(rows.map(function (r) { return r['설비 및 기계명']; })).filter(Boolean).length + '종</b>',
+      '안전검사 대상 <b>' + rows.filter(function (r) { return sdIsInspTarget(r['안전검사 대상']); }).length + '건</b>']),
+    sdSec('구분별', sdBars(kinds.slice(0, 6).map(function (x) {
+      return sdBar(x.k, sdPct(x.n, max), C.ink, x.n + '건', sdGo('safdevice', { kind: x.k }));
+    })) + (kinds.length > 6 ? '<div class="sd-more">외 ' + (kinds.length - 6) + '개 구분</div>' : ''))
+  ]);
+}
+
+/** 미조치 항목 : 안전점검 · 위험성평가 중 완료되지 않은 건. 누르면 그 달 · 사업장 · 부서로 걸러 보여줍니다 */
+function sdOpenCard() {
+  var items = ds('안전점검').filter(function (r) { return !inspIsDone(r); }).map(function (r) {
+    return { key: r.점검일, date: r.점검일, tag: r.점검구분 || '안전점검', meta: sdSiteName(r.사업장) + (r.부서 ? ' · ' + r.부서 : ''),
+      text: inspContentText(r), go: sdGo('safinspect', { site: r.사업장, dept: r.부서, month: safMonthOf(r.점검일) }) };
+  }).concat(ds('위험성평가').filter(function (r) { return !riskIsDone(r); }).map(function (r) {
+    return { key: r.점검일, date: r.점검일, tag: '위험성평가', meta: sdSiteName(r.사업장) + (r['매장/부서'] ? ' · ' + r['매장/부서'] : ''),
+      text: riskContentText(r), go: sdGo('safrisk', { site: r.사업장, dept: r['매장/부서'], month: safMonthOf(r.점검일) }) };
+  }));
+  return sdListCard({ en: 'Action Required', name: '미조치 항목', items: items, sec: '최근 순 · 안전점검 · 위험성평가',
+    hasData: ds('안전점검').length || ds('위험성평가').length, emptyMsg: '모든 점검 · 평가 항목이 조치 완료되었습니다' });
+}
+
+function renderSafDashPage() {
+  var ins = ds('안전점검'), ra = ds('위험성평가'), mt = ds('회의체'), ed = ds('교육'), dv = ds('안전장치');
+  var thisMonth = ymd(new Date()).slice(0, 7);
+  $('safDash').innerHTML = sdMeta('안전', 5) +
+    '<div class="sd-band">' +
+      sdRateCell('safinspect', '안전점검', ins.filter(inspIsDone).length, ins.length) +
+      sdRateCell('safrisk', '위험성평가', ra.filter(riskIsDone).length, ra.length) +
+      sdRateCell('safmeet', '회의체', mt.filter(meetIsDone).length, mt.length) +
+      sdBandCell('edu', '교육', ed.length, '건', null,
+        '이번 달 <b>' + ed.filter(function (r) { return safMonthOf(r.일자) === thisMonth; }).length + '건</b>') +
+      sdBandCell('safdevice', '안전장치', dv.length, '건', null,
+        '안전검사 대상 <b>' + dv.filter(function (r) { return sdIsInspTarget(r['안전검사 대상']); }).length + '건</b>') +
+    '</div>' +
+    '<div class="sd-grid">' +
+      sdRateCard({ tab: 'safinspect', en: 'Inspection', name: '안전점검', rows: ins, doneFn: inspIsDone,
+        kindLabel: '점검형태별', kinds: SAF_INS_KINDS, kindOf: function (r) { return r.점검구분; } }) +
+      sdRateCard({ tab: 'safrisk', en: 'Risk Assessment', name: '위험성평가', rows: ra, doneFn: riskIsDone,
+        kindLabel: '구분별', kinds: SAF_RISK_KINDS, kindOf: function (r) { return r.구분 || '정기'; } }) +
+      sdRateCard({ tab: 'safmeet', en: 'Committee', name: '회의체', rows: mt, doneFn: meetIsDone,
+        kindLabel: '회의체별', kinds: SAF_MT_KINDS, kindOf: function (r) { return r.회의체; } }) +
+    '</div>' +
+    '<div class="sd-grid">' + sdEduCard() + sdDeviceCard() + sdOpenCard() + '</div>';
+}
+
+/* ---------- 보건 ---------- */
+/** 보건활동 "월" 칸(1 · "1월" · "2026-01" 등)을 숫자 월로 */
+function sdMonthNum(v) { var n = parseInt(String(v == null ? '' : v).replace(/^\d{4}-/, ''), 10); return isNaN(n) ? 0 : n; }
+/** 연도별 인원 시트(건강검진 현황 · 정기교육)에서 볼 연도의 행 */
+function sdYearRows(rows) {
+  var y = sdPickYear(uniq(rows.map(function (r) { return String(r.연도); })).filter(Boolean));
+  return { year: y, rows: rows.filter(function (r) { return String(r.연도) === y; }) };
+}
+
+function sdHeaActCard() {
+  var ac = ds('보건활동'), done = ac.filter(heaActDone).length;
+  var sites = uniq(ac.map(function (r) { return r.사업장; })).filter(Boolean);
+  return sdCard('heaact', 'Wellness', '보건활동', ac.length, [
+    sdRingTop(sdPct(done, ac.length), [['전체', ac.length], ['진행', done], ['미진행', ac.length - done, 1]]),
+    sdSec('프로그램별 진행률', sdBars(HEA_ACT_KINDS.map(function (k) {
+      var sub = ac.filter(function (r) { return r.구분 === k; }), d = sub.filter(heaActDone).length;
+      return sdBar(k, sdPct(d, sub.length), C.ink, d + '/' + sub.length, sdGo('heaact', { kind: k }));
+    }))),
+    sdSec('사업장별', sdChips(sites.map(function (s) {
+      return sdChip(sdSiteName(s), ac.filter(function (r) { return r.사업장 === s; }).length, sdGo('heaact', { site: s }));
+    })))
+  ]);
+}
+
+/** 건강검진/상담 : 게시판은 비밀번호로 잠겨 있으므로 여기서는 이름 없이 인원 합계 · 비율만 보여줍니다 */
+function sdHeaExamCard() {
+  var ex = ds('건강검진 현황'), cs = ds('건강검진 상담'), cur = sdYearRows(ex);
+  var t = sdSum(cur.rows, '전체 인원'), s = sdSum(cur.rows, '검진 완료');
+  var csDone = cs.filter(function (r) { return String(r['상담 여부'] || '').trim() !== ''; }).length;
+  var parts = [];
+  if (ex.length) {
+    parts.push(sdRingTop(sdPct(s, t), [[cur.year + '년 대상', nf(t)], ['검진 완료', nf(s)], ['예약', nf(sdSum(cur.rows, '검진 예약'))],
+      ['미예약', nf(sdSum(cur.rows, '검진 미예약')), 1]]));
+    parts.push(sdSec(cur.year + '년 사업장별 수검률', sdBars(cur.rows.map(function (r) {
+      var a = num(r['전체 인원']), b = num(r['검진 완료']);
+      return sdBar(sdSiteName(r.사업장), sdPct(b, a), sdSiteColor(r.사업장), nf(b) + '/' + nf(a), sdGo('heaexam', { year: cur.year, site: r.사업장 }));
+    }))));
+  }
+  if (cs.length) {
+    parts.push(sdSec('건강검진 상담', sdBars([sdBar('상담 진행', sdPct(csDone, cs.length), C.ink, csDone + '/' + cs.length, sdGo('heaexam'))])));
+  }
+  parts.push('<div class="sd-more">🔒 상세 내역은 게시판에서 비밀번호 입력 후 열람</div>');
+  return sdCard('heaexam', 'Check-up', '건강검진/상담', ex.length || cs.length, parts);
+}
+
+function sdHeaEnvCard() {
+  var wk = ds('작업환경측정'), ok = wk.filter(heaEnvCompliant).length;
+  var sites = uniq(wk.map(function (r) { return r.사업장; })).filter(Boolean);
+  var dates = uniq(wk.map(function (r) { return r.측정일; })).filter(Boolean).sort().reverse().slice(0, 4);
+  return sdCard('heaenv', 'Work Environment', '작업환경측정', wk.length, [
+    sdRingTop(sdPct(ok, wk.length), [['측정', wk.length], ['법적 미만', ok], ['확인 필요', wk.length - ok, 1]]),
+    sdSec('사업장별 준수율', sdBars(sites.map(function (s) {
+      var sub = wk.filter(function (r) { return r.사업장 === s; }), d = sub.filter(heaEnvCompliant).length;
+      return sdBar(sdSiteName(s), sdPct(d, sub.length), sdSiteColor(s), d + '/' + sub.length, sdGo('heaenv', { site: s }));
+    }))),
+    sdSec('최근 측정일', sdChips(dates.map(function (d) {
+      return sdChip(d, wk.filter(function (r) { return r.측정일 === d; }).length + '건', sdGo('heaenv', { date: d }));
+    })))
+  ]);
+}
+
+function sdHeaEduCard() {
+  var ed = ds('정기교육'), cur = sdYearRows(ed);
+  var t = sdSum(cur.rows, '전체 인원'), s = sdSum(cur.rows, '교육 이수');
+  var years = uniq(ed.map(function (r) { return String(r.연도); })).filter(Boolean).sort().slice(-6);
+  return sdCard('heaedu', 'Health Training', '정기교육', ed.length, [
+    sdRingTop(sdPct(s, t), [[cur.year + '년 대상', nf(t)], ['이수', nf(s)], ['진행중', nf(sdSum(cur.rows, '교육 진행중'))],
+      ['미진행', nf(sdSum(cur.rows, '교육 미진행')), 1]]),
+    sdSec('연도별 이수율', sdCols(years.map(function (y) {
+      var rs = ed.filter(function (r) { return String(r.연도) === y; });
+      var p = sdPct(sdSum(rs, '교육 이수'), sdSum(rs, '전체 인원'));
+      return { label: y, v: p, text: p + '%', now: y === cur.year, go: sdGo('heaedu', { year: y }), title: y + '년 정기교육 보기' };
+    }))),
+    sdSec(cur.year + '년 사업장별', sdBars(cur.rows.map(function (r) {
+      var a = num(r['전체 인원']), b = num(r['교육 이수']);
+      return sdBar(sdSiteName(r.사업장), sdPct(b, a), sdSiteColor(r.사업장), nf(b) + '/' + nf(a), sdGo('heaedu', { year: cur.year, site: r.사업장 }));
+    })))
+  ]);
+}
+
+/** 확인 필요 : 작업환경측정 법적 미만이 아닌 항목 + 이번 달까지 결과가 없는 보건활동 */
+function sdHeaAttnCard() {
+  var now = new Date(), nowKey = now.getFullYear() * 100 + now.getMonth() + 1;
+  var items = ds('작업환경측정').filter(function (r) { return !heaEnvCompliant(r); }).map(function (r) {
+    return { key: r.측정일, date: r.측정일, tag: r.결과 || '결과 미기재', meta: sdSiteName(r.사업장) + (r.부서 ? ' · ' + r.부서 : ''),
+      text: (r.측정항목 || '작업환경측정') + ' · 노출수준 ' + (r.노출수준 || '-') + ' / 기준 ' + (r.노출기준 || '-'),
+      go: sdGo('heaenv', { site: r.사업장, dept: r.부서, date: r.측정일 }) };
+  }).concat(ds('보건활동').filter(function (r) {
+    var m = sdMonthNum(r.월), y = parseInt(r.연도, 10);
+    return !heaActDone(r) && (!y || !m || y * 100 + m <= nowKey);
+  }).map(function (r) {
+    var m = sdMonthNum(r.월);
+    return { key: (r.연도 || '') + '-' + pad(m), date: (r.연도 ? r.연도 + '년 ' : '') + (m ? m + '월' : ''), tag: r.구분 || '보건활동',
+      meta: sdSiteName(r.사업장 || ''), text: [r.대상자, r.목표].filter(function (v) { return !isBlank(v); }).join(' · ') || '결과 미입력',
+      go: sdGo('heaact', { kind: r.구분, site: r.사업장 }) };
+  }));
+  return sdListCard({ en: 'Attention', name: '확인 필요', items: items, sec: '최근 순 · 작업환경측정 · 보건활동',
+    hasData: ds('작업환경측정').length || ds('보건활동').length, emptyMsg: '확인이 필요한 항목이 없습니다' });
+}
+
+function renderHeaDashPage() {
+  var ac = ds('보건활동'), wk = ds('작업환경측정');
+  var ex = sdYearRows(ds('건강검진 현황')), ed = sdYearRows(ds('정기교육'));
+  var exT = sdSum(ex.rows, '전체 인원'), exS = sdSum(ex.rows, '검진 완료');
+  var edT = sdSum(ed.rows, '전체 인원'), edS = sdSum(ed.rows, '교육 이수');
+  var wkOk = wk.filter(heaEnvCompliant).length;
+  $('heaDash').innerHTML = sdMeta('보건', 4) +
+    '<div class="sd-band b4">' +
+      sdRateCell('heaact', '보건활동 진행률', ac.filter(heaActDone).length, ac.length) +
+      sdRateCell('heaexam', '건강검진 수검률', exS, exT, ex.year ? ex.year + '년 <b>' + nf(exS) + '</b> / ' + nf(exT) + '명' : '') +
+      sdRateCell('heaenv', '작업환경측정 준수율', wkOk, wk.length, '법적 미만 <b>' + wkOk + '</b> / 전체 ' + wk.length + '건') +
+      sdRateCell('heaedu', '정기교육 이수율', edS, edT, ed.year ? ed.year + '년 <b>' + nf(edS) + '</b> / ' + nf(edT) + '명' : '') +
+    '</div>' +
+    '<div class="sd-grid">' + sdHeaActCard() + sdHeaExamCard() + sdHeaEnvCard() + '</div>' +
+    '<div class="sd-grid c2">' + sdHeaEduCard() + sdHeaAttnCard() + '</div>';
+}
+
+/* ---------- 환경 ---------- */
+/** 연월(YYYY-MM)이 있는 시트에서 볼 연도 */
+function sdYmYear(rows) { return sdPickYear(uniq(rows.map(function (r) { return String(r.연월 || '').slice(0, 4); })).filter(Boolean)); }
+/** 1~12월 세로 막대(누르면 그 달). sumFn(ym) → 그 달 값 */
+function sdYearCols(tab, year, sumFn, extra) {
+  var nowYm = ymd(new Date()).slice(0, 7), items = [];
+  for (var m = 1; m <= 12; m++) {
+    var ym = year + '-' + pad(m), v = sumFn(ym), go = { month: ym };
+    for (var k in (extra || {})) go[k] = extra[k];
+    items.push({ label: String(m), v: v, text: v ? nf(v, v < 10 ? 1 : 0) : '', now: ym === nowYm, go: sdGo(tab, go), title: ym + ' 보기' });
+  }
+  return sdCols(items, true);
+}
+/** 측정값 ÷ 배출허용기준 (기준이 없으면 null) */
+function sdLimitRatio(r) { var b = num(r.배출허용기준); return b > 0 ? num(r.측정값) / b : null; }
+/** 오수처리 · 대기오염 공통 : 적합여부가 적힌 행 기준 적합률 */
+function sdJudge(rows) {
+  var judged = rows.filter(function (r) { return !isBlank(r.적합여부) && String(r.적합여부).trim() !== ''; });
+  return { judged: judged.length, ok: judged.filter(function (r) { return r.적합여부 === '적합'; }).length };
+}
+
+function sdWasteData() {
+  var main = ds('전체 폐기물');
+  if (!main.length) ENV_WASTE_SRC.forEach(function (s) { main = main.concat(ds(s.key)); });
+  var year = sdYmYear(main);
+  var yr = main.filter(function (r) { return String(r.연월 || '').slice(0, 4) === year; });
+  var total = sdSum(yr, '배출량(톤)');
+  var recycle = sdSum(yr.filter(function (r) { return r.폐기물구분 === '재활용'; }), '배출량(톤)');
+  return { main: main, year: year, yr: yr, total: total, recycleP: sdPct(recycle, total) };
+}
+function sdWasteCard() {
+  var w = sdWasteData();
+  return sdCard('envwaste', 'Waste', '폐기물', w.main.length, [
+    sdBigTop(nf(w.total, 1), '톤', [w.year + '년 누적 배출량', '재활용률 <b>' + w.recycleP + '%</b>',
+      '처리비용 <b>' + nf(sdSum(w.yr, '처리비용')) + '원</b>']),
+    sdSec(w.year + '년 월별 배출량(톤)', sdYearCols('envwaste', w.year, function (ym) {
+      return sdSum(w.yr.filter(function (r) { return String(r.연월) === ym; }), '배출량(톤)');
+    }, { year: w.year })),
+    sdSec('폐기물구분별', sdBars(ENV_WASTE_KINDS.map(function (kk) {
+      var v = sdSum(w.yr.filter(function (r) { return r.폐기물구분 === kk.k; }), '배출량(톤)');
+      return sdBar(kk.k, sdPct(v, w.total), kk.c, nf(v, 1) + '톤', sdGo('envwaste', { kind: kk.k, year: w.year }));
+    }))),
+    sdSec('종류별', sdChips(ENV_WASTE_SRC.map(function (s) {
+      var v = sdSum(ds(s.key).filter(function (r) { return String(r.연월 || '').slice(0, 4) === w.year; }), '배출량(톤)');
+      return sdChip(s.key, nf(v, 1) + '톤', sdGo('envwaste', { src: s.key, year: w.year }));
+    })))
+  ]);
+}
+
+function sdGhgData() {
+  var gh = ds('온실가스'), year = sdYmYear(gh);
+  var yr = gh.filter(function (r) { return String(r.연월 || '').slice(0, 4) === year; });
+  var lastM = yr.reduce(function (a, r) { return Math.max(a, sdMonthNum(String(r.연월).slice(5))); }, 0);
+  var prev = gh.filter(function (r) {
+    return String(r.연월 || '').slice(0, 4) === String(+year - 1) && sdMonthNum(String(r.연월).slice(5)) <= lastM;
+  });
+  var total = sdSum(yr, '온실가스 배출량'), prevTotal = sdSum(prev, '온실가스 배출량');
+  return { gh: gh, year: year, yr: yr, lastM: lastM, total: total,
+    delta: prevTotal ? Math.round((total - prevTotal) / prevTotal * 100) : null };
+}
+function sdGhgCard() {
+  var g = sdGhgData();
+  return sdCard('envghg', 'Emissions', '온실가스', g.gh.length, [
+    sdBigTop(nf(g.total, 1), '', [g.year + '년 누적 배출량' + (g.lastM ? ' (~' + g.lastM + '월)' : ''),
+      g.delta === null ? '전년 동기 자료 없음' : '전년 동기 대비 <b>' + (g.delta > 0 ? '+' : '') + g.delta + '%</b>']),
+    sdSec(g.year + '년 월별 배출량', sdYearCols('envghg', g.year, function (ym) {
+      return sdSum(g.yr.filter(function (r) { return String(r.연월) === ym; }), '온실가스 배출량');
+    })),
+    sdSec('항목별', sdBars(ENV_GHG_ITEMS.map(function (it) {
+      var v = sdSum(g.yr.filter(function (r) { return r.항목 === it.key; }), '온실가스 배출량');
+      return sdBar(it.key, sdPct(v, g.total), it.color, nf(v, 1), sdGo('envghg', { kind: it.key }));
+    })))
+  ]);
+}
+
+/** 오수처리 : 적합률 링 + 가장 최근 측정의 항목별 기준 대비 */
+function sdWaterCard() {
+  var ow = ds('오수처리'), j = sdJudge(ow);
+  var last = uniq(ow.map(function (r) { return r.측정일; })).filter(Boolean).sort().reverse()[0];
+  var latest = ow.filter(function (r) { return r.측정일 === last; });
+  return sdCard('envwater', 'Wastewater', '오수처리', ow.length, [
+    sdRingTop(sdPct(j.ok, j.judged), [['측정', ow.length], ['적합', j.ok], ['부적합', j.judged - j.ok, 1]]),
+    sdSec('최근 측정 기준 대비 · ' + (last || ''), sdBars(latest.slice(0, 6).map(function (r) {
+      var q = sdLimitRatio(r), p = q === null ? 0 : Math.round(q * 100);
+      return sdBar(r.항목, p, p >= 100 ? C.safe : C.ink, q === null ? String(r.측정값) : p + '%', sdGo('envwater', { month: safMonthOf(last) }));
+    })))
+  ]);
+}
+
+/** 대기오염 : 적합률 링 + 배출구별 적합률(볼 연도) + 최근 측정일 */
+function sdAirCard() {
+  var ai = ds('대기오염'), j = sdJudge(ai);
+  var year = sdPickYear(uniq(ai.map(function (r) { return String(r.측정일 || '').slice(0, 4); })).filter(Boolean));
+  var yr = ai.filter(function (r) { return String(r.측정일 || '').slice(0, 4) === year; });
+  var stacks = uniq(yr.map(function (r) { return r.배출구; })).filter(Boolean);
+  var dates = uniq(ai.map(function (r) { return r.측정일; })).filter(Boolean).sort().reverse().slice(0, 4);
+  return sdCard('envair', 'Air Quality', '대기오염', ai.length, [
+    sdRingTop(sdPct(j.ok, j.judged), [['측정', ai.length], ['적합', j.ok], ['부적합', j.judged - j.ok, 1]]),
+    sdSec(year + '년 배출구별 적합률', sdBars(stacks.map(function (s) {
+      var sj = sdJudge(yr.filter(function (r) { return r.배출구 === s; }));
+      return sdBar(s, sdPct(sj.ok, sj.judged), C.ink, sj.ok + '/' + sj.judged, sdGo('envair', { year: year }));
+    }))),
+    sdSec('최근 측정일', sdChips(dates.map(function (d) {
+      return sdChip(d, ai.filter(function (r) { return r.측정일 === d; }).length + '건', sdGo('envair', { date: d, year: d.slice(0, 4) }));
+    })))
+  ]);
+}
+
+/** 확인 필요 : 오수처리 · 대기오염 중 부적합이거나 배출허용기준의 80% 이상인 측정 */
+function sdEnvAttnCard() {
+  function pick(rows, tab, label) {
+    return rows.filter(function (r) {
+      var q = sdLimitRatio(r);
+      return (!isBlank(r.적합여부) && r.적합여부 !== '적합') || (q !== null && q >= 0.8);
+    }).map(function (r) {
+      var q = sdLimitRatio(r), bad = !isBlank(r.적합여부) && r.적합여부 !== '적합';
+      return { key: r.측정일, date: r.측정일, tag: bad ? String(r.적합여부) : '기준 ' + Math.round(q * 100) + '%',
+        meta: label + ' · ' + sdSiteName(r.사업장 || ''),
+        text: (r.배출구 ? r.배출구 + ' · ' : '') + r.항목 + ' ' + r.측정값 + ' / 기준 ' + r.배출허용기준 + (r.단위 ? ' ' + r.단위 : ''),
+        go: tab === 'envwater' ? sdGo(tab, { month: safMonthOf(r.측정일) })
+                               : sdGo(tab, { date: r.측정일, year: String(r.측정일 || '').slice(0, 4) }) };
+    });
+  }
+  var items = pick(ds('오수처리'), 'envwater', '오수처리').concat(pick(ds('대기오염'), 'envair', '대기오염'));
+  return sdListCard({ en: 'Attention', name: '확인 필요', items: items, sec: '부적합 · 배출허용기준 80% 이상',
+    hasData: ds('오수처리').length || ds('대기오염').length, emptyMsg: '모든 측정값이 기준 대비 여유가 있습니다' });
+}
+
+function renderEnvDashPage() {
+  var w = sdWasteData(), g = sdGhgData(), wj = sdJudge(ds('오수처리')), aj = sdJudge(ds('대기오염'));
+  $('envDash').innerHTML = sdMeta('환경', 4) +
+    '<div class="sd-band b4">' +
+      sdBandCell('envwaste', '폐기물 배출량', w.main.length ? nf(w.total, 1) : '—', w.main.length ? '톤' : '', null,
+        w.main.length ? w.year + '년 누적 · 재활용 <b>' + w.recycleP + '%</b>' : '') +
+      sdBandCell('envghg', '온실가스 배출량', g.gh.length ? nf(g.total, 1) : '—', '', null,
+        g.gh.length ? g.year + '년 누적' + (g.delta === null ? '' : ' · 전년 동기 <b>' + (g.delta > 0 ? '+' : '') + g.delta + '%</b>') : '') +
+      sdRateCell('envwater', '오수처리 적합률', wj.ok, wj.judged, '적합 <b>' + wj.ok + '</b> / 판정 ' + wj.judged + '건') +
+      sdRateCell('envair', '대기오염 적합률', aj.ok, aj.judged, '적합 <b>' + aj.ok + '</b> / 판정 ' + aj.judged + '건') +
+    '</div>' +
+    '<div class="sd-grid c2">' + sdWasteCard() + sdGhgCard() + '</div>' +
+    '<div class="sd-grid">' + sdWaterCard() + sdAirCard() + sdEnvAttnCard() + '</div>';
+}
+
+/** 현황 화면에서 누른 항목의 필터를 해당 게시판에 걸어 두고 이동합니다 (안 걸린 필터는 "전체"로 초기화) */
+function goBoard(tab, d) {
+  var site = d.sdsite || 'all', kind = d.sdkind || 'all', month = d.sdmonth || 'all', dept = d.sddept || 'all';
+  var year = d.sdyear || 'all', date = d.sddate || 'all';
+  if (tab === 'safinspect' && ds('안전점검').length) {
+    state.safSite = site; state.safKind = kind; state.safMonth = month; state.safDept = dept; state.safStat = 'all'; state.safQ = '';
+    renderSafInspectBlock();
+  } else if (tab === 'safrisk' && ds('위험성평가').length) {
+    state.riskSite = site; state.riskKind = kind; state.riskMonth = month; state.riskDept = dept; state.riskStat = 'all'; state.riskQ = '';
+    renderSafRiskBlock();
+  } else if (tab === 'safmeet' && ds('회의체').length) {
+    state.mtSite = site; state.mtKind = kind; state.mtMonth = month; state.mtStat = 'all'; state.mtAgenda = '';
+    renderSafMeetBlock();
+  } else if (tab === 'edu' && ds('교육').length) {
+    state.eduSite = site; state.eduMonth = month; state.eduTarget = 'all'; state.eduQ = '';
+    renderEduBlock();
+  } else if (tab === 'safdevice') {
+    state.safDeviceKind = kind; state.safDeviceEquip = 'all';
+    renderSafDevicePage();
+  } else if (tab === 'heaact') {
+    state.heaActKind = kind; state.heaActSite = site; state.heaActYear = 'all'; state.heaActMonth = 'all';
+    renderHeaActPage();
+  } else if (tab === 'heaexam') {
+    state.heaExamYear = year; state.heaExamSite = site;
+    renderHeaExamPage();
+  } else if (tab === 'heaenv') {
+    state.heaEnvSite = site; state.heaEnvDept = dept; state.heaEnvDate = date;
+    renderHeaEnvPage();
+  } else if (tab === 'heaedu') {
+    state.heaEduYear = year; state.heaEduSite = site;
+    renderHeaEduPage();
+  } else if (tab === 'envwaste') {
+    if (year !== 'all') state.envWasteYear = year;
+    state.envWasteSrc = d.sdsrc || '전체'; state.envWasteMonth = month; state.envWasteSite = site; state.envWasteKind = kind;
+    renderEnvWastePage();
+  } else if (tab === 'envghg') {
+    state.envGhgMonth = month; state.envGhgItem = kind;
+    renderEnvGhgPage();
+  } else if (tab === 'envwater') {
+    state.envWaterMonth = month; state.envWaterSite = site;
+    renderEnvWaterPage();
+  } else if (tab === 'envair') {
+    if (year !== 'all') state.envAirYear = year;
+    state.envAirDate = date;
+    renderEnvAirPage();
+  }
+  activateTab(tab);
 }
 
 /* ── 3-2. 매장정보 ── */
@@ -7472,6 +8105,10 @@ function startRealtime() {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'dashboard_files' }, bump)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'approvals' }, bump)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'status_overrides' }, bump)
+    // 방문 서약서 제출 → 방문 기록대장만 다시 불러옵니다(잠금 해제된 경우에만)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'visit_pledges' }, function () {
+      if (VISIT_LOG_UNLOCKED) loadVisitLog();
+    })
     .subscribe(function (status) {
       if (status === 'SUBSCRIBED') setSync('실시간 연결됨', 'ok');
     });
@@ -7480,7 +8117,7 @@ function startRealtime() {
 /* ============================================================
  *  8. 이벤트 연결
  * ============================================================ */
-var TAB_LIST = ['month', 'week', 'kpi', 'safinspect', 'safrisk', 'safmeet', 'edu', 'safdevice', 'heaact', 'heaexam', 'heaenv', 'heaedu', 'envwaste', 'envghg', 'envwater', 'envair', 'accident', 'budget', 'csa', 'qse', 'library', 'approval', 'visit', 'visitlog', 'news'];
+var TAB_LIST = ['month', 'week', 'kpi', 'safdash', 'safinspect', 'safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'accident', 'budget', 'csa', 'qse', 'library', 'approval', 'visit', 'visitlog', 'news'];
 /** 상단 "공통" · "안전" 버튼이 묶고 있는 게시판들. 그룹을 누르면 아래 두 번째 줄에 이 목록이 펼쳐집니다. */
 var NAV_GROUPS = {
   common: { label: '공통', sub: [
@@ -7496,6 +8133,8 @@ var NAV_GROUPS = {
     { href: 'https://ai-assist.kosha.or.kr/mfg/', label: 'AI 위험요인 사진 업로드' }
   ] },
   safety: { label: '안전', sub: [
+    // 첫 항목이 "안전"을 눌렀을 때 처음 열리는 화면입니다 → 다섯 게시판 요약 대시보드
+    { tab: 'safdash', label: '현황' },
     { tab: 'safinspect', label: '안전점검' },
     { tab: 'safrisk', label: '위험성평가' },
     { tab: 'safmeet', label: '회의체' },
@@ -7503,12 +8142,14 @@ var NAV_GROUPS = {
     { tab: 'safdevice', label: '안전장치' }
   ] },
   health: { label: '보건', sub: [
+    { tab: 'headash', label: '현황' },
     { tab: 'heaact', label: '보건활동' },
     { tab: 'heaexam', label: '건강검진/상담' },
     { tab: 'heaenv', label: '작측' },
     { tab: 'heaedu', label: '정기교육' }
   ] },
   env: { label: '환경', sub: [
+    { tab: 'envdash', label: '현황' },
     { tab: 'envwaste', label: '폐기물' },
     { tab: 'envghg', label: '온실가스' },
     { tab: 'envwater', label: '오수처리' },
@@ -7720,6 +8361,9 @@ function bind() {
       }
       return;
     }
+
+    var sdg = e.target.closest('[data-sdgo]');
+    if (sdg) { goBoard(sdg.dataset.sdgo, sdg.dataset); return; }
 
     var sik = e.target.closest('[data-safkind]');
     if (sik) {
@@ -8020,6 +8664,7 @@ function bindLogin() {
     kpi: ['KPI', 'KPI'], accident: ['Accident', '안전사고'], budget: ['Budget', '예산'],
     library: ['Library', '자료실'], approval: ['E-Approval', '전자결재'], news: ['Daily News', '데일리뉴스'],
     visit: ['Visitor Pledge', '방문 서약서'], visitlog: ['Visitor Log', '방문 기록대장'],
+    safdash: ['Safety Overview', '현황'], headash: ['Health Overview', '현황'], envdash: ['Environment Overview', '현황'],
     safinspect: ['Inspection', '안전점검'], safrisk: ['Risk Assessment', '위험성평가'],
     safmeet: ['Committee', '회의체'], edu: ['Training', '교육'], safdevice: ['Safety Device', '안전장치'],
     heaact: ['Wellness', '보건활동'], heaexam: ['Check-up', '건강검진/상담'],
@@ -8029,7 +8674,8 @@ function bindLogin() {
     csa: ['Compliance', '중대재해처벌법'], qse: ['Contractor Review', '적격수급인평가']
   };
   var GROUP = {
-    safinspect: '안전', safrisk: '안전', safmeet: '안전', edu: '안전', safdevice: '안전',
+    safdash: '안전', safinspect: '안전', safrisk: '안전', safmeet: '안전', edu: '안전', safdevice: '안전',
+    headash: '보건', envdash: '환경',
     heaact: '보건', heaexam: '보건', heaenv: '보건', heaedu: '보건',
     envwaste: '환경', envghg: '환경', envwater: '환경', envair: '환경',
     kpi: '공통', accident: '공통', budget: '공통', library: '공통', approval: '공통', news: '공통', visit: '공통', visitlog: '공통',

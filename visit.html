@@ -72,7 +72,6 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
             display:flex;align-items:center;justify-content:center}
   .done h2{font-size:19px}
   .done p{margin:0 0 6px;font-size:13.5px;color:var(--ink2);line-height:1.7}
-  .done .when{margin-top:14px;font-size:12px;color:var(--ink3)}
   .done .again{margin-top:22px;padding:12px 20px;font-size:14px;font-weight:600;background:#fff;border:1px solid var(--ink);
                border-radius:10px;cursor:pointer}
   .foot{margin-top:22px;text-align:center;font-size:11px;color:var(--ink3);line-height:1.7}
@@ -150,9 +149,7 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
   <section class="card done" id="doneView" hidden>
     <div class="ic">✓</div>
     <h2>서약서가 제출되었습니다</h2>
-    <p id="doneMsg"></p>
     <p>사업장 출입부터 퇴장까지 안전 수칙을 꼭 지켜 주세요.</p>
-    <p class="when" id="doneWhen"></p>
     <button class="again" id="btnAgain">다른 방문자 작성</button>
   </section>
 
@@ -223,9 +220,6 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
     // 방문자 페이지는 저장(insert)만 합니다. 목록을 읽어 오는 코드는 두지 않습니다.
     db.from('visit_pledges').insert(v).then(function (res) {
       if (res.error) throw res.error;
-      var now = new Date();
-      $('doneMsg').innerHTML = esc(v.company) + ' · <b>' + esc(v.name) + '</b> 님의 방문 안전 서약서가 접수되었습니다.';
-      $('doneWhen').textContent = '제출 시각 ' + now.toLocaleString('ko-KR');
       reset();
       $('formView').hidden = true;
       $('doneView').hidden = false;
