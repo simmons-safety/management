@@ -143,7 +143,7 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
         <div class="f"><label for="vsPhone">연락처 <em>*</em></label><input type="tel" id="vsPhone" autocomplete="tel" inputmode="tel" placeholder="예) 010-1234-5678"></div>
         <div class="f"><label for="vsCar">차량번호 <em>*</em></label><input type="text" id="vsCar" placeholder="예) 12가 3456 (차량 없으면 '없음')"></div>
       </div>
-      <label class="chk remember"><input type="checkbox" id="vsRemember"> <span>이 기기에 내 정보 저장 <small>다음 방문 때 이름 · 업체명 · 연락처 · 차량번호가 자동으로 입력됩니다. 공용 기기에서는 체크하지 마세요.</small></span></label>
+      <label class="chk remember"><input type="checkbox" id="vsRemember"> <span>이 기기에 내 정보 저장 <small>다음 방문 때 이름 · 업체명 · 연락처 · 차량번호가 자동으로 입력됩니다.</small></span></label>
       <button class="submit" id="btnSubmit">제출</button>
       <button class="clear" id="btnClear">양식 지우기</button>
     </section>
@@ -153,7 +153,6 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
     <div class="ic">✓</div>
     <h2>서약서가 제출되었습니다</h2>
     <p>사업장 출입부터 퇴장까지 안전 수칙을 꼭 지켜 주세요.</p>
-    <button class="again" id="btnAgain">다른 방문자 작성</button>
   </section>
 
   <p class="foot">(주)시몬스 안전보건경영부<br>제출된 개인정보는 수집일로부터 6개월 후 자동 파기됩니다.</p>
@@ -273,7 +272,6 @@ if (window.VS_EMBED) document.documentElement.classList.add('embed');
     if (!this.checked) { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
   };
   $('btnClear').onclick = function () { if (confirm('작성 중인 내용을 지울까요?')) reset(true); };
-  $('btnAgain').onclick = function () { $('doneView').hidden = true; $('formView').hidden = false; toTop(); };
   document.querySelectorAll('input[name="vsPrivacy"]').forEach(function (r) {
     r.onchange = function () { $('vsDenyMsg').hidden = this.value !== 'N'; };
   });
