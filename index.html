@@ -1256,6 +1256,161 @@ window.AI_CONFIG = {
     .sd-card{border-radius:var(--r-l);padding:22px 18px}
     .sd-big{font-size:46px}
   }
+  /* 현황 목록 안에서 바로 "완료 처리" */
+  .sd-itemrow{display:flex;align-items:center;gap:8px}
+  .sd-itemrow .sd-item{flex:1;margin-right:0}
+  .sd-act{flex:none}
+  .sd-act .b,.mo-act .b{font-size:11px;cursor:pointer;white-space:nowrap}
+
+  /* ── 모니터링 : 주간 · 월간 · 연간 업무 진행사항 (mo-) ── */
+  .sd-band.mo-band{grid-template-columns:repeat(3,1fr)}
+  @media (max-width:760px){
+    .sd-band.mo-band{grid-template-columns:1fr}
+    .sd-band.mo-band .sd-cell{border-left:none;border-top:1px solid rgba(255,255,255,.14)}
+    .sd-band.mo-band .sd-cell:first-child{border-top:none}
+    .sd-band.mo-band .sd-cell:last-child{grid-column:auto}
+  }
+  /* 보고 있는 기간 = 검은 띠 안의 흰 카드, 나머지는 흐리게 */
+  .mo-band .sd-cell{opacity:.5;transition:background .18s,opacity .18s}
+  .mo-band .sd-cell:hover{opacity:.85;background:rgba(255,255,255,.06)}
+  .mo-band .sd-cell.on{opacity:1;background:#fff;color:#000;margin:7px;padding:19px 19px 17px;border-radius:calc(var(--r-xl) - 7px);border-left:none}
+  .mo-band .sd-cell.on + .sd-cell{border-left:none}
+  .mo-band .sd-cell.on .l,.mo-band .sd-cell.on .d,.mo-band .sd-cell.on .v em{color:rgba(0,0,0,.55)}
+  .mo-band .sd-cell.on .l span{color:#000}
+  .mo-band .sd-cell.on .d b{color:#000}
+  .mo-band .sd-cell.on .bar{background:rgba(0,0,0,.1)}
+  .mo-band .sd-cell.on .bar i{background:#000}
+  /* 스크롤해도 상단 메뉴 바로 아래에 기간 · 미완료/완료 · 게시판 선택이 따라옵니다 (--mo-top 은 JS 가 메뉴 높이로 채움) */
+  .mo-tools{position:sticky;top:var(--mo-top,140px);z-index:5;background:var(--panel2);margin:-14px -16px 0;padding:14px 16px;border-radius:var(--r-l);transition:box-shadow .2s}
+  .mo-tools.stuck{box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}
+  .mo-grid > .sd-card:last-child{position:sticky;top:calc(var(--mo-top,140px) + 12px)}
+  .mo-tools .row .rt{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  /* 안전 · 보건 · 환경 업무 현황 카드 */
+  .mo-dom .sd-card{gap:20px}
+  .mo-dhd{display:flex;align-items:center;gap:8px;flex:none}
+  .mo-dom .sd-bar{grid-template-columns:minmax(0,92px) 1fr auto}
+  .mo-dom .sd-bar .v{min-width:86px}
+  .mo-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+  .mo-tools{display:flex;flex-direction:column;gap:12px}
+  .mo-tools .row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+  .mo-seg{display:inline-flex;background:#fff;border-radius:var(--pill);padding:4px;gap:2px}
+  .mo-seg button{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 18px;border-radius:var(--pill);font-size:13px;font-weight:600;color:var(--ink3);transition:background .15s,color .15s}
+  .mo-seg button b{font-family:var(--fd);font-weight:600;margin-left:6px}
+  .mo-seg button[aria-pressed="true"]{background:#000;color:#fff}
+  .mo-seg button:focus-visible{outline:2px solid #000;outline-offset:2px}
+  .sd-chip[aria-pressed="true"]{background:#000;color:#fff}
+  .sd-chip[aria-pressed="true"] b{color:#fff}
+  .mo-list{display:grid}
+  .mo-row{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+  .mo-row:last-child{border-bottom:none}
+  .mo-main{all:unset;box-sizing:border-box;cursor:pointer;flex:1;min-width:0;display:grid;
+    grid-template-columns:78px 76px minmax(0,120px) minmax(0,104px) minmax(0,1fr);align-items:center;gap:12px;
+    padding:13px 10px;margin-left:-10px;border-radius:var(--r-m);transition:background .15s}
+  .mo-main:hover{background:var(--hover)}
+  .mo-main:focus-visible{outline:2px solid #000;outline-offset:-2px}
+  .mo-d{font-family:var(--fd);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .mo-src{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+  .mo-src i{width:6px;height:6px;border-radius:50%;background:#C0392B;flex:none}
+  .mo-row.done .mo-src i{background:var(--ink3)}
+  .mo-meta{font-size:12px;color:var(--ink2);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mo-tag{justify-self:start;max-width:100%;padding:4px 11px;border:1px solid var(--line);border-radius:var(--pill);background:#fff;
+    font-size:11px;font-weight:500;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mo-tx{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mo-tx em{font-style:normal;font-weight:400;font-size:12px;color:var(--ink3);margin-left:8px}
+  .mo-tx em.pr{color:#C0392B;font-weight:600}
+  .mo-row.done .mo-tx{color:var(--ink2);font-weight:500}
+  .mo-act{flex:none}
+  .mo-st{display:inline-block;min-width:52px;padding:4px 10px;border-radius:var(--pill);text-align:center;
+    font-size:11px;font-weight:600;background:#FBEAE8;color:#C0392B}
+  .mo-st.done{background:#fff;color:var(--ink3)}
+  .mo-sec{margin-top:6px}
+  .mo-sec + .mo-sec{margin-top:22px}
+  .mo-sec .sd-sec{display:flex;justify-content:space-between;gap:8px}
+  .mo-sec .sd-sec b{color:var(--ink);font-family:var(--fd)}
+  .mo-sec.late .sd-sec b{color:#C0392B}
+  .mo-more{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;margin-top:10px;padding:11px;border-radius:var(--pill);
+    background:#fff;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink2)}
+  .mo-more:hover{color:#000;box-shadow:inset 0 0 0 1px #000}
+  /* ── 연간 업무 계획 (월간 스케줄 아이콘 → 창) (pl-) ── */
+  .plan-btn{display:inline-flex;align-items:center;gap:7px}
+  .plan-btn svg{width:15px;height:15px;flex:none}
+  /* 테마의 .sheet{overflow:hidden} 때문에 창 전체는 고정하고, 목록(#planBody)만 스크롤합니다 */
+  .plan-sheet{width:min(1280px,100%);max-height:92vh;display:flex;flex-direction:column}
+  .plan-sheet > *{flex:none}
+  .plan-sheet > #planBody{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain}
+  .pl-row.hd{position:sticky;top:0;z-index:2;background:var(--panel)}
+  .pl-bar{position:sticky;top:0;z-index:4;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:16px 26px;background:var(--panel);border-bottom:1px solid var(--line)}
+  .pl-bar .sp{flex:1}
+  .pl-mnav{display:inline-flex;align-items:center;gap:4px}
+  .pl-mnav button{all:unset;cursor:pointer;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--panel2);font-size:15px}
+  .pl-mnav button:hover{background:#000;color:#fff}
+  .pl-mnav b{min-width:58px;text-align:center;font-family:var(--fd);font-size:17px;font-weight:600}
+  .pl-dl{font-size:12px;font-weight:600;color:var(--ink2);text-decoration:none;padding:7px 14px;border-radius:var(--pill);background:var(--panel2)}
+  .pl-dl:hover{background:#000;color:#fff}
+  .pl-sum{padding:14px 26px 4px;font-size:12.5px;color:var(--ink3)}
+  .pl-sum b{color:var(--ink);font-weight:600}
+  .pl-sum b.r{color:#C0392B}
+  .pl-row{display:grid;grid-template-columns:62px minmax(0,1fr) 112px 44px 96px 92px;align-items:center;gap:12px;padding:10px 26px;border-bottom:1px solid var(--line);font-size:13px}
+  .pl-row.hd{font-size:11px;font-weight:600;color:var(--ink3);padding-top:12px;padding-bottom:8px;border-bottom-color:#000}
+  .pl-row.done .pl-t{color:var(--ink3);font-weight:500}
+  .pl-g{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700}
+  .pl-g i{width:7px;height:7px;border-radius:50%;flex:none}
+  .pl-t{font-weight:600;color:var(--ink);min-width:0}
+  .pl-t em{font-style:normal;font-weight:400;font-size:11.5px;color:var(--ink3);margin-left:8px}
+  .pl-who{font-size:12px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pl-cyc{font-size:12px;color:var(--ink3)}
+  .pl-wk{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
+  .pl-wk span{height:20px;border-radius:5px;background:var(--panel2);display:grid;place-items:center;font-size:9.5px;color:var(--ink3)}
+  .pl-wk span.on{background:#000;color:#fff;font-weight:600}
+  .pl-wk span.ar{background:#D9D9D9;color:var(--ink2)}
+  .pl-wk span.o{background:#fff;box-shadow:inset 0 0 0 1.5px #000;color:#000;font-weight:600}
+  .pl-gw{padding:0 0 4px}
+  .pl-gt{border-collapse:separate;border-spacing:0;font-size:12px;min-width:1180px;width:100%}
+  .pl-gt th,.pl-gt td{border-bottom:1px solid var(--line);padding:0;height:30px;background:var(--panel)}
+  .pl-gt thead th{position:sticky;top:0;z-index:2;font-size:11px;font-weight:600;color:var(--ink3);height:26px}
+  .pl-gt thead tr:nth-child(2) th{top:26px;font-size:9.5px;font-weight:500;border-bottom-color:#000}
+  .pl-gt{table-layout:fixed}
+  .pl-gt .c-g,.pl-gt .c-t{text-align:left}
+  .pl-gt .c-g{width:28px;padding:0 0 0 26px}
+  .pl-gt .c-t{width:300px;padding:0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:var(--ink)}
+  .pl-gt .c-w{width:96px;padding:0 8px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pl-gt .c-c{width:36px;color:var(--ink3);text-align:center}
+  .pl-gt th.mh{cursor:pointer;border-left:1px solid var(--line)}
+  .pl-gt th.mh:hover{color:#000}
+  .pl-gt td.w,.pl-gt th.wh{width:18px;min-width:18px;text-align:center;cursor:pointer}
+  .pl-gt td.w.ms,.pl-gt th.wh.ms{border-left:1px solid var(--line)}
+  .pl-gt .cur{background:#FFF8D6}
+  .pl-gt th.mh.cur{color:#000}
+  .pl-gt tr.grp td{height:auto;padding:14px 0 6px 26px;font-size:12px;font-weight:700;border-bottom-color:#000}
+  .mk{display:inline-block;vertical-align:middle}
+  .mk.s{width:9px;height:9px;border-radius:50%;background:#000}
+  .mk.o{width:8px;height:8px;border-radius:50%;box-shadow:inset 0 0 0 1.5px #000}
+  .mk.a{width:100%;height:3px;background:#BDBDBD;border-radius:2px}
+  .pl-lgd{display:flex;flex-wrap:wrap;gap:14px;padding:12px 26px 0;font-size:11.5px;color:var(--ink3);align-items:center}
+  .pl-lgd span{display:inline-flex;align-items:center;gap:6px}
+  .pl-lgd .mk.a{width:16px}
+  @media (max-width:760px){
+    .pl-bar{padding:14px 16px}
+    .pl-row{grid-template-columns:auto minmax(0,1fr) auto;gap:6px 10px;padding:12px 16px}
+    .pl-row.hd{display:none}
+    .pl-who,.pl-cyc{display:none}
+    .pl-wk{grid-column:2;max-width:140px}
+    .pl-st{grid-row:1;grid-column:3}
+    .pl-sum{padding:12px 16px 2px}
+  }
+
+  /* 모니터링에서 눌러 이동한 게시물을 잠깐 노랗게 표시 */
+  @keyframes moFlash{0%,45%{background:#FFF1A8}100%{background:transparent}}
+  .mo-flash,tr.mo-flash td{animation:moFlash 2.6s ease}
+  @media (max-width:1180px){
+    .mo-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:760px){
+    .mo-main{display:flex;flex-wrap:wrap;gap:4px 10px;padding:12px 8px;margin-left:-8px}
+    .mo-meta{max-width:50%}
+    .mo-tx{flex-basis:100%;white-space:normal}
+    .mo-seg button{padding:8px 14px}
+  }
 </style>
 
 </head>
@@ -1332,6 +1487,7 @@ window.AI_CONFIG = {
   <nav class="bnav" role="group" aria-label="화면 전환">
       <button data-tab="month"    aria-pressed="true"><span class="t">Schedule</span><span class="k">월간 스케줄</span></button>
       <button data-tab="week"     aria-pressed="false"><span class="t">Weekly</span><span class="k">주간업무</span></button>
+      <button data-group="monitor" aria-pressed="false"><span class="t">Monitoring</span><span class="k">모니터링</span></button>
       <button data-group="common" aria-pressed="false"><span class="t">Common</span><span class="k">공통</span></button>
       <button data-group="safety" aria-pressed="false"><span class="t">Safety</span><span class="k">안전</span></button>
       <button data-group="health" aria-pressed="false"><span class="t">Health</span><span class="k">보건</span></button>
@@ -1354,6 +1510,8 @@ window.AI_CONFIG = {
         <header>
           <h2 id="calTitle">—</h2>
           <div class="calnav">
+            <button class="reset plan-btn" id="btnPlan" title="연간 업무 계획 보기">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="11.5" rx="2"/><path d="M1.75 6.25h12.5M5 1.25v3M11 1.25v3M4.5 9h3M4.5 11.5h5.5"/></svg>연간 업무 계획</button>
             <button class="reset" id="mToday">오늘</button>
             <button class="calmove" id="calPrev">‹ <b id="calPrevL"></b></button>
             <button class="calmove" id="calNext"><b id="calNextL"></b> ›</button>
@@ -1404,6 +1562,14 @@ window.AI_CONFIG = {
       <div class="card wk now" id="panel-금주"></div>
       <div class="card wk" id="panel-차주"></div>
     </div>
+  </section>
+
+  <!-- ══════════ 모니터링 ══════════ -->
+  <section class="bpanel" id="bd-monitor" hidden>
+    <div id="monDash"></div>
+  </section>
+  <section class="bpanel" id="bd-monact" hidden>
+    <div id="monActDash"></div>
   </section>
 
 
@@ -1868,6 +2034,22 @@ window.AI_CONFIG = {
   </div>
 </div>
 
+<!-- 연간 업무 계획 (월간 스케줄 → "연간 업무 계획" 아이콘) -->
+<div class="scrim" id="planScrim">
+  <div class="sheet plan-sheet" role="dialog" aria-modal="true" aria-labelledby="planTitle">
+    <div class="sheet-hd">
+      <p class="eyebrow" id="planEyebrow">ANNUAL PLAN</p>
+      <h3 id="planTitle">연간 업무 계획</h3>
+    </div>
+    <div class="pl-bar" id="planBar"></div>
+    <div id="planBody"></div>
+    <div class="sheet-ft">
+      <div class="spacer"></div>
+      <button class="reset" id="planClose">닫기</button>
+    </div>
+  </div>
+</div>
+
 <div class="scrim" id="storeScrim">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="storeShTitle">
     <div class="sheet-hd">
@@ -2025,6 +2207,7 @@ var SCH_STYLE = {
   '기획': { bg: '#EFE4D2', fg: SCH_INK }
 };
 var SCH_DEFAULT = { bg: '#EFEFEF', fg: '#6B6B6B' };   /* 구분이 비어 있을 때 */
+var SCH_OFF_BG = '#D3D5D9';   /* 토 · 일 · 공휴일의 회색 일정 — 평일 회색(#E6E7E9)보다 한 단계 진하게 */
 function schStyle(c) { return SCH_STYLE[String(c || '').trim()] || SCH_DEFAULT; }
 /** 종료일이 시작일보다 뒤일 때만 "여러 날 일정"으로 봅니다 */
 function schEnd(r) {
@@ -2368,7 +2551,7 @@ function closeLightbox() { $('imgbox').classList.remove('on'); $('imgboxImg').sr
 /* ============================================================
  *  4. 그리기
  * ============================================================ */
-function renderAll() { renderHeader(); renderMonthPanel(); renderWeekPanel(); }
+function renderAll() { renderHeader(); renderMonthPanel(); renderWeekPanel(); renderMonitorPage(); }
 
 function renderInitial() { renderAll(); renderDataTabs(); renderCsaDashboard(); renderCsaTable(); initQseForm(); renderLibSites(); renderLibList(); initApForm(); renderApLists(); renderVisitLog(); renderNews(); }
 
@@ -2513,6 +2696,7 @@ function renderCalendar(rows) {
     var key = y + '-' + pad(m + 1) + '-' + pad(d);
     var dow = new Date(y, m, d).getDay();
     var evs = daySlots(key);
+    var isOff = dow === 0 || dow === 6 || !!KR_HOLIDAYS[key];
     var nEv = 0, nHid = 0;
     evs.forEach(function (r, i) { if (r) { nEv++; if (i >= 4) nHid++; } });
     var cls = 'cal-d' + (dow === 0 ? ' sun' : dow === 6 ? ' sat' : '') + (KR_HOLIDAYS[key] ? ' holiday' : '') +
@@ -2525,6 +2709,8 @@ function renderCalendar(rows) {
         /* 기간 일정의 줄을 맞추기 위한 빈 자리 */
         if (!r) return '<em class="ec ph" aria-hidden="true">&nbsp;</em>';
         var sty = schStyle(r.구분), multi = r._seg && r._seg !== 'single';
+        /* 토 · 일 · 공휴일의 회색 일정(개인업무 · 구분 없음)은 한 단계 진한 회색으로 */
+        var bg = (isOff && (sty === SCH_STYLE['개인업무'] || sty === SCH_DEFAULT)) ? SCH_OFF_BG : sty.bg;
         var isS = r._seg === 'start' || r._seg === 'single', isE = r._seg === 'end' || r._seg === 'single';
         var showText = !multi || isS || dow === 0;          /* 주가 바뀌면 제목을 다시 씁니다 */
         var c = 'ec' + (r.상태 === '완료' ? ' done' : '') +
@@ -2532,7 +2718,7 @@ function renderCalendar(rows) {
         var tip = (r.구분 ? '[' + r.구분 + '] ' : '') + r.일정명 +
           (multi ? ' (' + r.일자 + ' ~ ' + schEnd(r) + ')' : '');
         return '<em class="' + c + '" data-id="' + r.ID + '" ' +
-          'style="background:' + sty.bg + ';color:' + sty.fg + '" ' +
+          'style="background:' + bg + ';color:' + sty.fg + '" ' +
           'title="' + esc(tip) + '">' +
           (showText ? ((r.시간 && !multi) ? '<em>' + esc(r.시간) + '</em> ' : '') + esc(r.일정명) : '&nbsp;') +
           '</em>';
@@ -2731,6 +2917,7 @@ function saveRows(key, rows) {
       var i = arr.findIndex(function (x) { return x.ID === row.ID; });
       if (i >= 0) arr[i] = row; else arr.push(row);
     });
+    renderMonitorPage();
     setSync('저장 완료', 'ok');
     return res;
   }).catch(function (e) {
@@ -2756,6 +2943,7 @@ function deleteRow(key, id) {
     var arr = key === 'schedule' ? state.schedule : state.weekly;
     var i = arr.findIndex(function (x) { return x.ID === id; });
     if (i >= 0) arr.splice(i, 1);
+    renderMonitorPage();
     setSync('삭제 완료', 'ok');
   }).catch(function (e) {
     state.busy = false;
@@ -3575,7 +3763,7 @@ function renderDataTabs() {
   renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderEduPage(); renderSafDevicePage(); renderSafDashPage();
   renderHeaActPage(); renderHeaExamPage(); renderHeaEnvPage(); renderHeaEduPage();
   renderEnvWastePage(); renderEnvGhgPage(); renderEnvWaterPage(); renderEnvAirPage();
-  renderHeaDashPage(); renderEnvDashPage();
+  renderHeaDashPage(); renderEnvDashPage(); renderMonitorPage();
   renderAccident(); renderBudget();
 }
 
@@ -3597,6 +3785,13 @@ function isOverrideComplete(key) { return !!(state.statusOverrides && state.stat
 function inspRowKey(r) { return rowKey('안전점검', r.사업장, r.부서, r.점검일, r.점검구분, r.내용); }
 function riskRowKey(r) { return rowKey('위험성평가', r.사업장, r['매장/부서'], r.점검일, r['점검 내용'] || r.내용); }
 function meetRowKey(r) { return rowKey('회의체', r.사업장, r.회의체, r.개최일, r.안건 || r.주요안건); }
+function heaActRowKey(r) { return rowKey('보건활동', r.연도, r.구분, r.사업장, r.월, r.대상자, r.목표); }
+/** 완료 표시가 바뀌면 그 상태를 쓰는 화면을 모두 다시 그립니다 */
+function rerenderStatusViews() {
+  renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderSafDashPage();
+  renderHeaActPage(); renderHeaDashPage(); renderMonitorPage();
+  if ($('planScrim').classList.contains('on')) renderPlan();
+}
 /** 상태 칸을 "완료 처리" / "완료" 토글 버튼으로 그립니다. label 은 완료가 아닐 때 버튼에 보일 문구입니다 */
 function statusToggleCell(sheet, key, label) {
   var done = isOverrideComplete(key);
@@ -3610,7 +3805,7 @@ function toggleRowStatus(sheet, key, makeComplete) {
   state.statusOverrides = state.statusOverrides || {};
   var prev = state.statusOverrides[key];
   if (makeComplete) state.statusOverrides[key] = '완료'; else delete state.statusOverrides[key];
-  renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderSafDashPage();
+  rerenderStatusViews();
 
   var req = makeComplete
     ? RPC.db.from('status_overrides').upsert({
@@ -3623,7 +3818,7 @@ function toggleRowStatus(sheet, key, makeComplete) {
     toast(makeComplete ? '완료로 표시했습니다.' : '완료 표시를 취소했습니다.');
   }).catch(function (err) {
     if (prev === undefined) delete state.statusOverrides[key]; else state.statusOverrides[key] = prev;
-    renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderSafDashPage();
+    rerenderStatusViews();
     console.warn('[EHS] 완료 상태 저장 실패', err);
     toast('저장 실패: ' + ((err && err.message) || err), 'err');
   });
@@ -3635,7 +3830,7 @@ function loadStatusOverrides() {
     var map = {};
     (res.data || []).forEach(function (r) { map[r.row_key] = r.status; });
     state.statusOverrides = map;
-    renderSafInspectPage(); renderSafRiskPage(); renderSafMeetPage(); renderSafDashPage();
+    rerenderStatusViews();
   }).catch(function (err) {
     console.warn('[EHS] 완료 상태 조회 실패', err);
     state.statusOverrides = state.statusOverrides || {};
@@ -4163,7 +4358,7 @@ function renderSafDevicePage() {
 /** 누르면 이동할 게시판과 미리 걸어 둘 필터(사업장·구분·월·부서·연도·측정일·종류)를 data-sd* 속성으로 만듭니다 */
 function sdGo(tab, o) {
   o = o || {};
-  return ' data-sdgo="' + tab + '"' + ['site', 'kind', 'month', 'dept', 'year', 'date', 'src'].map(function (k) {
+  return ' data-sdgo="' + tab + '"' + ['site', 'kind', 'month', 'dept', 'year', 'date', 'src', 'flash'].map(function (k) {
     return o[k] ? ' data-sd' + k + '="' + esc(o[k]) + '"' : '';
   }).join('');
 }
@@ -4246,9 +4441,11 @@ function sdListCard(o) {
   if (!o.hasData) return html + '<div class="sd-empty">아직 불러온 자료가 없습니다</div></div>';
   if (!items.length) return html + '<div class="sd-empty">' + esc(o.emptyMsg) + '</div></div>';
   return html + sdSec(o.sec, '<div class="sd-list">' + items.slice(0, 6).map(function (it) {
-    return '<button type="button" class="sd-item"' + it.go + '>' +
+    var main = '<button type="button" class="sd-item"' + it.go + '>' +
       '<span class="top"><i></i>' + esc(it.date) + '<span class="tag">' + esc(it.tag) + '</span>' + esc(it.meta) + '</span>' +
       '<span class="tx">' + esc(it.text || '(내용 없음)') + '</span></button>';
+    // act : 목록에서 바로 누르는 "완료 처리" 버튼
+    return it.act ? '<div class="sd-itemrow">' + main + '<span class="sd-act">' + it.act + '</span></div>' : main;
   }).join('') + '</div>' +
     (items.length > 6 ? '<div class="sd-more">외 ' + (items.length - 6) + '건 · 각 게시판에서 확인</div>' : '')) + '</div>';
 }
@@ -4318,11 +4515,15 @@ function sdDeviceCard() {
 /** 미조치 항목 : 안전점검 · 위험성평가 중 완료되지 않은 건. 누르면 그 달 · 사업장 · 부서로 걸러 보여줍니다 */
 function sdOpenCard() {
   var items = ds('안전점검').filter(function (r) { return !inspIsDone(r); }).map(function (r) {
+    var k = inspRowKey(r);
     return { key: r.점검일, date: r.점검일, tag: r.점검구분 || '안전점검', meta: sdSiteName(r.사업장) + (r.부서 ? ' · ' + r.부서 : ''),
-      text: inspContentText(r), go: sdGo('safinspect', { site: r.사업장, dept: r.부서, month: safMonthOf(r.점검일) }) };
+      text: inspContentText(r), act: statusToggleCell('안전점검', k, '완료 처리'),
+      go: sdGo('safinspect', { site: r.사업장, dept: r.부서, month: safMonthOf(r.점검일), flash: k }) };
   }).concat(ds('위험성평가').filter(function (r) { return !riskIsDone(r); }).map(function (r) {
+    var k = riskRowKey(r);
     return { key: r.점검일, date: r.점검일, tag: '위험성평가', meta: sdSiteName(r.사업장) + (r['매장/부서'] ? ' · ' + r['매장/부서'] : ''),
-      text: riskContentText(r), go: sdGo('safrisk', { site: r.사업장, dept: r['매장/부서'], month: safMonthOf(r.점검일) }) };
+      text: riskContentText(r), act: statusToggleCell('위험성평가', k, '완료 처리'),
+      go: sdGo('safrisk', { site: r.사업장, dept: r['매장/부서'], month: safMonthOf(r.점검일), flash: k }) };
   }));
   return sdListCard({ en: 'Action Required', name: '미조치 항목', items: items, sec: '최근 순 · 안전점검 · 위험성평가',
     hasData: ds('안전점검').length || ds('위험성평가').length, emptyMsg: '모든 점검 · 평가 항목이 조치 완료되었습니다' });
@@ -4443,10 +4644,11 @@ function sdHeaAttnCard() {
     var m = sdMonthNum(r.월), y = parseInt(r.연도, 10);
     return !heaActDone(r) && (!y || !m || y * 100 + m <= nowKey);
   }).map(function (r) {
-    var m = sdMonthNum(r.월);
+    var m = sdMonthNum(r.월), k = heaActRowKey(r);
     return { key: (r.연도 || '') + '-' + pad(m), date: (r.연도 ? r.연도 + '년 ' : '') + (m ? m + '월' : ''), tag: r.구분 || '보건활동',
       meta: sdSiteName(r.사업장 || ''), text: [r.대상자, r.목표].filter(function (v) { return !isBlank(v); }).join(' · ') || '결과 미입력',
-      go: sdGo('heaact', { kind: r.구분, site: r.사업장 }) };
+      act: statusToggleCell('보건활동', k, '완료 처리'),
+      go: sdGo('heaact', { kind: r.구분, site: r.사업장, year: r.연도 ? String(r.연도) : '', month: r.월 ? String(r.월) : '', flash: k }) };
   }));
   return sdListCard({ en: 'Attention', name: '확인 필요', items: items, sec: '최근 순 · 작업환경측정 · 보건활동',
     hasData: ds('작업환경측정').length || ds('보건활동').length, emptyMsg: '확인이 필요한 항목이 없습니다' });
@@ -4470,8 +4672,13 @@ function renderHeaDashPage() {
 }
 
 /* ---------- 환경 ---------- */
-/** 연월(YYYY-MM)이 있는 시트에서 볼 연도 */
-function sdYmYear(rows) { return sdPickYear(uniq(rows.map(function (r) { return String(r.연월 || '').slice(0, 4); })).filter(Boolean)); }
+/** 연월 칸 → "YYYY-MM". 온실가스 시트처럼 엑셀 날짜가 "5/20/26"(m/d/yy) 로 들어온 경우도 맞춥니다 */
+function sdYm(v) {
+  var s = String(v == null ? '' : v).trim();
+  return /^\d{4}-\d{2}/.test(s) ? s.slice(0, 7) : safMonthOf(normDate(s));
+}
+/** 연월이 있는 시트에서 볼 연도 */
+function sdYmYear(rows) { return sdPickYear(uniq(rows.map(function (r) { return sdYm(r.연월).slice(0, 4); })).filter(Boolean)); }
 /** 1~12월 세로 막대(누르면 그 달). sumFn(ym) → 그 달 값 */
 function sdYearCols(tab, year, sumFn, extra) {
   var nowYm = ymd(new Date()).slice(0, 7), items = [];
@@ -4494,7 +4701,7 @@ function sdWasteData() {
   var main = ds('전체 폐기물');
   if (!main.length) ENV_WASTE_SRC.forEach(function (s) { main = main.concat(ds(s.key)); });
   var year = sdYmYear(main);
-  var yr = main.filter(function (r) { return String(r.연월 || '').slice(0, 4) === year; });
+  var yr = main.filter(function (r) { return sdYm(r.연월).slice(0, 4) === year; });
   var total = sdSum(yr, '배출량(톤)');
   var recycle = sdSum(yr.filter(function (r) { return r.폐기물구분 === '재활용'; }), '배출량(톤)');
   return { main: main, year: year, yr: yr, total: total, recycleP: sdPct(recycle, total) };
@@ -4505,14 +4712,14 @@ function sdWasteCard() {
     sdBigTop(nf(w.total, 1), '톤', [w.year + '년 누적 배출량', '재활용률 <b>' + w.recycleP + '%</b>',
       '처리비용 <b>' + nf(sdSum(w.yr, '처리비용')) + '원</b>']),
     sdSec(w.year + '년 월별 배출량(톤)', sdYearCols('envwaste', w.year, function (ym) {
-      return sdSum(w.yr.filter(function (r) { return String(r.연월) === ym; }), '배출량(톤)');
+      return sdSum(w.yr.filter(function (r) { return sdYm(r.연월) === ym; }), '배출량(톤)');
     }, { year: w.year })),
     sdSec('폐기물구분별', sdBars(ENV_WASTE_KINDS.map(function (kk) {
       var v = sdSum(w.yr.filter(function (r) { return r.폐기물구분 === kk.k; }), '배출량(톤)');
       return sdBar(kk.k, sdPct(v, w.total), kk.c, nf(v, 1) + '톤', sdGo('envwaste', { kind: kk.k, year: w.year }));
     }))),
     sdSec('종류별', sdChips(ENV_WASTE_SRC.map(function (s) {
-      var v = sdSum(ds(s.key).filter(function (r) { return String(r.연월 || '').slice(0, 4) === w.year; }), '배출량(톤)');
+      var v = sdSum(ds(s.key).filter(function (r) { return sdYm(r.연월).slice(0, 4) === w.year; }), '배출량(톤)');
       return sdChip(s.key, nf(v, 1) + '톤', sdGo('envwaste', { src: s.key, year: w.year }));
     })))
   ]);
@@ -4520,10 +4727,10 @@ function sdWasteCard() {
 
 function sdGhgData() {
   var gh = ds('온실가스'), year = sdYmYear(gh);
-  var yr = gh.filter(function (r) { return String(r.연월 || '').slice(0, 4) === year; });
-  var lastM = yr.reduce(function (a, r) { return Math.max(a, sdMonthNum(String(r.연월).slice(5))); }, 0);
+  var yr = gh.filter(function (r) { return sdYm(r.연월).slice(0, 4) === year; });
+  var lastM = yr.reduce(function (a, r) { return Math.max(a, sdMonthNum(sdYm(r.연월).slice(5))); }, 0);
   var prev = gh.filter(function (r) {
-    return String(r.연월 || '').slice(0, 4) === String(+year - 1) && sdMonthNum(String(r.연월).slice(5)) <= lastM;
+    return sdYm(r.연월).slice(0, 4) === String(+year - 1) && sdMonthNum(sdYm(r.연월).slice(5)) <= lastM;
   });
   var total = sdSum(yr, '온실가스 배출량'), prevTotal = sdSum(prev, '온실가스 배출량');
   return { gh: gh, year: year, yr: yr, lastM: lastM, total: total,
@@ -4535,7 +4742,7 @@ function sdGhgCard() {
     sdBigTop(nf(g.total, 1), '', [g.year + '년 누적 배출량' + (g.lastM ? ' (~' + g.lastM + '월)' : ''),
       g.delta === null ? '전년 동기 자료 없음' : '전년 동기 대비 <b>' + (g.delta > 0 ? '+' : '') + g.delta + '%</b>']),
     sdSec(g.year + '년 월별 배출량', sdYearCols('envghg', g.year, function (ym) {
-      return sdSum(g.yr.filter(function (r) { return String(r.연월) === ym; }), '온실가스 배출량');
+      return sdSum(g.yr.filter(function (r) { return sdYm(r.연월) === ym; }), '온실가스 배출량');
     })),
     sdSec('항목별', sdBars(ENV_GHG_ITEMS.map(function (it) {
       var v = sdSum(g.yr.filter(function (r) { return r.항목 === it.key; }), '온실가스 배출량');
@@ -4616,6 +4823,8 @@ function renderEnvDashPage() {
 function goBoard(tab, d) {
   var site = d.sdsite || 'all', kind = d.sdkind || 'all', month = d.sdmonth || 'all', dept = d.sddept || 'all';
   var year = d.sdyear || 'all', date = d.sddate || 'all';
+  // 연간계획은 게시판 탭이 아니라 월간 스케줄 위의 창으로 엽니다
+  if (tab === 'plan') { activateTab('month'); openPlan({ month: d.sdmonth, flash: d.sdflash }); return; }
   if (tab === 'safinspect' && ds('안전점검').length) {
     state.safSite = site; state.safKind = kind; state.safMonth = month; state.safDept = dept; state.safStat = 'all'; state.safQ = '';
     renderSafInspectBlock();
@@ -4631,8 +4840,12 @@ function goBoard(tab, d) {
   } else if (tab === 'safdevice') {
     state.safDeviceKind = kind; state.safDeviceEquip = 'all';
     renderSafDevicePage();
+  } else if (tab === 'week') {
+    var wd = parseYmd(date);
+    if (wd) state.monday = mondayOf(wd);
+    renderWeekPanel();
   } else if (tab === 'heaact') {
-    state.heaActKind = kind; state.heaActSite = site; state.heaActYear = 'all'; state.heaActMonth = 'all';
+    state.heaActKind = kind; state.heaActSite = site; state.heaActYear = year; state.heaActMonth = month; state.heaActStat = 'all';
     renderHeaActPage();
   } else if (tab === 'heaexam') {
     state.heaExamYear = year; state.heaExamSite = site;
@@ -4659,7 +4872,625 @@ function goBoard(tab, d) {
     renderEnvAirPage();
   }
   activateTab(tab);
+  if (d.sdflash) monFlash(d.sdflash);
 }
+
+/** 이동한 게시판에서 그 게시물(행)을 찾아 화면 가운데로 스크롤하고 잠깐 노랗게 표시합니다.
+ *  key : 완료 상태 키(안전점검 · 위험성평가 · 회의체 · 보건활동) 또는 "w:<주간업무 ID>" */
+function monFlash(key) {
+  setTimeout(function () {
+    var p = document.querySelector('.bpanel:not([hidden])'), hit = null;
+    if (!p) return;
+    if (key.indexOf('w:') === 0) {
+      var b = p.querySelector('.st-b[data-sid2="' + key.slice(2).replace(/"/g, '') + '"]');
+      hit = b && b.closest('.wk-item');
+    } else {
+      Array.prototype.some.call(p.querySelectorAll('[data-rowkey],[data-statustoggle]'), function (x) {
+        if ((x.dataset.rowkey || x.dataset.statustoggle) !== key) return false;
+        hit = x.closest('tr') || x;
+        return true;
+      });
+    }
+    if (!hit) return;
+    hit.classList.remove('mo-flash'); void hit.offsetWidth; hit.classList.add('mo-flash');
+    hit.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, 420);
+}
+
+/* ── 0-1. 연간 업무 계획 : "25년 안전보건경영부 연간 업무 계획 최종.xlsx" 를 옮겨 둔 표 ──
+ *  [구분, 내용, 담당자, 주기, 48주 표시, 비고] — 48주 = 1월 1주 ~ 12월 4주, 한 글자씩
+ *  ( . 없음 · o ○ · * ● · > 화살표(진행 기간) ). 해마다 같은 계획을 올해 날짜에 적용하고,
+ *  월별 완료 여부는 status_overrides 에 "연간계획::연도|월|구분|내용" 키로 저장합니다. */
+var PLAN_FILE = '25년 안전보건경영부 연간 업무 계획 최종.xlsx';
+var PLAN_TITLE = '2025년 안전보건경영부 업무 계획';
+var PLAN_BASE = '2025. 01. 02 기준';
+var PLAN_GROUPS = ['안전', '보건', '기획', '환경'];
+var PLAN_ROWS = [
+  ["안전","팩토리움 안전 순회점검","한승배","일","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["안전","테라스 투어 고객 안전관리","김관수,한승배","일","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["안전","팩토리움 안전 순회점검 개선 조치 및 모니터링","한승배","주","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["안전","용역, 위험, 비정형 작업에 대한 안전·보건 서류 관리","한승배","주","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["안전","매장 조성 최초 위험성평가 자료 작성","김관수","주","oooooooooooooooooooooooooooooooooooooooooooooooo","발생 시"],
+  ["안전","매장 철거 공사 안전점검","김관수","주","oooooooooooooooooooooooooooooooooooooooooooooooo","발생 시"],
+  ["안전","매장 구조 (시설물) 수시 위험성평가 자료 작성","김관수","주","oooooooooooooooooooooooooooooooooooooooooooooooo","발생 시"],
+  ["안전","매장 안전 순회점검 및 모니터링","김관수","주","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["안전","팩토리움 위험물 창고 순회점검","한승배","주","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["안전","팩토리움 안전 순회점검 보고서 작성","한승배","월","...>*..>*..>*..>*..>*..>*..>*..>*..>*..>*..>*...",""],
+  ["안전","매장 팜업, 조성, 철거 공사 일정 확인","김관수","월","o...o...o...o...o...o...o...o...o...o...o...o...","발생 시"],
+  ["안전","팩토리움 유해 위험 기계·기구 점검 기획안 보고","한승배","월",".>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*",""],
+  ["안전","팩토리움 안전·보건 협의체 회의 준비 및 회의록 보고","한승배","월",">>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*",""],
+  ["안전","배송센터 안전·보건 협의체 회의 준비 및 회의록 보고","한승배","월",">>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*",""],
+  ["안전","서울사무소 안전·보건 협의체 회의 준비 및 회의록 보고","김관수","월",">>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*",""],
+  ["안전","지게차 신규 인원 파악","한승배","월","o...o...o...o...o...o...o...o...o...o...o...o...",""],
+  ["안전","지게차 특별안전보건교육 준비 및 결과 보고","한승배","월",".>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*",""],
+  ["안전","월간 팩토리움 안전활동 현황 취합","한승배","월","..>*..>*..>*..>*..>*..>*..>*..>*..>*..>*..>*..>*",""],
+  ["안전","안전보건의 날 기안서 작성 및 보고, 게시","김관수,한승배","월","..>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*.>>*...",""],
+  ["안전","안전보건의 날 점검","김관수,한승배","월",".....o.......o.......o.......o.......o.......o..",""],
+  ["안전","협력사 법규 이행사항 지도 및 평가","김관수,한승배","월","...o...o...o...o...o...o...o...o...o...o...o...o",""],
+  ["안전","수시 위험성평가 사전준비","김관수,한승배","월",".o...o...o...o...o...o...o...o...o...o...o...o..",""],
+  ["안전","수시 위험성평가 위험요인 발굴","김관수,한승배","월","..o...o...o...o...o...o...o...o...o...o...o...o.",""],
+  ["안전","수시 위험성평가 위험요인 개선","김관수,한승배","월","...o...o...o...o...o...o...o...o...o...o...o...o",""],
+  ["안전","수시 위험성평가 결과 보고서 작성","김관수,한승배","월","....o...o...o...o...o...o...o...o...o...o...o...",""],
+  ["안전","안전보건 과제 우수 매장 포상 과제 수립, 포상 및 결과 보고","김관수","분기",">>>>>>>>>>**>>>>>>>>>>**>>>>>>>>>>**>>>>>>>>>>**",""],
+  ["안전","팩토리움 협력업체 합동점검 및 개선 조치 및 모니터링 보고","한승배","분기","..........>>>>>>>>>*..>>>>>>>>>*..>>>>>>>>>*....",""],
+  ["안전","서울사무소 협력사 안전보건교육 실시","김관수","분기","........>>>*........>>>*........>>>*........>>>*",""],
+  ["안전","매장 안전보건교육 및 실습 기획, 훈련 및 보고","김관수","분기",">>>>>>>>>>>*>>>>>>>>>>>*>>>>>>>>>>>*>>>>>>>>>>>*",""],
+  ["안전","서울사무소 관리감독자 역량 강화 교육(분기별)","김관수","분기","........>>>*........>>>*........>>>*........>>>*",""],
+  ["안전","서울사무소 산업안전보건위원회 회의 실시 및 보고","김관수","분기","........>>>*........>>>*........>>>*........>>>*",""],
+  ["안전","서울사무소 산업안전보건위원회 안건 개선 조치 및 모니터링","김관수","분기","............>>>>>>>*....>>>>>>>*....>>>>>>>*....",""],
+  ["안전","팩토리움 산업안전보건위원회 회의자료 준비 및 회의록 보고","한승배","분기","........>>>*........>>>*........>>>*........>>>*",""],
+  ["안전","팩토리움 산업안전보건위원회 안건 개선 조치 및 모니터링","한승배","분기","............>>>>>>>*....>>>>>>>*....>>>>>>>*....",""],
+  ["안전","팩토리움 넘어짐 사고 예방 점검 기획안 작성 및 보고","한승배","년","........>>>*....................................",""],
+  ["안전","팩토리움 안전·보건 표지 점검 기획안 작성 및 보고","한승배","년","....................>>>*........................",""],
+  ["안전","파머스 마켓 행사 안전관리","김관수,한승배","년","...............................oooooooo.........",""],
+  ["안전","일루미네이션 행사 안전관리","김관수,한승배","년",".......................................ooooooooo",""],
+  ["안전","안전골든벨(안전퀴즈) 기획안 작성 및 실시","김관수,한승배","년","........................>>*.....................",""],
+  ["안전","SIMMONS 6대 안전보건환경 수칙 수립 및 게시","김관수,한승배","년","................................>*..............","안전보건공단"],
+  ["안전","동영상 안전교육 기획안 수립 및 게시(배포)","김관수,한승배","년","................>>>*............................",""],
+  ["안전","외부 출입자 안전보건 guide 기획안 작성 및 운영, 보고","김관수,한승배","년",".............>>>*...............................",""],
+  ["안전","협력사 비상대응 매뉴얼 교육, 시나리오 구축 여부 확인","한승배","년","....................>>>*........................",""],
+  ["안전","협력사 위험성평가 교육","한승배","년","............................>>..................",""],
+  ["안전","협력사 합동 수시 위험성평가 사전준비","한승배","년","..............................>.................",""],
+  ["안전","협력사 합동 수시 위험성평가 위험요인 발굴","한승배","년","...............................>>>..............",""],
+  ["안전","협력사 합동 수시 위험성평가 위험요인 개선","한승배","년","..................................>>>>..........",""],
+  ["안전","협력사 합동 수시 위험성평가 결과 보고서 작성","한승배","년","......................................**........",""],
+  ["안전","협력사 수시 교육 기획안 작성","한승배","년","........>>......................................",""],
+  ["안전","협력사 수시 교육 자료 준비","한승배","년","..........>>....................................",""],
+  ["안전","협력사 수시 교육 실시","한승배","년","............>>>>................................",""],
+  ["안전","협력사 수시 교육 결과 보고서 작성","한승배","년","................**..............................",""],
+  ["안전","정기위험성평가 기획안 작성 및 사전준비","김관수,한승배","년","...................................>............",""],
+  ["안전","정기위험성평가 위험요인 발굴","김관수,한승배","년","....................................>>..........",""],
+  ["안전","정기위험성평가 위험요인 개선","김관수,한승배","년","......................................>>>>>.....","환경안전솔루션"],
+  ["안전","정기위험성평가 결과 보고서 작성","김관수,한승배","년","...........................................**...",""],
+  ["안전","외부 및 세미나 교육 일정 확인","김관수,한승배","년","........o...........o...........o...........o...",""],
+  ["안전","외부 및 세미나 교육 참석","김관수,한승배","년","...........o...........o...........o...........o",""],
+  ["안전","안전관리자 보수 교육","김관수,한승배","년","....o..o........................................",""],
+  ["안전","타 기업 안전·보건 벤치 마킹 계획 수립 및 방문, 결과 보고","김관수,한승배","년","................>>>>>>**............>>>>>>**....",""],
+  ["안전","위험 기계기구 및 설비 안전검사/인증","한승배","년","........>>>*....................................","압력용기(4월 內)"],
+  ["보건","일반건강검진 유소견자 상담","민순기,박현미","주","....oooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["보건","임원 일반건강검진 결과 취합","민순기","주","....oooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["보건","ILO 스트레스 체크리스트 교육","민순기","주","....oooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["보건","신규채용시교육 명단 확인 및 안내","박현미","주","o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.",""],
+  ["보건","신규채용시교육 실시","박현미","주",".o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o",""],
+  ["보건","신규채용시교육 미수료자 독려 안내","박현미","주",".o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o",""],
+  ["보건","매장 심폐소생술(CPR)교육 실시","민순기","주","..>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>....",""],
+  ["보건","매장 안전보건관련 점검 실시","민순기","주","..>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>...",""],
+  ["보건","정기안전보건교육 미수료자 독려 안내","박현미","월","...o...o...o...o...o...o...o...o...o...o...o....",""],
+  ["보건","물질안전보건교육자료(MSDS) 게시여부 확인","민순기,박현미","월","...o...o...o...o...o...o...o...o...o...o...o...o",""],
+  ["보건","GHS-경고표지 제작 및 배포","박현미","월","...o...o...o...o...o...o...o...o...o...o...o...o",""],
+  ["보건","팩토리움 자동제세동기(AED) 점검","박현미","월","..o...o...o...o...o...o...o...o...o...o...o...o.",""],
+  ["보건","서울사무소 자동제세동기(AED) 점검","민순기","월","...o...o...o...o...o...o...o...o...o...o...o...o",""],
+  ["보건","1월 안전보건의 날(미세먼지, 금연) 게시물 제작 및 업로드","민순기,박현미","월","*...............................................",""],
+  ["보건","3월 안전보건의 날(봄철 건강관리) 게시물 제작 및 업로드","민순기,박현미","월",".......>*.......................................",""],
+  ["보건","5월 안전보건의 날(심폐소생술(CPR) 및 응급처치) 게시물 제작 및 업로드","민순기,박현미","월","...............>*...............................",""],
+  ["보건","7월 안전보건의 날(온열질환 예방 및 응급처치) 게시물 제작 및 업로드","민순기,박현미","월",".......................>*.......................",""],
+  ["보건","9월 안전보건의 날(근골격계질환 예방) 게시물 제작 및 업로드","민순기,박현미","월","...............................>*...............",""],
+  ["보건","11월 안전보건의 날(독감 예방접종) 게시물 제작 및 업로드","민순기,박현미","월",".......................................>*.......",""],
+  ["보건","안전보건 공지사항/게시물 제작 (수시)","민순기,박현미","월",".o...o...o...o...o...o...o...o...o...o...o...o..",""],
+  ["보건","일반건강검진 미수검자 확인 및 검진 독려","민순기,박현미","분기","........>>>*........>>>*........>>>*....>>>*....",""],
+  ["보건","병가 및 산재 근로자 건강 확인","민순기,박현미","분기","........o...........o...........o...........o*..",""],
+  ["보건","건강검진 검진 소견 정리","민순기,박현미","분기","............>>>.............>>>.............>>>.",""],
+  ["보건","건강검진 검진 소견별 교육자료 제작","박현미","분기","............>>>*............>>>*............>>>*",""],
+  ["보건","건강검진 검진 소견별 교육자료 배포 (E-mail)","민순기,박현미","분기","................................................",""],
+  ["보건","정기안전보건교육 명단 확인 및 안내","박현미","분기",">>>.........>>..........>>..........>>..........",""],
+  ["보건","특별안전보건교육 해당 부서/작업 확인","박현미","분기","....o...........o...........o...........o.......",""],
+  ["보건","특별안전보건교육 명단 확인","박현미","분기","....o...........o...........o...........o.......",""],
+  ["보건","특별안전보건교육 실시","박현미","분기","........>>>>>.......>>>>........>>>>........>>>>",""],
+  ["보건","물질안전보건교육자료(MSDS) 명단 확인 (취급자/구매자/관리자)","박현미","분기",".......o.......o.......o.......o.......o........",""],
+  ["보건","물질안전보건교육자료(MSDS) 교육 실시","민순기,박현미","분기","........o.......o.......o.......o.......o.......",""],
+  ["보건","특별관리물질 현황 및 취급자 파악","박현미","분기","........o...........o...........o...........o...",""],
+  ["보건","특별관리물질 특별안전보건교육 실시","박현미","분기","........o...........o...........o...........o...",""],
+  ["보건","특별관리물질 취급일지 점검","박현미","분기","........o...........o...........o...........o...",""],
+  ["보건","수시 화학물질 위험성평가 자료 수집","민순기,박현미","분기",".........>>..........>>.........>>>.............",""],
+  ["보건","수시 화학물질 위험성평가 현장조사","민순기,박현미","분기","..........>>..........>>.........>>>............",""],
+  ["보건","수시 화학물질 위험성평가 실시(평가)","민순기,박현미","분기","..........>>...........>>..........>>...........",""],
+  ["보건","수시 화학물질 위험성평가 대책 수립 및 개선","민순기,박현미","분기","...........>>...........>>.........>>>..........",""],
+  ["보건","수시 화학물질 위험성평가 결과 기록 및 교육","민순기,박현미","분기",".............>>.........>>>..........>>.........",""],
+  ["보건","팩토리움 협력업체 심폐소생술(CPR)교육 일정 협의","박현미","분기","............>>>........>>>..........>>..........",""],
+  ["보건","팩토리움 협력업체 심폐소생술(CPR)교육 준비","박현미","분기","..............>>..........>>..........>>........",""],
+  ["보건","팩토리움 협력업체 심폐소생술(CPR)교육 실시","박현미","분기","................>>..........>>..........>>......",""],
+  ["보건","팩토리움 협력업체 심폐소생술(CPR)교육 만족도 실시","박현미","분기","................>>>..........>>.........>>>.*...",""],
+  ["보건","정기안전보건교육 실시","박현미","반기","..>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.",""],
+  ["보건","전부서 물질안전보건교육자료(MSDS) 전수 조사","박현미","반기","....>>>>....................>>>>................",""],
+  ["보건","물질안전보건교육자료(MSDS)교육 해당 부서/작업 확인","박현미","반기","...>>>>>....................>>>>................",""],
+  ["보건","수시 화학물질 위험성평가 실시 여부 확인(신규물질 도입 등)","민순기,박현미","반기","........>>..........>>.........>>>..............",""],
+  ["보건","휴게시설 점검","민순기,박현미","반기","..................o....o..................o....o",""],
+  ["보건","작업환경측정 일정 협의","박현미","반기","..............>>................................",""],
+  ["보건","작업환경측정 준비(화학물질 취급량, 취급자 등)","박현미","반기","...............>.......................>........",""],
+  ["보건","작업환경측정 실시","박현미","반기","................>>>>...*................>>>>>...",""],
+  ["보건","작업환경측정 결과보고서 검토","박현미","반기","....................>>>>...................>>>>>",""],
+  ["보건","작업환경측정 결과 교육 및 현장 게시","민순기,박현미","반기",".......................*.......................*",""],
+  ["보건","혹서기/혹한기 예방 대상 부서 선정","민순기,박현미","반기","................>...................>...........",""],
+  ["보건","혹서기/혹한기 예방 물품 준비","민순기,박현미","반기",".................>...>...>...>.......>...>...>..",""],
+  ["보건","혹서기/혹한기 예방 대책 수립","민순기,박현미","반기","..................*...................*.........",""],
+  ["보건","혹서기/혹한기 예방 교육일자 협의","민순기,박현미","반기","...................>...................>........",""],
+  ["보건","혹서기/혹한기 예방 교육 실시","민순기,박현미","반기",".....................>...>...>...........>...>..",""],
+  ["보건","혹서기/혹한기 예방 자율점검표 점검","민순기,박현미","반기","....................>>>>>>>>>>>>.......>>>>>>>>>",""],
+  ["보건","혹서기/혹한기 예방 활동 실시 (순회점검 등)","민순기,박현미","반기","....................>>>>>>>>>>>*........>>>>>>>*",""],
+  ["보건","일반건강검진 대상자 명단 작성 및 실시","민순기","년",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>...*",""],
+  ["보건","일반건강검진 유소견자 파악 및 인바디 측정","민순기","년","....>>>>>>>>>>>*>>>>>>>>>>>*>>>>>>>>>>>*>>>>>>>*",""],
+  ["보건","뇌심혈관 위험도 평가 결과 업무적합성 평가 실시","민순기","년","....>>>>*.......................................",""],
+  ["보건","외부강사 초빙 교육","민순기","년","..................o.............................",""],
+  ["보건","특수건강검진 대상자 명단 작성, 실시","박현미","년",".....................................>>.........",""],
+  ["보건","특수건강검진 미수검자 확인 및 검진 독려","박현미","년",".......................................*........",""],
+  ["보건","특수건강검진 유소견자 파악","박현미","년","................................................",""],
+  ["보건","특수건강검진 유소견자 상담","민순기,박현미","년","..........................................>>>*..",""],
+  ["보건","관리감독자 선임 및 명단 확인","민순기","년",">>>.............................................",""],
+  ["보건","관리감독자교육 일정 확인 및 관리감독자 교육 신청","민순기","년","..>>>...........................................",""],
+  ["보건","관리감독자 교육 계획 작성","민순기","년","..>>*...........................................",""],
+  ["보건","관리감독자교육(인터넷) 실시","민순기","년","........>>>>....................................",""],
+  ["보건","관리감독자교육(집체교육) 실시","민순기","년","....>>>>>>>>>>>>>>>>>>>>>>>>....................",""],
+  ["보건","관리감독자 미수료자 독려 안내","민순기","년","....>>>>>>>>>>>>>>>>>>>>>>>>....................",""],
+  ["보건","정기 화학물질 위험성평가 자료 수집","민순기,박현미","년","...................................>>...........",""],
+  ["보건","정기 화학물질 위험성평가 현장조사","민순기,박현미","년","...................................>>...........",""],
+  ["보건","정기 화학물질 위험성평가 실시(평가)","민순기,박현미","년",".....................................>>>........",""],
+  ["보건","정기 화학물질 위험성평가 대책 수립 및 개선","민순기,박현미","년","........................................>>>.....",""],
+  ["보건","정기 화학물질 위험성평가 결과 기록 및 교육","민순기,박현미","년","...........................................>*...",""],
+  ["보건","화학물질 지침서 재개정 및 게시판 업로드","박현미","년",">>>>*...........................................",""],
+  ["보건","매장 심폐소생술(CPR)교육 일정 협의","민순기","년",">>..............................................",""],
+  ["보건","매장 안전보건관련 점검 일정 협의","민순기","년",">>..............................................",""],
+  ["보건","매장 안전보건관련 점검 준비","민순기","년",">>>.............................................",""],
+  ["보건","심폐소생술(CPR) 안전보건교육자료 영상 준비","민순기,박현미","년","........>>......................................",""],
+  ["보건","심폐소생술(CPR) 안전보건교육자료 영상 제작","민순기,박현미","년","..........>>>>>>*...............................",""],
+  ["보건","심폐소생술(CPR) 안전보건교육자료 영상 배포","민순기,박현미","년","................>>..............................",""],
+  ["보건","작업장 정리정돈, 안전행동 인증샷 챌린지 준비","박현미","년","..................>>............................",""],
+  ["보건","작업장 정리정돈, 안전행동 인증샷 챌린지 실시","박현미","년","....................>...........................",""],
+  ["보건","걷기프로그램 진행 일정 및 내용 협의","박현미","년",".....>..........................................",""],
+  ["보건","걷기프로그램 게시물 제작 및 업로드","박현미","년","......>>........................................",""],
+  ["보건","걷기프로그램 홍보 및 참여 유도 안내","박현미","년","........>...>...>...............................",""],
+  ["보건","걷기프로그램 실시","박현미","년","........>>>>>>>>>>>>............................",""],
+  ["보건","걷기프로그램 만족도 조사 실시","박현미","년","....................>*..........................",""],
+  ["보건","금연프로그램 홍보 및 참여 유도 안내","민순기,박현미","년",">>>>............................................",""],
+  ["보건","금연프로그램 실시","민순기,박현미","년",">>>>>>>>>>>>>>>>>>>>>>>>>>>>*...................",""],
+  ["보건","안전보건가이드 수립","민순기,박현미","년",".............>>*................................",""],
+  ["보건","안전보건가이드 QR코드 생성 및 배포","민순기,박현미","년","...............>................................",""],
+  ["보건","보호구 점검 (노후화 및 파손 등)","민순기,박현미","년","...................>............................",""],
+  ["보건","혈압계 검교정","민순기,박현미","년","...................................>*...........",""],
+  ["보건","생산동 온/습도계 측정 및 기록","박현미","년","....................>>>>>>>>>>>*................",""],
+  ["보건","독감예방접종 병원 일정 및 비용 협의","민순기","년",".................................>..............",""],
+  ["보건","독감예방접종 게시물 제작 및 업로드","박현미","년","...................................>>>..........",""],
+  ["보건","독감예방접종 실시","민순기,박현미","년","....................................>>>>>>>>..*.",""],
+  ["보건","독감예방접종 미접종자 독려","민순기,박현미","년","....................................>>>>>>>>....",""],
+  ["보건","일루미네이션 교육자료 작성","민순기,박현미","년","....................................>>..........",""],
+  ["보건","일루미네이션 방한용품 구매","민순기","년","....................................>>>>........",""],
+  ["보건","일루미네이션 방한용품 및 건강체크지 준비","민순기,박현미","년","........................................>>>>>>>>",""],
+  ["보건","업무용 차량 안전용품 점검(A/S기술팀, 사내 차량)","민순기","년","..........o.......................o.............",""],
+  ["기획","다음연도 안전보건방침/목표 설정","윤동현","년","........................................>>>>...*",""],
+  ["기획","다음연도 안전보건 목표추진 계획, 업무 계획 수립","윤동현","년","*...........................................>>>>",""],
+  ["기획","당해연도 안전보건 실적취합","윤동현","년","............................................>>>.",""],
+  ["기획","다음연도 안전보건 계획수립","윤동현","년","*.............................................>>",""],
+  ["기획","2025년도 안전보건계획 이사회 보고","윤동현","년","....>>>*........................................",""],
+  ["기획","내부심사 계획 및 실시","윤동현","년","............>>>>..........*.....................",""],
+  ["기획","경영 검토","윤동현","년","............................................>>>>",""],
+  ["기획","다음연도 안전보건예산 편성","윤동현","년","*.......................................>>>>....",""],
+  ["기획","ISO[9001. 14001, 45001]통합","윤동현","일회성","........>>>>>>>>................................",""],
+  ["기획","비상대응훈련 계획 및 실행","윤동현","년","................................>>>>>>>>>>>>....",""],
+  ["기획","사후심사","윤동현","년","....................>>>.........................",""],
+  ["기획","중대재해처벌법 반기보고","윤동현","반기",">>*.....................>>*.....................",""],
+  ["기획","수급업체 안전보건수준평가(정기)","윤동현","반기",">>*.....................>>*.....................",""],
+  ["기획","중대재해 대응 매뉴얼 이행상황 점검","윤동현","반기","........>>>...................>>>...............",""],
+  ["기획","비상상황 대응 절차 점검","윤동현","반기","........>>>...................>>>...............",""],
+  ["기획","협의체 안전보건에 관한 심의∙의결사항 이행여부 점검","윤동현","반기","..........>>>.....................>>>...........",""],
+  ["기획","산업안전보건위원회 심의∙의결사항 이행점검","윤동현","반기","..........>>>.....................>>>...........",""],
+  ["기획","위험성 평가 지침 준수 및 개선상황 점검","윤동현","반기","............>>>.....................>>>.........",""],
+  ["기획","재해/사고 발생 시 예방,개선 대책이행 점검","윤동현","반기","............>>>.....................>>>.........",""],
+  ["기획","리스크 평가 후 개선조치 이행점검","윤동현","반기","............>>>.....................>>>.........",""],
+  ["기획","안전보건 업무담당자 업무수행 평가","윤동현","반기","..............>>>>>...................>>>>>.....",""],
+  ["기획","안전보건 법규 준수 평가","윤동현","반기","..............>>>>>...................>>>>>.....",""],
+  ["기획","안전보건 인력 배치 및 예산 집행상황 점검","윤동현","반기","................>>>.....................>>>.....",""],
+  ["기획","안전보건 의견 조치결과 취합, 분석, 유효성 검토","윤동현","반기","..................>>>>>...................>>>...",""],
+  ["기획","안전보건 법정 교육 이행상황 점검","윤동현","반기","..................>>>>>...................>>>...",""],
+  ["기획","산업안전보건위원회 심의∙의결사항 개시 여부 점검","윤동현","분기",">...........>...........>...........>...........",""],
+  ["기획","안전보건환경 목표추진 및 월간활동 점검","윤동현","월간","...o...o...o...o...o...o...o...o...o...o...o...o",""],
+  ["기획","개인별 종사자의견 취합 [안전보건 건의함, QR코드]","윤동현","월간","..o...o...o...o...o...o...o...o...o...o...o...o.",""],
+  ["기획","부서별 관리감독자의견  취합 [활동, 예산 집행, 기타 의견 및 제안사항]","윤동현","월간",".o...o...o...o...o...o...o...o...o...o...o...o..",""],
+  ["기획","자격인증 관리","윤동현","월간","o...o...o...o...o...o...o...o...o...o...o...o...",""],
+  ["기획","안전보건 개정 법규등록 관리 [재개정 사항 모니터링]","윤동현","월간","o...o...o...o...o...o...o...o...o...o...o...o...",""],
+  ["기획","일반∙공사 도급계약 적격수급인 선정평가","윤동현","주간","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["기획","신규직원 수시교육","윤동현","주간","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["기획","신규 오픈매장 현장점검","윤동현","발생 시","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["환경","대기배출시설 및 방지시설 점검","이재훈","일","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["환경","대기배출시설 및 방지시설 운영기록부 작성","이재훈","일","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["환경","폐기물 보관시설 점검 및 폐기물 위탁 처리 (올바로 시스템 입력)","이재훈","일","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["환경","안전보건경영부 주간업무 취합","이재훈","주","oooooooooooooooooooooooooooooooooooooooooooooooo",""],
+  ["환경","월별 폐기물 위탁처리 실적 관리 및 분석, 보고","이재훈","월",">>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*>>>*",""],
+  ["환경","팩토리움 오수처리시설 슬러지 위탁처리 및 보고","이재훈","분기","........>>>*........>>>*....>>>*........>>>*....",""],
+  ["환경","환경 관련 박람회 참석","이재훈","분기","............>>>*........>>>*....>>>*>>>*........",""],
+  ["환경","팩토리움 오수처리시설 분리막 청소 및 보고","이재훈","반기","................>>>*................>>>*........",""],
+  ["환경","대기오염물질 오염물질 측정 일정 계획 및 보고","이재훈","반기",".>>>.................................>>>........",""],
+  ["환경","대기오염물질 배출시설 및 방지시설 오염물질 위탁 측정 및 보고","이재훈","반기","....>>>*................................>>>*....",""],
+  ["환경","대기오염물질 측정 결과 보고서 제출","이재훈","반기","........>>>*................................>>>*","환경부"],
+  ["환경","ISO 140001 환경영향평가 실적, 환경목표 모니터링 관리","이재훈","반기",">>>*....................>>>*....................",""],
+  ["환경","화학물질 통계조사 대응","이재훈","년","........................>>>*....................",""],
+  ["환경","화학물질 배출량 조사 대응","이재훈","년","............>>>*................................",""],
+  ["환경","팩토리움, 스튜디오, 장평리 오수처리시설 방류수 측정","이재훈","년","............................................>>>*",""],
+  ["환경","폐기물 처리 실적 집계","이재훈","년",">...............................................",""],
+  ["환경","폐기물 처리 실적 보고 작성 및 제출 (올바로 시스템)","이재훈","년",">>*.............................................","한국환경공단"],
+  ["환경","폐기물 처분 부담금 납부 실적 자료 작성 및 제출","이재훈","년","....>>*.........................................","한국환경공단"],
+  ["환경","폐기물부담금 납부 실적 자료 집계","이재훈","년","..>>............................................","한국환경공단"],
+  ["환경","폐기물부담금 납부 실적 자료 작성 및 제출","이재훈","년","....>>>>>>*.....................................",""],
+  ["환경","생산자책임재활용제도(재활용 분담금) 실적 자료 작성 및 제출","이재훈","년","........>>>>>*..................................","한국환경공단"],
+  ["환경","환경 캠페인 기획 및 실행","이재훈","년","....................>>>*........................","이천시청"],
+  ["환경","이천시청 자원 순환 업무 협약 유지 (행사 협의 및 기획 등)","이재훈","년","............>>>*>>>*>>>*........................","이천시청"],
+  ["환경","ISO 14001 인증 유지 심사 (대응 서류 준비)","이재훈","년","............>>>>>>>>>*..........................",""]
+];
+function planSeg(r, m) { return r[4].substr(m * 4, 4); }
+function planIn(r, m) { return /[^.]/.test(planSeg(r, m)); }
+function planKey(y, m, r) { return rowKey('연간계획', y, m + 1, r[0], r[1]); }
+/** 그 달 4칸 중 표시된 주 → "1~3주" · "1·3주" · "매주" */
+function planWeekTxt(seg) {
+  var ws = [];
+  for (var i = 0; i < 4; i++) if (seg.charAt(i) !== '.') ws.push(i + 1);
+  if (ws.length === 4) return '매주';
+  if (ws.length === 1) return ws[0] + '주';
+  return (ws[ws.length - 1] - ws[0] === ws.length - 1 ? ws[0] + '~' + ws[ws.length - 1] : ws.join('·')) + '주';
+}
+/** 그 달에서 실제로 해당하는 날짜 범위 (1주 = 1~7일 … 4주 = 22일~말일) */
+function planRange(y, m, seg) {
+  var first = seg.search(/[^.]/), last = 3 - seg.split('').reverse().join('').search(/[^.]/);
+  return { s: new Date(y, m, 1 + first * 7), e: last === 3 ? new Date(y, m + 1, 0) : new Date(y, m, 7 + last * 7) };
+}
+
+function openPlan(o) {
+  o = o || {};
+  var mm = /^\d{4}-(\d{2})/.exec(o.month || '');
+  state.planMonth = mm ? +mm[1] - 1 : new Date().getMonth();
+  state.planView = 'list'; state.planG = 'all'; state.planSt = 'all';
+  renderPlan();
+  $('planScrim').classList.add('on');
+  if (!o.flash) return;
+  setTimeout(function () {
+    Array.prototype.some.call($('planBody').querySelectorAll('[data-rowkey]'), function (x) {
+      if (x.dataset.rowkey !== o.flash) return false;
+      x.classList.remove('mo-flash'); void x.offsetWidth; x.classList.add('mo-flash');
+      x.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      return true;
+    });
+  }, 120);
+}
+function closePlan() { $('planScrim').classList.remove('on'); }
+
+function renderPlan() {
+  var y = new Date().getFullYear(), m = state.planMonth, isList = state.planView === 'list';
+  var byG = function (r) { return state.planG === 'all' || r[0] === state.planG; };
+  $('planEyebrow').textContent = 'ANNUAL PLAN · ' + PLAN_BASE;
+  $('planTitle').textContent = isList ? y + '년 ' + (m + 1) + '월 업무 체크리스트' : PLAN_TITLE;
+
+  var monthRows = PLAN_ROWS.filter(function (r) { return planIn(r, m); });
+  var doneOf = function (r) { return isOverrideComplete(planKey(y, m, r)); };
+  var gChips = ['all'].concat(PLAN_GROUPS).map(function (g) {
+    var n = (isList ? monthRows : PLAN_ROWS).filter(function (r) { return g === 'all' || r[0] === g; }).length;
+    return '<button type="button" class="sd-chip" data-plg="' + g + '" aria-pressed="' + (state.planG === g) + '">' + (g === 'all' ? '전체' : g) + '<b>' + n + '</b></button>';
+  }).join('');
+  var stChips = isList ? [['all', '전체'], ['open', '미완료'], ['done', '완료']].map(function (s) {
+    return '<button type="button" class="sd-chip" data-plst="' + s[0] + '" aria-pressed="' + (state.planSt === s[0]) + '">' + s[1] + '</button>';
+  }).join('') : '';
+
+  $('planBar').innerHTML =
+    '<div class="mo-seg" role="group" aria-label="보기">' +
+      '<button type="button" data-plview="list" aria-pressed="' + isList + '">월별 체크리스트</button>' +
+      '<button type="button" data-plview="gantt" aria-pressed="' + !isList + '">연간 계획표</button></div>' +
+    (isList ? '<div class="pl-mnav"><button type="button" data-plmv="-1" aria-label="이전 달">‹</button><b>' + (m + 1) + '월</b>' +
+      '<button type="button" data-plmv="1" aria-label="다음 달">›</button></div>' : '') +
+    '<div class="sd-chips">' + gChips + '</div>' +
+    (stChips ? '<div class="sd-chips">' + stChips + '</div>' : '') +
+    '<span class="sp"></span><a class="pl-dl" href="' + encodeURI(PLAN_FILE) + '" download>원본 엑셀 ↓</a>';
+
+  if (isList) {
+    var rows = monthRows.filter(byG);
+    var d = rows.filter(doneOf).length;
+    var list = rows.filter(function (r) {
+      return state.planSt === 'all' || (state.planSt === 'done') === doneOf(r);
+    });
+    $('planBody').innerHTML =
+      '<div class="pl-sum">' + y + '년 ' + (m + 1) + '월 해당 업무 <b>' + rows.length + '건</b> · 완료 <b>' + d + '</b> · 미완료 <b class="r">' + (rows.length - d) + '</b>' +
+        ' · 완료 처리한 내용은 모니터링(월간)에 반영됩니다</div>' +
+      '<div class="pl-row hd"><span>구분</span><span>내용</span><span>담당자</span><span>주기</span><span>주차 1 · 2 · 3 · 4</span><span>상태</span></div>' +
+      (list.length ? list.map(function (r) {
+        var seg = planSeg(r, m), k = planKey(y, m, r);
+        var wk = seg.split('').map(function (c, i) {
+          return '<span class="' + (c === '*' ? 'on' : c === 'o' ? 'o' : c === '>' ? 'ar' : '') + '">' + (c === '.' ? '' : i + 1) + '</span>';
+        }).join('');
+        return '<div class="pl-row' + (doneOf(r) ? ' done' : '') + '" data-rowkey="' + esc(k) + '">' +
+          '<span class="pl-g"><i style="background:' + catColor(r[0]) + '"></i>' + esc(r[0]) + '</span>' +
+          '<span class="pl-t">' + esc(r[1]) + (r[5] ? '<em>' + esc(r[5]) + '</em>' : '') + '</span>' +
+          '<span class="pl-who">' + esc(r[2]) + '</span><span class="pl-cyc">' + esc(r[3]) + '</span>' +
+          '<span class="pl-wk" title="' + esc(planWeekTxt(seg)) + '">' + wk + '</span>' +
+          '<span class="pl-st">' + statusToggleCell('연간계획', k, '완료 처리') + '</span></div>';
+      }).join('') : '<div class="sd-empty" style="padding:20px 26px">해당하는 업무가 없습니다.</div>');
+    return;
+  }
+
+  // 연간 계획표 : 원본 엑셀처럼 12개월 × 4주. 월 머리글이나 칸을 누르면 그 달 체크리스트로
+  var cm = new Date().getMonth();
+  var head1 = '<tr><th class="c-g"></th><th class="c-t">내용</th><th class="c-w">담당자</th><th class="c-c">주기</th>' +
+    MONTHS.map(function (x, i) { return '<th class="mh' + (i === cm ? ' cur' : '') + '" colspan="4" data-plm="' + i + '">' + (i + 1) + '월</th>'; }).join('') + '</tr>';
+  var head2 = '<tr><th class="c-g"></th><th class="c-t"></th><th class="c-w"></th><th class="c-c"></th>';
+  for (var i = 0; i < 48; i++) head2 += '<th class="wh' + (i % 4 === 0 ? ' ms' : '') + (Math.floor(i / 4) === cm ? ' cur' : '') + '">' + (i % 4 + 1) + '</th>';
+  head2 += '</tr>';
+  var body = '', lastG = '';
+  PLAN_ROWS.filter(byG).forEach(function (r) {
+    if (r[0] !== lastG) { lastG = r[0]; body += '<tr class="grp"><td colspan="52">' + esc(r[0]) + '</td></tr>'; }
+    body += '<tr><td class="c-g"><span class="pl-g"><i style="background:' + catColor(r[0]) + '"></i></span></td>' +
+      '<td class="c-t" title="' + esc(r[1] + (r[5] ? ' (' + r[5] + ')' : '')) + '">' + esc(r[1]) + '</td>' +
+      '<td class="c-w">' + esc(r[2]) + '</td><td class="c-c">' + esc(r[3]) + '</td>';
+    for (var w = 0; w < 48; w++) {
+      var c = r[4].charAt(w);
+      body += '<td class="w' + (w % 4 === 0 ? ' ms' : '') + (Math.floor(w / 4) === cm ? ' cur' : '') + '" data-plm="' + Math.floor(w / 4) + '">' +
+        (c === '*' ? '<i class="mk s"></i>' : c === 'o' ? '<i class="mk o"></i>' : c === '>' ? '<i class="mk a"></i>' : '') + '</td>';
+    }
+    body += '</tr>';
+  });
+  $('planBody').innerHTML =
+    '<div class="pl-lgd"><span><i class="mk s"></i>중점 실행</span><span><i class="mk o"></i>실행</span><span><i class="mk a"></i>진행 기간</span>' +
+      '<span>노란 칸 = 이번 달 · 월이나 칸을 누르면 그 달 체크리스트</span></div>' +
+    '<div class="pl-gw"><table class="pl-gt"><thead>' + head1 + head2 + '</thead><tbody>' + body + '</tbody></table></div>';
+}
+
+/* ── 0. 모니터링 : 각 게시판의 완료 · 미완료 업무를 주간 · 월간 · 연간으로 모아 봅니다 ──
+ *  일정이 기간과 겹치면 그 기간 업무로 셉니다 (주간업무 = 해당 주, 보건활동 = 해당 월, 나머지 = 점검일 · 개최일).
+ *  기간이 시작되기 전에 끝났는데 아직 미완료인 건은 "이월" 로 따로 보여줍니다. */
+var MON_SRC = [
+  { k: 'week', n: '주간업무' }, { k: 'safinspect', n: '안전점검' }, { k: 'safrisk', n: '위험성평가' },
+  { k: 'safmeet', n: '회의체' }, { k: 'heaact', n: '보건활동' }, { k: 'plan', n: '연간계획' }
+];
+var MON_PERIODS = [{ k: 'week', n: '주간', en: 'Weekly' }, { k: 'month', n: '월간', en: 'Monthly' }, { k: 'year', n: '연간', en: 'Yearly' }];
+var MON_PAGE = 30;
+function monSrcName(k) { for (var i = 0; i < MON_SRC.length; i++) if (MON_SRC[i].k === k) return MON_SRC[i].n; return k; }
+function monDateTxt(d) { return ymd(d).slice(2).replace(/-/g, '.'); }
+function monWindow(k) {
+  var n = new Date(), t = new Date(n.getFullYear(), n.getMonth(), n.getDate()), y = t.getFullYear(), m = t.getMonth();
+  if (k === 'week') { var mo = mondayOf(t); return { s: mo, e: addDays(mo, 6), txt: weekLabel(mo) + ' · ' + rangeText(mo) }; }
+  if (k === 'month') return { s: new Date(y, m, 1), e: new Date(y, m + 1, 0), txt: y + '년 ' + (m + 1) + '월' };
+  return { s: new Date(y, 0, 1), e: new Date(y, 11, 31), txt: y + '년' };
+}
+/** 모든 게시판의 업무를 같은 모양으로 : { src, s, e(기간), date, tag, meta, text, sub, note, done, go(이동) }
+ *  모니터링은 보기 전용 — 완료 처리는 항목을 눌러 이동한 해당 게시물에서만 합니다. */
+function monItems() {
+  var out = [];
+  state.weekly.forEach(function (r) {
+    var m = weeklyMonday(r);
+    if (!m) return;
+    var done = r.상태 === '완료';
+    out.push({ src: 'week', s: m, e: addDays(m, 6), date: rangeText(m), tag: r.분류 || '주간업무', meta: r.담당 || '',
+      text: r.내용, sub: r.일정, note: r.상태 === '진행' ? '진행중' : '', done: done,
+      go: sdGo('week', { date: ymd(m), flash: 'w:' + r.ID }) });
+  });
+  ds('안전점검').forEach(function (r) {
+    var d = parseYmd(r.점검일), k = inspRowKey(r);
+    if (!d) return;
+    out.push({ src: 'safinspect', s: d, e: d, date: monDateTxt(d), tag: r.점검구분 || '안전점검',
+      meta: sdSiteName(r.사업장) + (r.부서 ? ' · ' + r.부서 : ''), text: inspContentText(r), done: inspIsDone(r),
+      go: sdGo('safinspect', { site: r.사업장, dept: r.부서, month: safMonthOf(r.점검일), flash: k }) });
+  });
+  ds('위험성평가').forEach(function (r) {
+    var d = parseYmd(r.점검일), k = riskRowKey(r);
+    if (!d) return;
+    out.push({ src: 'safrisk', s: d, e: d, date: monDateTxt(d), tag: r.구분 || '정기',
+      meta: sdSiteName(r.사업장) + (r['매장/부서'] ? ' · ' + r['매장/부서'] : ''), text: riskContentText(r), done: riskIsDone(r),
+      go: sdGo('safrisk', { site: r.사업장, dept: r['매장/부서'], month: safMonthOf(r.점검일), flash: k }) });
+  });
+  ds('회의체').forEach(function (r) {
+    var d = parseYmd(r.개최일), k = meetRowKey(r);
+    if (!d) return;
+    out.push({ src: 'safmeet', s: d, e: d, date: monDateTxt(d), tag: r.회의체 || '회의체',
+      meta: sdSiteName(r.사업장 || ''), text: r.안건 || r.주요안건, done: meetIsDone(r),
+      go: sdGo('safmeet', { site: r.사업장, kind: r.회의체, month: safMonthOf(r.개최일), flash: k }) });
+  });
+  ds('보건활동').forEach(function (r) {
+    var y = parseInt(r.연도, 10), m = sdMonthNum(r.월), pd = parseYmd(r.진행일);
+    if (!y && pd) y = pd.getFullYear();
+    if (!m && pd) m = pd.getMonth() + 1;
+    if (!y || !m) return;
+    out.push({ src: 'heaact', s: new Date(y, m - 1, 1), e: new Date(y, m, 0), date: String(y).slice(2) + '.' + pad(m) + '월',
+      tag: r.구분 || '보건활동', meta: sdSiteName(r.사업장 || ''),
+      text: [r.대상자, r.목표].filter(function (v) { return !isBlank(v); }).join(' · '), sub: r['진행 사항'],
+      done: heaActDone(r),
+      go: sdGo('heaact', { kind: r.구분, site: r.사업장, year: r.연도 ? String(r.연도) : '', month: r.월 ? String(r.월) : '', flash: heaActRowKey(r) }) });
+  });
+  return out;
+}
+/** 연간 업무 계획 중 그 달(w = 월간 기간)에 해야 하는 항목. 월간에서만 셉니다(이월 없음) */
+function monPlanItems(w) {
+  var y = w.s.getFullYear(), m = w.s.getMonth(), ym = y + '-' + pad(m + 1);
+  return PLAN_ROWS.filter(function (r) { return planIn(r, m); }).map(function (r) {
+    var seg = planSeg(r, m), rg = planRange(y, m, seg), k = planKey(y, m, r);
+    return { src: 'plan', s: rg.s, e: rg.e, date: (m + 1) + '월 ' + planWeekTxt(seg), tag: r[0], meta: r[2], text: r[1],
+      sub: r[3] + (r[5] ? ' · ' + r[5] : ''), done: isOverrideComplete(k), go: sdGo('plan', { month: ym, flash: k }) };
+  });
+}
+/** 기간 w 안의 업무(inW) · 완료 수 · 이월(기간 전에 끝났는데 미완료) */
+function monStats(items, w) {
+  var inW = items.filter(function (it) { return it.s <= w.e && it.e >= w.s; });
+  var done = inW.filter(function (it) { return it.done; }).length;
+  return { inW: inW, done: done, open: inW.length - done,
+    over: items.filter(function (it) { return !it.done && it.e < w.s; }) };
+}
+function monRow(it) {
+  return '<div class="mo-row' + (it.done ? ' done' : '') + '"><button type="button" class="mo-main"' + it.go + ' title="' + esc(monSrcName(it.src)) + ' 게시판에서 보기">' +
+    '<span class="mo-d">' + esc(it.date) + '</span>' +
+    '<span class="mo-src"><i></i>' + esc(monSrcName(it.src)) + '</span>' +
+    '<span class="mo-meta">' + esc(it.meta || '—') + '</span>' +
+    '<span class="mo-tag">' + esc(it.tag) + '</span>' +
+    '<span class="mo-tx">' + esc(it.text || '(내용 없음)') + (it.note ? '<em class="pr">' + esc(it.note) + '</em>' : '') +
+      (!isBlank(it.sub) ? '<em>' + esc(it.sub) + '</em>' : '') + '</span>' +
+    '</button><span class="mo-act"><span class="mo-st' + (it.done ? ' done' : '') + '">' + (it.done ? '완료' : '미완료') + '</span></span></div>';
+}
+function monSection(title, list, late) {
+  var shown = state.monMore ? list : list.slice(0, MON_PAGE);
+  return '<div class="mo-sec' + (late ? ' late' : '') + '"><div class="sd-sec"><span>' + esc(title) + '</span><b>' + list.length + '건</b></div>' +
+    '<div class="mo-list">' + shown.map(monRow).join('') + '</div>' +
+    (list.length > shown.length ? '<button type="button" class="mo-more" data-momore>' + (list.length - shown.length) + '건 더 보기</button>' : '') + '</div>';
+}
+
+function renderMonitorPage() {
+  var el = $('monDash');
+  if (!el) return;
+  state.monPeriod = state.monPeriod || 'week';
+  state.monSrc = state.monSrc || 'week';    // 처음에는 주간업무부터 보여줍니다
+  state.monView = state.monView || 'open';
+  var all = monItems(), planNow = monPlanItems(monWindow('month'));
+  function itemsFor(k) { return k === 'month' ? all.concat(planNow) : all; }
+  var per = MON_PERIODS.filter(function (p) { return p.k === state.monPeriod; })[0];
+  // 연간계획은 월간 화면에서만 보여줍니다
+  var srcs = MON_SRC.filter(function (s) { return s.k !== 'plan' || per.k === 'month'; });
+  if (state.monSrc === 'plan' && per.k !== 'month') state.monSrc = 'all';
+  var w = monWindow(per.k), cur = monStats(itemsFor(per.k), w);
+  function bySrc(list) { return state.monSrc === 'all' ? list : list.filter(function (it) { return it.src === state.monSrc; }); }
+  function asc(a, b) { return a.s - b.s; }
+
+  // 4칸 띠 : 기간별 미완료 건수 + 완료율 (누르면 아래 목록이 그 기간으로)
+  var band = MON_PERIODS.map(function (p) {
+    var st = monStats(itemsFor(p.k), monWindow(p.k)), pc = sdPct(st.done, st.inW.length), on = p.k === per.k;
+    return '<button type="button" class="sd-cell' + (on ? ' on' : '') + '" data-moperiod="' + p.k + '" aria-pressed="' + on + '">' +
+      '<span class="l">' + p.n + ' 미완료<span aria-hidden="true">' + p.en + '</span></span>' +
+      '<span class="v">' + st.open + '<em>건</em></span>' +
+      '<span class="bar"><i style="width:' + pc + '%"></i></span>' +
+      '<span class="d">완료 <b>' + st.done + '</b> / ' + st.inW.length + '건 · ' + pc + '%' +
+        (st.over.length ? ' · 이월 <b>' + st.over.length + '</b>' : '') + '</span></button>';
+  }).join('');
+
+  var openList = bySrc(cur.inW.filter(function (it) { return !it.done; })).sort(asc);
+  var doneList = bySrc(cur.inW.filter(function (it) { return it.done; })).sort(function (a, b) { return b.s - a.s; });
+  var overList = bySrc(cur.over).sort(asc);
+  var isOpen = state.monView === 'open';
+  var pool = isOpen ? cur.inW.filter(function (it) { return !it.done; }).concat(cur.over) : cur.inW.filter(function (it) { return it.done; });
+
+  // 주간업무 → 전체 → 나머지 게시판 순
+  var chips = srcs.slice(0, 1).concat([{ k: 'all', n: '전체' }], srcs.slice(1)).map(function (c) {
+    var n = c.k === 'all' ? pool.length : pool.filter(function (it) { return it.src === c.k; }).length;
+    return '<button type="button" class="sd-chip" data-mosrc="' + c.k + '" aria-pressed="' + (state.monSrc === c.k) + '">' + esc(c.n) + '<b>' + n + '</b></button>';
+  }).join('');
+
+  var body;
+  if (isOpen) {
+    body = (openList.length || overList.length)
+      ? (openList.length ? monSection(per.n + ' 미완료 · 오래된 순', openList) : '') +
+        (overList.length ? monSection('이월 · 지난 기간에 끝나지 않은 업무', overList, true) : '')
+      : '<div class="sd-empty">' + per.n + ' 기준 미완료 업무가 없습니다. 모두 완료되었습니다.</div>';
+  } else {
+    body = doneList.length ? monSection(per.n + ' 완료 · 최근 순', doneList)
+      : '<div class="sd-empty">' + per.n + ' 기준 완료된 업무가 아직 없습니다.</div>';
+  }
+
+  var left = '<div class="sd-card">' +
+    '<div class="mo-tools"><div class="row">' +
+      '<div class="sd-hd"><span><span class="en">' + esc(w.txt) + '</span><span class="nm">업무 진행사항</span></span></div>' +
+      '<div class="rt"><div class="mo-seg" role="group" aria-label="완료 여부">' +
+        '<button type="button" data-moview="open" aria-pressed="' + isOpen + '">미완료<b>' + (cur.open + cur.over.length) + '</b></button>' +
+        '<button type="button" data-moview="done" aria-pressed="' + !isOpen + '">완료<b>' + cur.done + '</b></button>' +
+      '</div></div></div>' +
+      '<div class="sd-chips">' + chips + '</div>' +
+    '</div>' + body + '</div>';
+
+  var right = '<div class="sd-card"><div class="sd-hd"><span><span class="en">Progress</span><span class="nm">게시판별 진행률</span></span></div>' +
+    sdRingTop(sdPct(cur.done, cur.inW.length), [['전체', cur.inW.length], ['완료', cur.done], ['미완료', cur.open, 1], ['이월', cur.over.length, 1]]) +
+    sdSec(per.n + ' · 누르면 해당 게시판만', sdBars(srcs.map(function (s) {
+      var sub = cur.inW.filter(function (it) { return it.src === s.k; }), d = sub.filter(function (it) { return it.done; }).length;
+      return sdBar(s.n, sdPct(d, sub.length), C.ink, d + '/' + sub.length, ' data-mosrc="' + s.k + '"');
+    }))) +
+    '<div class="sd-more">주간업무는 해당 주, 보건활동은 해당 월, 안전점검 · 위험성평가 · 회의체는 점검일 · 개최일 기준으로 집계합니다. ' +
+    '연간계획(월간 스케줄 → 연간 업무 계획)은 월간에서만 그 달 해당 업무를 보여줍니다. ' +
+    '항목을 누르면 해당 게시물로 이동하며, 완료 처리는 그 게시물에서 합니다.</div></div>';
+
+  el.innerHTML = '<div class="sd-meta"><span>주간업무 · 안전점검 · 위험성평가 · 회의체 · 보건활동 진행사항을 <b>주간 · 월간 · 연간</b>으로 모니터링</span>' +
+      '<span>' + ymd(new Date()).replace(/-/g, '.') + ' 기준</span></div>' +
+    '<div class="sd-band mo-band">' + band + '</div>' +
+    '<div class="mo-grid">' + left + right + '</div>';
+  monSyncSticky();
+  renderMonActPage();
+}
+/** 모니터링 → 활동 현황 : 안전 · 보건 · 환경 업무 현황 카드 */
+function renderMonActPage() {
+  var el = $('monActDash');
+  if (!el) return;
+  el.innerHTML = '<div class="sd-meta"><span>안전 · 보건 · 환경 업무를 한눈에 · 카드 제목을 누르면 각 분야 현황으로, 항목을 누르면 해당 게시판으로 이동합니다</span>' +
+      '<span>' + ymd(new Date()).replace(/-/g, '.') + ' 기준</span></div>' +
+    '<div class="sd-grid mo-dom">' + monDomainCards() + '</div>';
+}
+/** 안전 · 보건 · 환경 업무 현황 카드 3개. 제목을 누르면 각 분야 "현황" 대시보드로, 막대 · 칩을 누르면 해당 게시판으로 */
+function monDomainCards() {
+  function rate(label, tab, done, total, go) {
+    return sdBar(label, sdPct(done, total), C.ink, total ? sdPct(done, total) + '% · ' + nf(done) + '/' + nf(total) : '—', go || sdGo(tab));
+  }
+  function card(tab, en, name, alert, bars, chips) {
+    return '<div class="sd-card"><button type="button" class="sd-hd"' + sdGo(tab) + ' title="' + esc(name) + ' 현황으로 이동">' +
+      '<span><span class="en">' + esc(en) + '</span><span class="nm">' + esc(name) + '</span></span>' +
+      '<span class="mo-dhd">' + (alert ? '<span class="cnt">확인 ' + alert + '건</span>' : '<span class="cnt ok">이상 없음</span>') +
+      '<span class="go" aria-hidden="true">→</span></span></button>' +
+      sdSec('완료 · 준수율', sdBars(bars)) + sdSec('주요 현황', sdChips(chips)) + '</div>';
+  }
+  var thisMonth = ymd(new Date()).slice(0, 7);
+
+  // 안전 : 안전점검 · 위험성평가 · 회의체 완료율 + 교육 · 안전장치 · 미조치
+  var ins = ds('안전점검'), ra = ds('위험성평가'), mt = ds('회의체');
+  var insD = ins.filter(inspIsDone).length, raD = ra.filter(riskIsDone).length, mtD = mt.filter(meetIsDone).length;
+  var safOpen = (ins.length - insD) + (ra.length - raD);
+  var saf = card('safdash', 'Safety', '안전 업무 현황', safOpen, [
+    rate('안전점검', 'safinspect', insD, ins.length), rate('위험성평가', 'safrisk', raD, ra.length), rate('회의체', 'safmeet', mtD, mt.length)
+  ], [
+    sdChip('미조치', safOpen + '건', sdGo('safinspect')),
+    sdChip('이번 달 교육', ds('교육').filter(function (r) { return safMonthOf(r.일자) === thisMonth; }).length + '건', sdGo('edu', { month: thisMonth })),
+    sdChip('안전장치', ds('안전장치').length + '건', sdGo('safdevice'))
+  ]);
+
+  // 보건 : 보건활동 · 건강검진 · 작업환경측정 · 정기교육
+  var ac = ds('보건활동'), wk = ds('작업환경측정');
+  var ex = sdYearRows(ds('건강검진 현황')), ed = sdYearRows(ds('정기교육'));
+  var acD = ac.filter(heaActDone).length, wkOk = wk.filter(heaEnvCompliant).length;
+  var heaAlert = (ac.length - acD) + (wk.length - wkOk);
+  var hea = card('headash', 'Health', '보건 업무 현황', heaAlert, [
+    rate('보건활동', 'heaact', acD, ac.length),
+    rate('건강검진', 'heaexam', sdSum(ex.rows, '검진 완료'), sdSum(ex.rows, '전체 인원'), sdGo('heaexam', { year: ex.year })),
+    rate('작업환경측정', 'heaenv', wkOk, wk.length),
+    rate('정기교육', 'heaedu', sdSum(ed.rows, '교육 이수'), sdSum(ed.rows, '전체 인원'), sdGo('heaedu', { year: ed.year }))
+  ], [
+    sdChip('보건활동 미진행', (ac.length - acD) + '건', sdGo('heaact')),
+    sdChip('작업환경 기준 초과', (wk.length - wkOk) + '건', sdGo('heaenv'))
+  ]);
+
+  // 환경 : 오수처리 · 대기오염 적합률 + 폐기물 · 온실가스
+  var w = sdWasteData(), g = sdGhgData(), wj = sdJudge(ds('오수처리')), aj = sdJudge(ds('대기오염'));
+  var envAlert = (wj.judged - wj.ok) + (aj.judged - aj.ok);
+  var env = card('envdash', 'Environment', '환경 업무 현황', envAlert, [
+    rate('오수처리', 'envwater', wj.ok, wj.judged), rate('대기오염', 'envair', aj.ok, aj.judged)
+  ], [
+    sdChip(w.main.length ? w.year + '년 폐기물' : '폐기물', w.main.length ? nf(w.total, 1) + '톤' : '—', sdGo('envwaste')),
+    sdChip('재활용률', w.main.length ? w.recycleP + '%' : '—', sdGo('envwaste')),
+    sdChip(g.gh.length ? g.year + '년 온실가스' : '온실가스', g.gh.length ? nf(g.total, 1) : '—', sdGo('envghg'))
+  ]);
+  return saf + hea + env;
+}
+/** 고정되는 상단 메뉴 바로 아래 위치를 --mo-top 으로 알려 주고, 붙어 있는 동안 그림자를 줍니다 */
+function monSyncSticky() {
+  var nav = $('bnavOuter'), tools = document.querySelector('#monDash .mo-tools');
+  if (!nav) return;
+  var top = (parseFloat(getComputedStyle(nav).top) || 0) + nav.offsetHeight;
+  document.documentElement.style.setProperty('--mo-top', top + 'px');
+  if (tools) tools.classList.toggle('stuck', Math.abs(tools.getBoundingClientRect().top - top) < 2 && window.scrollY > 0);
+}
+window.addEventListener('resize', monSyncSticky);
+window.addEventListener('scroll', function () { if (state.tab === 'monitor') monSyncSticky(); }, { passive: true });
 
 /* ── 3-2. 매장정보 ── */
 function renderStoreInfo() {
@@ -4769,11 +5600,29 @@ function progressKpi(label, done, total, desc, color) {
  * 실제 엑셀 시트 열: 구분 · 사업장 · 월 · 대상자 · 목표 · 진행 사항 · 결과 · 진행일 · 비고 */
 var HEA_ACT_KINDS = ['모라케어', '오운완', '걷기챌린지'];
 /** 모라케어는 결과가 있으면(공란이 아니면) 진행, 오운완·걷기챌린지는 결과가 있고 "미달성"이 아니어야 진행 */
-function heaActDone(r) {
+function heaActResultDone(r) {
   var res = String((r && r.결과) || '').trim();
   if (!res) return false;
   if (r.구분 !== '모라케어' && res === '미달성') return false;
   return true;
+}
+/** 엑셀 결과로 완료됐거나, 대시보드에서 "완료 처리" 를 누른 건 */
+function heaActDone(r) { return isOverrideComplete(heaActRowKey(r)) || heaActResultDone(r); }
+/** 상태 칸 : 엑셀 결과로 이미 완료면 배지, 아니면 안전점검처럼 "완료 처리" 토글 버튼 */
+function heaActStatusCell(r) {
+  var key = heaActRowKey(r);
+  if (heaActResultDone(r) && !isOverrideComplete(key)) return '<span class="b b-mid" title="엑셀 결과로 완료">완료</span>';
+  return statusToggleCell('보건활동', key, '완료 처리');
+}
+/** 최근 연도 · 월이 위로, 같은 달은 모라케어 → 오운완 → 걷기챌린지 → 사업장 순 */
+function heaActSort(a, b) {
+  var ya = parseInt(a.연도, 10) || 0, yb = parseInt(b.연도, 10) || 0;
+  if (ya !== yb) return yb - ya;
+  var ma = sdMonthNum(a.월), mb = sdMonthNum(b.월);
+  if (ma !== mb) return mb - ma;
+  var ka = HEA_ACT_KINDS.indexOf(a.구분), kb = HEA_ACT_KINDS.indexOf(b.구분);
+  if (ka !== kb) return (ka < 0 ? 99 : ka) - (kb < 0 ? 99 : kb);
+  return String(a.사업장 || '').localeCompare(String(b.사업장 || ''));
 }
 function renderHeaActPage() {
   var ac = ds('보건활동');
@@ -4789,13 +5638,16 @@ function renderHeaActPage() {
   }).join('');
 
   var years = uniq(ac.map(function (r) { return String(r.연도); })).filter(Boolean).sort().reverse();
-  var months = uniq(ac.map(function (r) { return r.월; })).filter(Boolean);
+  // 월 칸이 숫자로 들어오는 엑셀도 있어 문자열로 맞춰 비교하고, 목록은 1월 → 12월 순으로
+  var months = uniq(ac.map(function (r) { return r.월 == null ? '' : String(r.월); })).filter(Boolean)
+    .sort(function (a, b) { return sdMonthNum(a) - sdMonthNum(b); });
   var kinds = uniq(ac.map(function (r) { return r.구분; })).filter(Boolean);
   var sites = uniq(ac.map(function (r) { return r.사업장; })).filter(Boolean);
   state.heaActYear = state.heaActYear || 'all';
   state.heaActMonth = state.heaActMonth || 'all';
   state.heaActKind = state.heaActKind || 'all';
   state.heaActSite = state.heaActSite || 'all';
+  state.heaActStat = state.heaActStat || 'all';
   if (state.heaActYear !== 'all' && years.indexOf(state.heaActYear) === -1) state.heaActYear = 'all';
   if (state.heaActMonth !== 'all' && months.indexOf(state.heaActMonth) === -1) state.heaActMonth = 'all';
   if (state.heaActKind !== 'all' && kinds.indexOf(state.heaActKind) === -1) state.heaActKind = 'all';
@@ -4803,9 +5655,10 @@ function renderHeaActPage() {
 
   var filtered = ac.filter(function (r) {
     return (state.heaActYear === 'all' || String(r.연도) === state.heaActYear) &&
-      (state.heaActMonth === 'all' || r.월 === state.heaActMonth) &&
+      (state.heaActMonth === 'all' || String(r.월) === state.heaActMonth) &&
       (state.heaActKind === 'all' || r.구분 === state.heaActKind) &&
-      (state.heaActSite === 'all' || r.사업장 === state.heaActSite);
+      (state.heaActSite === 'all' || r.사업장 === state.heaActSite) &&
+      (state.heaActStat === 'all' || (state.heaActStat === '완료') === heaActDone(r));
   });
 
   $('heaAct').innerHTML =
@@ -4814,29 +5667,30 @@ function renderHeaActPage() {
       safSel('heaActMonthSel', '전체 월', months, state.heaActMonth) +
       safSel('heaActKindSel', '전체 구분', kinds, state.heaActKind) +
       safSel('heaActSiteSel', '전체 사업장', sites, state.heaActSite, function (s) { return s === '서울사무소' ? '매장' : s; }) +
+      safSel('heaActStatSel', '전체 상태', ['미완료', '완료'], state.heaActStat) +
     '</div>' +
     tbl(
       [{ t: '연도', w: '58px' }, { t: '구분', w: '84px' }, { t: '사업장', w: '90px' }, { t: '월', w: '52px' },
-       { t: '대상자', w: '90px' }, { t: '목표' }, { t: '진행 사항' }, { t: '결과', w: '96px' }, { t: '진행일', w: '84px' }, { t: '비고' }],
-      filtered.slice().sort(function (a, b) {
-        return (String(b.연도) + String(b.월)).localeCompare(String(a.연도) + String(a.월));
-      }).map(function (r) {
-        var done = heaActDone(r);
-        return '<tr><td class="n">' + esc(r.연도) + '</td>' +
+       { t: '대상자', w: '90px' }, { t: '목표' }, { t: '진행 사항' }, { t: '결과', w: '96px' }, { t: '진행일', w: '84px' }, { t: '비고' }, { t: '상태', w: '84px' }],
+      filtered.slice().sort(heaActSort).map(function (r) {
+        var done = heaActResultDone(r);
+        return '<tr data-rowkey="' + esc(heaActRowKey(r)) + '"><td class="n">' + esc(r.연도) + '</td>' +
           '<td><span class="b b-gray">' + esc(r.구분) + '</span></td>' +
           '<td class="dim">' + esc(r.사업장) + '</td><td class="n">' + esc(r.월) + '</td>' +
           '<td class="k">' + esc(r.대상자) + '</td>' +
           '<td class="dim">' + esc(r.목표) + '</td><td class="dim">' + esc(r['진행 사항']) + '</td>' +
           '<td>' + (r.결과 ? '<span class="b ' + (done ? 'b-mid' : 'b-gray') + '">' + esc(r.결과) + '</span>'
                           : '<span class="dim">미진행</span>') + '</td>' +
-          '<td class="n dim">' + esc(r.진행일) + '</td><td class="dim">' + esc(r.비고) + '</td></tr>';
-      }), 960) +
-    '<div class="subttl">' + filtered.length + '건 표시</div>';
+          '<td class="n dim">' + esc(r.진행일) + '</td><td class="dim">' + esc(r.비고) + '</td>' +
+          '<td>' + heaActStatusCell(r) + '</td></tr>';
+      }), 1060) +
+    '<div class="subttl">' + filtered.length + '건 표시 · 최근 월 순</div>';
 
   $('heaActYearSel').onchange = function () { state.heaActYear = this.value; renderHeaActPage(); };
   $('heaActMonthSel').onchange = function () { state.heaActMonth = this.value; renderHeaActPage(); };
   $('heaActKindSel').onchange = function () { state.heaActKind = this.value; renderHeaActPage(); };
   $('heaActSiteSel').onchange = function () { state.heaActSite = this.value; renderHeaActPage(); };
+  $('heaActStatSel').onchange = function () { state.heaActStat = this.value; renderHeaActPage(); };
 }
 
 /* -- 4-2. 건강검진 / 상담 (비밀번호 보호) -- */
@@ -8121,9 +8975,13 @@ function startRealtime() {
 /* ============================================================
  *  8. 이벤트 연결
  * ============================================================ */
-var TAB_LIST = ['month', 'week', 'kpi', 'safdash', 'safinspect', 'safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'accident', 'budget', 'csa', 'qse', 'library', 'approval', 'visit', 'visitlog', 'news'];
+var TAB_LIST = ['month', 'week', 'monitor', 'monact', 'kpi', 'safdash', 'safinspect', 'safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'accident', 'budget', 'csa', 'qse', 'library', 'approval', 'visit', 'visitlog', 'news'];
 /** 상단 "공통" · "안전" 버튼이 묶고 있는 게시판들. 그룹을 누르면 아래 두 번째 줄에 이 목록이 펼쳐집니다. */
 var NAV_GROUPS = {
+  monitor: { label: '모니터링', sub: [
+    { tab: 'monitor', label: '주간/월간' },
+    { tab: 'monact', label: '활동 현황' }
+  ] },
   common: { label: '공통', sub: [
     { tab: 'approval', label: '전자결재' },
     { tab: 'kpi', label: 'KPI' },
@@ -8202,6 +9060,7 @@ function activateTab(t) {
     var el = $('bd-' + tt); if (el) el.hidden = t !== tt;
   });
   if (t === 'news') newsTabOpened();
+  if (t === 'monitor') monSyncSticky();
   if (t === 'visit') openVisitFrame();
   if (t === 'visitlog' && VISIT_LOG_UNLOCKED) loadVisitLog();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -8366,6 +9225,27 @@ function bind() {
       return;
     }
 
+    // 연간 업무 계획 창 : 보기 · 달 이동 · 구분 · 상태 · 월 선택
+    var plv = e.target.closest('[data-plview]');
+    if (plv) { state.planView = plv.dataset.plview; renderPlan(); return; }
+    var plmv = e.target.closest('[data-plmv]');
+    if (plmv) { state.planMonth = (state.planMonth + (+plmv.dataset.plmv) + 12) % 12; renderPlan(); return; }
+    var plg = e.target.closest('[data-plg]');
+    if (plg) { state.planG = plg.dataset.plg; renderPlan(); return; }
+    var plst = e.target.closest('[data-plst]');
+    if (plst) { state.planSt = plst.dataset.plst; renderPlan(); return; }
+    var plm = e.target.closest('[data-plm]');
+    if (plm) { state.planMonth = +plm.dataset.plm; state.planView = 'list'; renderPlan(); $('planBody').scrollIntoView(); return; }
+
+    // 모니터링 : 기간 · 게시판 · 완료여부 · 더 보기
+    var mop = e.target.closest('[data-moperiod]');
+    if (mop) { state.monPeriod = mop.dataset.moperiod; state.monMore = false; renderMonitorPage(); return; }
+    var mos = e.target.closest('[data-mosrc]');
+    if (mos) { state.monSrc = state.monSrc === mos.dataset.mosrc ? 'all' : mos.dataset.mosrc; state.monMore = false; renderMonitorPage(); return; }
+    var mov = e.target.closest('[data-moview]');
+    if (mov) { state.monView = mov.dataset.moview; state.monMore = false; renderMonitorPage(); return; }
+    if (e.target.closest('[data-momore]')) { state.monMore = true; renderMonitorPage(); return; }
+
     var sdg = e.target.closest('[data-sdgo]');
     if (sdg) { goBoard(sdg.dataset.sdgo, sdg.dataset); return; }
 
@@ -8455,6 +9335,7 @@ function bind() {
     if (e.key === 'Escape' && $('scrim').classList.contains('on')) closeSheet();
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && $('scrim').classList.contains('on')) submitSheet();
     if (e.key === 'Escape' && $('storeScrim').classList.contains('on')) $('storeScrim').classList.remove('on');
+    if (e.key === 'Escape' && $('planScrim').classList.contains('on')) closePlan();
     if (e.key === 'Escape' && $('popupEditor').classList.contains('on')) closePopupEditor();
     if (e.key === 'Escape' && $('aiKeyEditor').classList.contains('on')) closeAiKeyEditor();
     if (e.key === 'Escape' && $('dayPopup').classList.contains('on')) closeDayPopup();
@@ -8523,6 +9404,9 @@ function bind() {
   $('btnCancel').onclick = closeSheet;
   $('btnSave').onclick = submitSheet;
   bindOverlayClose($('scrim'), closeSheet);
+  $('btnPlan').onclick = function () { openPlan(); };
+  $('planClose').onclick = closePlan;
+  bindOverlayClose($('planScrim'), closePlan);
   $('storeShClose').onclick = function () { $('storeScrim').classList.remove('on'); };
   bindOverlayClose($('storeScrim'), function () { $('storeScrim').classList.remove('on'); });
   // 어두운 배경을 클릭했을 때만 닫습니다(이미지를 드래그해도 닫히지 않도록).
@@ -8664,7 +9548,7 @@ function bindLogin() {
 /* ══════════ HYBE 히어로 : 열려 있는 게시판에 맞춰 큰 영문 제목을 바꿉니다 ══════════ */
 (function () {
   var NAMES = {
-    month: ['Schedule', '월간 스케줄'], week: ['Weekly', '주간업무'],
+    month: ['Schedule', '월간 스케줄'], week: ['Weekly', '주간업무'], monitor: ['Monitoring', '주간/월간'], monact: ['Activity Status', '활동 현황'],
     kpi: ['KPI', 'KPI'], accident: ['Accident', '안전사고'], budget: ['Budget', '예산'],
     library: ['Library', '자료실'], approval: ['E-Approval', '전자결재'], news: ['Daily News', '데일리뉴스'],
     visit: ['Visitor Pledge', '방문 서약서'], visitlog: ['Visitor Log', '방문 기록대장'],
@@ -8679,7 +9563,7 @@ function bindLogin() {
   };
   var GROUP = {
     safdash: '안전', safinspect: '안전', safrisk: '안전', safmeet: '안전', edu: '안전', safdevice: '안전',
-    headash: '보건', envdash: '환경',
+    headash: '보건', envdash: '환경', monitor: '모니터링', monact: '모니터링',
     heaact: '보건', heaexam: '보건', heaenv: '보건', heaedu: '보건',
     envwaste: '환경', envghg: '환경', envwater: '환경', envair: '환경',
     kpi: '공통', accident: '공통', budget: '공통', library: '공통', approval: '공통', news: '공통', visit: '공통', visitlog: '공통',
