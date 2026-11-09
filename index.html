@@ -235,6 +235,40 @@ window.AI_CONFIG = {
   .bud-detail-head{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:12px}
   .bud-detail-head .dim{font-weight:400;color:var(--ink3);margin-left:6px}
   .bud-detail table.dt{min-width:0}
+  .bud-tile{padding:18px 20px}
+  .bud-tile-g{display:inline-flex;align-items:center;gap:7px}
+  .bud-dot{display:inline-block;width:8px;height:8px;border-radius:50%}
+  .bud-tile-pct.over,.bud-tile-foot .over{color:var(--safe)}
+  .bud-tile.total .bud-tile-pct.over,.bud-tile.total .bud-tile-foot .over{color:#fff}
+  .bud-tile-v{margin:10px 0 12px}
+  .bud-tile-v em{font-size:12px}
+  .bud-bar{height:4px;background:var(--grid);border-radius:4px;overflow:hidden}
+  .bud-bar i{display:block;height:100%;border-radius:4px}
+  .bud-tile.total .bud-bar{background:rgba(255,255,255,.2)}
+  .bud-tile-foot{margin-top:10px;font-size:11px}
+  .bud-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .bud-src{font-size:11.5px;color:var(--ink3)}
+  .bud-src b{color:var(--ink);font-weight:700}
+  .bud-memo{display:block;font-size:11px;font-weight:400;color:var(--ink3);margin-top:2px}
+  table.dt tr.bud-team-row{cursor:pointer}
+  table.dt tr.bud-team-row.on td{background:var(--panel2)}
+  .bud-cell b{font-weight:700;font-variant-numeric:tabular-nums}
+  .bud-cell em{font-style:normal;color:var(--ink3);font-variant-numeric:tabular-nums}
+  .bud-cell span{display:block;font-size:10.5px;color:var(--ink3)}
+  .bud-cell span.over{color:var(--safe);font-weight:700}
+  .bud-mon{display:flex;align-items:stretch;gap:8px;height:190px;padding-top:6px}
+  .bud-mon .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+  .bud-mon .bw{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center}
+  .bud-mon .c{width:100%;max-width:40px;min-height:2px;background:var(--ink);box-sizing:border-box}
+  .bud-mon .col.fc .c{background:var(--plan)}
+  .bud-mon .col.pl .c{background:transparent;border:1.5px dashed var(--ink3)}
+  .bud-mon .col.neg .c{background:var(--safe)}
+  .bud-mon .n{font-size:10.5px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink2)}
+  .bud-mon .m{font-size:11px;color:var(--ink3)}
+  .bud-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink3);margin-top:12px}
+  .bud-legend i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px;background:var(--ink)}
+  .bud-legend i.fc{background:var(--plan)} .bud-legend i.pl{background:transparent;border:1.5px dashed var(--ink3);box-sizing:border-box}
+  @media (max-width:640px){ .bud-mon{gap:4px} .bud-mon .n{display:none} }
 
   /* ══════════ 표 ══════════ */
   .tw{overflow-x:auto;margin:0 -4px}
@@ -272,6 +306,8 @@ window.AI_CONFIG = {
   .b-lo{background:var(--panel2);border-color:var(--panel2);color:var(--ink2)}
   .b-ok{background:var(--ink);border-color:var(--ink);color:#fff}
   .b-gray{background:#fff;color:var(--ink3);border-color:var(--line)}
+  .b-blue{background:#EAF1FB;color:#1F5FAE;border-color:#C9DBF3}
+  .b-green{background:#EAF5EE;color:#2E7D46;border-color:#C6E3D0}
   button.b{-webkit-appearance:none;appearance:none;font:inherit;cursor:pointer;transition:filter .12s}
   button.b:hover{filter:brightness(.92)}
 
@@ -605,6 +641,8 @@ window.AI_CONFIG = {
   .ap-sigbox h3{margin:0 0 6px;font-size:16px;font-weight:700;letter-spacing:-.03em}
   .ap-sigbox h3 i{font-style:normal;font-weight:400;font-size:13px;color:var(--ink3);margin-left:4px}
   .ap-sigbox p{margin:0 0 12px;font-size:12px;color:var(--ink3);line-height:1.6}
+  /* 삭제 · 수정 비밀번호 힌트 */
+  .ap-sigbox p.del-hint{margin:8px 0 12px;font-size:13px;font-weight:800;color:#6B6B6B;letter-spacing:-.01em}
   .ap-sigpad{display:block;width:100%;height:180px;border:1px dashed #999;border-radius:8px;background:#FAFAFA;touch-action:none;cursor:crosshair}
   .ap-sigbtns{display:flex;gap:8px;margin-top:12px}
   @media (max-width:720px){ .ap-top{grid-template-columns:1fr} }
@@ -1384,6 +1422,8 @@ window.AI_CONFIG = {
   .dz-it.img{padding:0;width:84px;height:64px;overflow:hidden}
   .dz-it.img img{width:100%;height:100%;object-fit:cover;display:block}
   .dz-it button{all:unset;position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;font-size:10px;text-align:center;line-height:18px;cursor:pointer}
+  .sm-pdf{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;font-size:11.5px;font-weight:700;flex:none}
+  .sm-pdf svg{width:13px;height:13px}
   /* 업무 수행 평가 (현장 플랫폼 연동) — 플랫폼 관리자 모드와 같은 모양 */
   .scot{width:100%;min-width:1080px;border-collapse:collapse;font-size:12.5px;background:transparent}
   .scot th{font-size:10.5px;font-weight:600;color:var(--ink3);padding:8px 4px;border-bottom:1px solid var(--ink);text-align:center;line-height:1.35;vertical-align:bottom}
@@ -1470,6 +1510,15 @@ window.AI_CONFIG = {
   .cr-sig .k{font-size:11.5px;font-weight:700;color:var(--ink2);white-space:nowrap}
   .cr-sig img{height:44px;max-width:120px;object-fit:contain;flex:1}
   .cr-sig .none{flex:1;font-size:11.5px;color:var(--ink3)}
+  .cr-sig .f label,.cr-appr .f label{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+  .cr-sig .f input[type=date],.cr-appr .f input[type=date]{width:100%}
+  .cr-sig.off > span:first-child{opacity:.25;filter:grayscale(1)}
+  .cr-flow{display:block;font-size:11.5px;color:var(--ink3);line-height:1.6}
+  .cr-doc .bar .cr-st{align-self:center;font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;background:#fff;border:1px solid #ddd}
+  .cr-sig .f label input[type=checkbox],.cr-appr .f label input[type=checkbox]{width:16px;height:16px;flex:none;margin:0;accent-color:#2E9BD6}
+  .cr-sig .f label{justify-content:flex-start;flex-wrap:wrap}
+  .cr-appr{display:flex;align-items:center;gap:14px;margin:0 0 12px;padding:10px 12px;border:1px solid #eee;border-radius:12px}
+  .cr-appr .f{flex:1}
   .cr-m .bd2{font-size:10.5px;color:#C0392B;font-weight:700}
   .cr-m .sg{font-size:10px;color:var(--ink3)}
   .cr-bg{position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.5);overflow-y:auto;padding:28px 12px;overscroll-behavior:contain}
@@ -1604,6 +1653,113 @@ window.AI_CONFIG = {
   .mo-more{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;margin-top:10px;padding:11px;border-radius:var(--pill);
     background:#fff;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink2)}
   .mo-more:hover{color:#000;box-shadow:inset 0 0 0 1px #000}
+  /* ── AI 어드바이저 (ai-) ── */
+  .ai-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .ai-card{display:flex;flex-direction:column;gap:10px;padding:28px 28px 24px;background:#fff;border-radius:var(--r-xl);text-decoration:none;color:var(--ink);
+    box-shadow:inset 0 0 0 1px #e6e6e6;transition:box-shadow .15s,transform .15s}
+  .ai-card:hover{box-shadow:inset 0 0 0 2px #000;transform:translateY(-2px)}
+  .ai-ic{font-size:30px;line-height:1}
+  .ai-t{font-size:20px;font-weight:800;letter-spacing:-.03em}
+  .ai-d{font-size:13.5px;line-height:1.7;color:var(--ink2)}
+  .ai-ex{font-size:12px;color:var(--ink3);background:#f5f5f5;border-radius:10px;padding:8px 12px}
+  .ai-go{margin-top:6px;align-self:flex-start;font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:999px;background:#000;color:#fff}
+  .ai-note{margin:12px 2px 0;font-size:11.5px;color:var(--ink3)}
+  @media (max-width:760px){ .ai-grid{grid-template-columns:1fr} }
+  /* ── 자료실 (lb-) : 구분 타일 · 목록 · 본문 보기 ── */
+  .lb-cats{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+  .lb-cat{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border-radius:var(--r-l);padding:14px 16px;display:flex;flex-direction:column;gap:6px;transition:box-shadow .15s;box-shadow:inset 0 0 0 1px #e6e6e6}
+  .lb-cat:hover{box-shadow:inset 0 0 0 1px #000}
+  .lb-cat.on{background:#000;color:#fff}
+  .lb-cat .k{font-size:12px;font-weight:600;color:inherit;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lb-cat b{font-family:var(--fd);font-size:24px;font-weight:800;line-height:1}
+  .lb-idx{font-size:11.5px;color:var(--ink3);margin:0 0 8px}
+  .lb-row{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:flex-start;gap:12px;width:100%;padding:12px 10px;border-radius:12px;border-bottom:1px solid #eee}
+  .lb-row:hover{background:var(--hover)}
+  .lb-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+  .lb-t{font-size:13.5px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .lb-m{font-size:11.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lb-n{font-size:12px;color:var(--ink2)}
+  .lb-snip{font-size:12px;color:var(--ink2);background:#f6f6f6;border-radius:8px;padding:6px 10px;margin-top:4px;line-height:1.6}
+  .lb-snip .n{margin-left:8px;font-size:10.5px;font-weight:700;color:var(--ink3);white-space:nowrap}
+  .lb-row mark,.lb-text mark{background:#FFE58A;color:inherit;border-radius:3px;padding:0 1px}
+  .lb-text mark.cur{background:#F2A900;color:#000;box-shadow:0 0 0 2px #F2A900}
+  .lb-go{color:var(--ink3);align-self:center}
+  .lb-ico{flex:none;width:40px;height:46px;border-radius:8px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;box-sizing:border-box;
+    font-family:var(--fd);font-size:10px;font-weight:800;letter-spacing:.04em;color:#fff;background:#8a8a8a}
+  .lb-xls{background:#1E7B45} .lb-doc{background:#2B5797} .lb-ppt{background:#C24A28} .lb-pdf{background:#B3261E} .lb-hwp{background:#2A8FBD} .lb-img{background:#7A5BB5}
+  .lb-hint{margin:10px 0 0;font-size:11.5px;color:var(--ink3);line-height:1.6}
+  .sheet.lb-sheet{width:min(1000px,100%);height:min(92vh,980px);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;padding:0}
+  .lb-hd{display:flex;align-items:flex-start;gap:12px;padding:22px 24px 12px}
+  .lb-hd-l{flex:1;min-width:0}
+  .lb-hd h3{margin:6px 0 4px;font-size:19px;letter-spacing:-.03em}
+  .lb-hd p{margin:0;font-size:11.5px;color:var(--ink3)}
+  .lb-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:0 24px 12px;border-bottom:1px solid #eee}
+  .lb-bar select{width:auto;padding:6px 10px;font-size:12px}
+  .lb-bar a.reset{text-decoration:none;display:inline-block}
+  .lb-find{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+  .lb-find button{padding:3px 9px;font-size:12px}
+  .lb-body{flex:1;overflow-y:auto;padding:18px 24px 28px;overscroll-behavior:contain}
+  .lb-text p{margin:0 0 4px;font-size:13px;line-height:1.75;white-space:pre-wrap;word-break:break-word}
+  .lb-text h4{margin:18px 0 8px;font-size:12px;font-weight:800;color:var(--ink3);letter-spacing:.02em;padding-bottom:4px;border-bottom:1px solid #eee}
+  .lb-text h4:first-child{margin-top:0}
+  .lb-frame{width:100%;height:100%;min-height:70vh;border:0;border-radius:8px;background:#f4f4f4}
+  .lb-pic{max-width:100%;display:block;margin:0 auto;border-radius:8px}
+  @media (max-width:900px){ .lb-cats{grid-template-columns:repeat(4,minmax(0,1fr))} }
+  @media (max-width:520px){ .lb-cats{grid-template-columns:repeat(2,minmax(0,1fr))} .lb-hd,.lb-bar,.lb-body{padding-left:16px;padding-right:16px} }
+  /* ── 내 메모장 (월간 스케줄 "메모" → 오른쪽 서랍) (memo-) ── */
+  .memo-btn{display:inline-flex;align-items:center;gap:6px}
+  .memo-btn span{font-size:14px;line-height:1}
+  .memo-btn b{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#000;color:#fff;font-size:10.5px;font-weight:700;line-height:18px;text-align:center;font-family:var(--fd)}
+  .memo-dim{position:fixed;inset:0;z-index:7000;background:rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s}
+  .memo-dim.on{opacity:1;pointer-events:auto}
+  .memo-drawer{position:fixed;top:0;right:0;bottom:0;z-index:7001;width:min(400px,100vw);background:#fff;box-shadow:-12px 0 40px rgba(0,0,0,.12);
+    display:flex;flex-direction:column;transform:translateX(102%);transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+  .memo-drawer.on{transform:none}
+  .memo-hd{display:flex;align-items:center;gap:8px;padding:20px 20px 12px}
+  .memo-hd h3{margin:0;font-size:18px;font-weight:800;letter-spacing:-.03em;flex:1}
+  .memo-hd .sub{font-size:11px;color:var(--ink3);font-weight:500;margin-left:6px}
+  .memo-x{all:unset;cursor:pointer;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--ink3);font-size:15px}
+  .memo-x:hover{background:#f2f2f2;color:#000}
+  .memo-tools{display:flex;gap:8px;padding:0 20px 12px}
+  .memo-tools input{flex:1;min-width:0;border:1px solid #e6e6e6;border-radius:999px;padding:9px 14px;font:inherit;font-size:13px;background:#f7f7f7;outline:none}
+  .memo-tools input:focus{background:#fff;border-color:#000}
+  .memo-new{all:unset;cursor:pointer;padding:0 16px;border-radius:999px;background:#000;color:#fff;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+  .memo-list{flex:1;overflow-y:auto;padding:4px 12px 20px}
+  .memo-add{display:flex;align-items:center;gap:8px;margin:0 20px 10px;padding:0 6px 0 14px;border:1.5px solid #000;border-radius:14px}
+  .memo-add span{font-size:16px;font-weight:700}
+  .memo-drawer .memo-add input{flex:1;min-width:0;border:0 !important;box-shadow:none !important;background:transparent !important;padding:12px 4px !important;font:inherit;font-size:14px;outline:none}
+  .memo-sec{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:6px;width:100%;padding:12px 10px 6px;font-size:11.5px;font-weight:700;color:var(--ink3);letter-spacing:.02em}
+  .memo-sec b{color:var(--ink);font-family:var(--fd)}
+  .memo-sec.fold{cursor:pointer;margin-top:10px;border-top:1px solid #eee;padding-top:14px}
+  .memo-sec.fold span{margin-left:auto;font-weight:600;font-size:11px}
+  .memo-it{display:flex;align-items:flex-start;gap:10px;padding:10px 6px 10px 10px;border-radius:12px;margin-bottom:2px}
+  .memo-it:hover{background:#f5f5f5}
+  .memo-ck{all:unset;cursor:pointer;flex:none;width:18px;height:18px;margin-top:1px;border:1.5px solid #c9c9c9;border-radius:50%;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
+  .memo-ck:hover{border-color:#000}
+  .memo-body{all:unset;cursor:pointer;flex:1;min-width:0;display:block}
+  .memo-it .t{display:block;font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .memo-it .p{display:block;font-size:12px;color:var(--ink3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .memo-it .d{display:block;font-size:10.5px;color:#b5b5b5;margin-top:4px;font-family:var(--fd)}
+  .memo-done{all:unset;cursor:pointer;flex:none;align-self:center;font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:999px;border:1px solid #000;color:#000;transition:background .12s,color .12s}
+  .memo-done:hover{background:#000;color:#fff}
+  /* 완료 : 체크 · 취소선 · 흐리게 */
+  .memo-it.done .memo-ck{background:#000;border-color:#000}
+  .memo-it.done .memo-ck::after{content:'';width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+  .memo-it.done .t{color:#9b9b9b;text-decoration:line-through;font-weight:600}
+  .memo-it.done .p{color:#c2c2c2}
+  .memo-it.done .memo-done{border-color:#d0d0d0;color:var(--ink3)}
+  .memo-empty{padding:40px 20px;text-align:center;font-size:12.5px;color:var(--ink3);line-height:1.7}
+  .memo-ed{flex:1;display:flex;flex-direction:column;min-height:0;padding:0 20px 16px}
+  .memo-drawer .memo-ed textarea{flex:1;width:100%;box-sizing:border-box;border:0 !important;border-radius:0 !important;box-shadow:none !important;resize:none;outline:none;
+    font:inherit;font-size:14px;line-height:1.75;color:var(--ink);padding:6px 2px !important;background:transparent !important;min-height:0}
+  .memo-drawer .memo-tools input{border:1px solid #e6e6e6 !important;border-radius:999px !important;padding:9px 14px !important;background:#f7f7f7 !important;box-shadow:none !important}
+  .memo-drawer .memo-tools input:focus{background:#fff !important;border-color:#000 !important}
+  .memo-ed textarea::placeholder{color:#c4c4c4}
+  .memo-ft{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid #f0f0f0}
+  .memo-ft .st{flex:1;font-size:11px;color:var(--ink3)}
+  .memo-ft button{all:unset;cursor:pointer;font-size:12px;font-weight:600;padding:7px 12px;border-radius:999px;color:var(--ink2)}
+  .memo-ft button:hover{background:#f2f2f2;color:#000}
+  .memo-ft button.del:hover{color:#C0392B}
   /* ── 연간 업무 계획 (월간 스케줄 아이콘 → 창) (pl-) ── */
   .plan-btn{display:inline-flex;align-items:center;gap:7px}
   .plan-btn svg{width:15px;height:15px;flex:none}
@@ -1785,6 +1941,7 @@ window.AI_CONFIG = {
           <div class="calnav">
             <button class="reset plan-btn" id="btnPlan" title="연간 업무 계획 보기">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="11.5" rx="2"/><path d="M1.75 6.25h12.5M5 1.25v3M11 1.25v3M4.5 9h3M4.5 11.5h5.5"/></svg>연간 업무 계획</button>
+            <button class="reset memo-btn" id="btnMemo" title="내 메모장 (이 PC에만 저장)"><span aria-hidden="true">🗒️</span>메모<b id="memoCnt" hidden></b></button>
             <button class="reset" id="mToday">오늘</button>
             <button class="calmove" id="calPrev">‹ <b id="calPrevL"></b></button>
             <button class="calmove" id="calNext"><b id="calNextL"></b> ›</button>
@@ -2070,10 +2227,19 @@ window.AI_CONFIG = {
 
   <!-- ══════════ 예산 ══════════ -->
   <section class="bpanel" id="bd-budget" hidden>
+    <div class="bud-top"><span class="bud-src" id="budSrc"></span><div class="filterbar" id="budTeam"></div></div>
     <div class="kpis k2" id="budKpi"></div>
     <div class="card">
-      <header><h2>구분별 집행 현황</h2><span class="note">눌러서 상세 항목 펼쳐보기</span></header>
+      <header><h2>항목별 현황</h2><span class="note">안전 · 보건 · 환경 · 기타 · 눌러서 상세 항목 펼쳐보기</span></header>
       <div id="budGroup"></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <header><h2>팀별 · 항목별 현황</h2><span class="note">FY26 실적 / le9 목표 · 백만원 · 팀을 누르면 그 팀만 보기</span></header>
+      <div id="budMatrix"></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <header><h2>월별 집행 추이</h2><span class="note" id="budMonNote"></span></header>
+      <div id="budMonth"></div>
     </div>
     <div class="card" style="margin-top:12px">
       <header><h2>상세 항목</h2><div class="filterbar" id="budFilter"></div></header>
@@ -2150,7 +2316,11 @@ window.AI_CONFIG = {
     </div>
     <div class="card" style="margin-top:12px">
       <header><h2>개인별 평가 점수</h2><span class="note" id="smScoreNote"></span></header>
-      <div class="filterbar" id="smSort" style="margin-bottom:10px"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div class="filterbar" id="smSort" style="margin:0;flex:1"></div>
+        <button type="button" class="reset sm-pdf" id="btnSmPdf" title="지금 보이는 구분의 평가 점수표를 PDF로 내려받기">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 2v8M4.5 6.8 8 10.3l3.5-3.5M2.5 13.5h11"/></svg>PDF</button>
+      </div>
       <div class="tw"><table class="scot" id="smScore"></table></div>
       <div class="scolgd">
         <span><b style="background:#000"></b>양호 10</span><span><b style="background:#DADADA"></b>보통 7</span><span><b style="background:#FDECEA"></b>미흡 4</span>
@@ -2172,18 +2342,54 @@ window.AI_CONFIG = {
   </section>
 
   <!-- ══════════ 자료실 · 안전보건 WEB SITE ══════════ -->
+  <!-- AI 어드바이저 : 안전보건공단 AI 서비스 2가지 (새 창으로 연결) -->
+  <section class="bpanel" id="bd-aiadv" hidden>
+    <div class="ai-grid">
+      <a class="ai-card" href="https://ai-assist.kosha.or.kr/law/" target="_blank" rel="noopener">
+        <span class="ai-ic" aria-hidden="true">⚖️</span>
+        <span class="ai-t">AI 어드바이저</span>
+        <span class="ai-d">산업안전보건 법령 · 기준을 질문하면 AI가 근거 조항과 함께 답해 줍니다.</span>
+        <span class="ai-ex">예) "지게차 운전자 자격 기준은?" · "밀폐공간 작업 전 확인 사항"</span>
+        <span class="ai-go">바로가기 ↗</span>
+      </a>
+      <a class="ai-card" href="https://ai-assist.kosha.or.kr/mfg/" target="_blank" rel="noopener">
+        <span class="ai-ic" aria-hidden="true">📷</span>
+        <span class="ai-t">AI 위험요인 사진 업로드</span>
+        <span class="ai-d">작업 현장 사진을 올리면 AI가 위험요인을 찾아 개선 대책을 알려 줍니다.</span>
+        <span class="ai-ex">순회점검 · 위험성평가 때 현장 사진으로 바로 확인</span>
+        <span class="ai-go">바로가기 ↗</span>
+      </a>
+    </div>
+    <p class="ai-note">안전보건공단(KOSHA) AI 서비스로 연결되며, 새 창에서 열립니다.</p>
+  </section>
+
+  <!-- 자료실 : 구분(안전 · 보건 · 환경 · 기획 · 공통 · 기타) · 본문 보기 · 본문 검색 (schema_library.sql 다시 실행 필요) -->
   <section class="bpanel" id="bd-library" hidden>
-    <div class="lib-grid">
+    <div class="lb-cats" id="libCats"></div>
+    <div class="card" style="margin-top:12px">
+      <header><h2>자료 목록</h2><span class="note" id="libCount"></span></header>
+      <div class="rg-tools">
+        <label class="rg-search" for="libQ">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4.2-4.2"></path></svg>
+          <input type="search" id="libQ" placeholder="제목 · 파일명 · 본문 내용 검색 (예: 지게차, 협력업체, 공문)" autocomplete="off">
+        </label>
+        <select id="libSort" aria-label="정렬"><option value="recent">최근 등록순</option><option value="date">문서 일자순</option><option value="title">제목순</option></select>
+      </div>
+      <div id="libIdx" class="lb-idx" hidden></div>
+      <div id="libList"></div>
+    </div>
+    <div class="g-half" style="margin-top:12px;align-items:start">
       <div class="card">
-        <header><h2>자료실</h2><span class="note">문서 업로드 · 열람</span></header>
+        <header><h2>자료 등록</h2><span class="note">여러 파일 한 번에 · 본문 자동 색인</span></header>
         <div class="form" style="grid-template-columns:1fr 1fr">
-          <div class="f wide"><label>제목</label><input type="text" id="libTitle" placeholder="예) 2026년 위험성평가 지침"></div>
-          <div class="f wide"><label>파일 (선택)</label><input type="file" id="libFile"></div>
+          <div class="f"><label>구분</label><select id="libCat"></select></div>
+          <div class="f"><label>문서 일자 (선택)</label><input type="date" id="libDate"></div>
+          <div class="f wide"><label>제목 <i style="font-style:normal;color:var(--ink3);font-weight:400">· 비우면 파일 이름</i></label><input type="text" id="libTitle" placeholder="예) 2026년 위험성평가 지침"></div>
+          <div class="f wide"><label>설명 (선택)</label><input type="text" id="libNote" placeholder="예) 고용노동부 성남지청 공문 · 회신 기한 12/10"></div>
+          <div class="f wide"><label>파일</label><input type="file" id="libFile" multiple></div>
         </div>
-        <div class="secthead" style="margin-top:14px">
-          <button class="reset go" id="btnLibUpload">업로드</button>
-        </div>
-        <div id="libList" style="margin-top:16px"></div>
+        <p class="lb-hint">워드(docx) · 엑셀 · 파워포인트(pptx) · PDF · 한글(hwpx) · 텍스트는 본문을 읽어 검색되고, 그 밖의 파일(hwp · 그림 등)은 제목 · 파일명으로 검색됩니다.</p>
+        <div class="secthead" style="margin-top:14px"><button class="reset go" id="btnLibUpload">등록</button></div>
       </div>
       <div class="card">
         <header><h2>안전 · 보건 관련 사이트</h2><span class="note">WEB SITE</span></header>
@@ -2191,6 +2397,25 @@ window.AI_CONFIG = {
       </div>
     </div>
   </section>
+
+  <!-- 자료 보기 (본문 · 원본) -->
+  <div class="scrim" id="libScrim">
+    <div class="sheet lb-sheet" role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+      <div class="lb-hd">
+        <div class="lb-hd-l"><span class="b b-gray" id="lbCat"></span><h3 id="lbTitle"></h3><p id="lbMeta"></p></div>
+        <button class="reset" id="lbClose" aria-label="닫기">닫기</button>
+      </div>
+      <div class="lb-bar">
+        <div class="mo-seg" id="lbTabs"><button type="button" data-lbtab="text" aria-pressed="true">본문</button><button type="button" data-lbtab="orig" aria-pressed="false">원본 미리보기</button></div>
+        <span class="lb-find" id="lbFind"></span>
+        <span style="flex:1"></span>
+        <select id="lbCatSel" aria-label="구분 바꾸기" title="구분 바꾸기"></select>
+        <a class="reset" id="lbOpen" target="_blank" rel="noopener">원본 열기 ↗</a>
+        <button class="reset" id="lbDel">삭제</button>
+      </div>
+      <div class="lb-body" id="lbBody"></div>
+    </div>
+  </div>
 
   <!-- ══════════ 사규 (매뉴얼 · 규정 · 절차서 · 지침서) ══════════
        자료는 sagyu_data.js 에서 읽습니다. "매뉴얼 사규" 폴더의 문서를 바꾼 뒤 사규_목록_갱신.ps1 을 실행하세요. -->
@@ -2273,30 +2498,37 @@ window.AI_CONFIG = {
     </div>
   </section>
 
-  <!-- ══════════ 안전보건의 날 (schema_safetyday.sql 실행 필요) ══════════ -->
+  <!-- ══════════ 안전보건의 날 ══════════
+       안전보건 회보 · 이벤트 글은 현장근로자용 플랫폼 Supabase 의 safety_day_board 표에 저장되어
+       현장 플랫폼 [안전보건의 날] 메뉴에 그대로 보입니다. (플랫폼 폴더의 schema_safetyday.sql 실행 필요)
+       예전 '활동 기록'(이 대시보드 Supabase 의 safety_day_posts)은 목록에 '내부 기록'으로 함께 보입니다. -->
   <section class="bpanel" id="bd-safeday" hidden>
     <div class="card">
       <header><h2>월별 실시 현황</h2><div class="filterbar" id="sdyYears"></div></header>
+      <div class="filterbar" id="sdyBoards" style="margin:-4px 0 12px"></div>
       <div id="sdyMonths"></div>
     </div>
     <div class="g-half" style="margin-top:12px">
       <div class="card">
-        <header><h2>활동 등록</h2><span class="note">사진 여러 장 첨부 가능</span></header>
+        <header><h2>게시글 등록</h2><span class="note">현장 플랫폼 [안전보건의 날]에 바로 게시됩니다</span></header>
         <div class="form" style="grid-template-columns:1fr 1fr">
-          <div class="f"><label>실시일</label><input type="date" id="sdyDate"></div>
-          <div class="f"><label>사업장</label>
+          <div class="f"><label>게시판</label>
+            <select id="sdyBoard"><option value="news">안전보건 회보</option><option value="event">이벤트</option></select></div>
+          <div class="f" data-sdyfor="news"><label>발행 월</label><input type="month" id="sdyYm"></div>
+          <div class="f" data-sdyfor="event" hidden><label>실시일</label><input type="date" id="sdyDate"></div>
+          <div class="f" data-sdyfor="event" hidden><label>사업장</label>
             <select id="sdySite"><option>전사</option><option>팩토리움</option><option>서울사무소</option><option>매장</option></select></div>
-          <div class="f wide"><label>제목</label><input type="text" id="sdyTitle" placeholder="예) 11월 안전보건의 날 - 동절기 화재예방 캠페인"></div>
-          <div class="f"><label>참석 인원 (선택)</label><input type="number" id="sdyPeople" min="0" placeholder="명"></div>
-          <div class="f"><label>사진 (선택)</label><input type="file" id="sdyPhotos" accept="image/*" multiple></div>
-          <div class="f wide"><label>주요 활동 내용</label><textarea id="sdyContent" rows="5" placeholder="캠페인 · 교육 · 점검 · 시상 등 주요 활동"></textarea></div>
+          <div class="f" data-sdyfor="event" hidden><label>참석 인원 (선택)</label><input type="number" id="sdyPeople" min="0" placeholder="명"></div>
+          <div class="f wide"><label>제목</label><input type="text" id="sdyTitle" placeholder="예) 2026년 11월 안전보건 회보 - 동절기 화재예방"></div>
+          <div class="f wide"><label>첨부 (사진 · PDF, 여러 개)</label><input type="file" id="sdyPhotos" accept="image/*,application/pdf,.pdf" multiple></div>
+          <div class="f wide"><label>내용 (선택)</label><textarea id="sdyContent" rows="5" placeholder="회보 주요 내용 · 이벤트 안내(기간 · 참여 방법 · 경품) 등"></textarea></div>
         </div>
         <div class="secthead" style="margin-top:14px">
           <button class="reset go" id="btnSdySave">등록</button>
         </div>
       </div>
       <div class="card">
-        <header><h2>활동 기록</h2><span class="note" id="sdyCount"></span></header>
+        <header><h2>게시 기록</h2><span class="note" id="sdyCount"></span></header>
         <div id="sdyList"></div>
       </div>
     </div>
@@ -3381,8 +3613,45 @@ function saveRows(key, rows) {
   });
 }
 
-/** 월간스케쥴 일정 삭제 비밀번호 */
-var SCHEDULE_DELETE_PW = '0000';
+/* ── 삭제 비밀번호 (모든 게시판 공통) ──
+ *  삭제 버튼을 누르면 이 비밀번호를 묻습니다. 바꾸려면 아래 두 줄만 고치면 됩니다. */
+var DEL_PIN = '1004';
+var DEL_HINT = '천사';
+var CR_CEO_PIN = '8587';   // 대표님 라운딩 "대표이사 결재 · 반려" 비밀번호 (힌트 없음)
+/** 삭제 · 수정 비밀번호 확인 창. 맞으면 true, 취소하면 false 로 끝나는 Promise
+ *  mode : 'edit' 이면 "수정 비밀번호" 로 묻습니다 (비밀번호 · 힌트는 같음)
+ *         'ceo'  이면 "대표이사 결재 비밀번호"(CR_CEO_PIN) 로 묻습니다 (힌트 없음) */
+function delPin(what, mode) {
+  var ceo = mode === 'ceo';
+  var verb = ceo ? '대표이사 결재' : mode === 'edit' ? '수정' : '삭제';
+  var PIN = ceo ? CR_CEO_PIN : DEL_PIN;
+  return new Promise(function (resolve) {
+    var bg = document.createElement('div');
+    bg.className = 'ap-sigbg';
+    bg.innerHTML = '<div class="ap-sigbox" role="dialog" aria-label="' + verb + ' 비밀번호" style="max-width:360px">' +
+      '<h3>' + verb + ' 비밀번호</h3><p>' + esc(what || '이 항목을 ' + verb + '합니다.') + '<br>' + (ceo ? '진행하려면' : verb + '하려면') + ' 비밀번호를 입력해 주세요.</p>' +
+      '<input type="password" class="ap-pinin" autocomplete="off" inputmode="numeric" style="width:100%">' +
+      (ceo ? '<div style="height:12px"></div>' : '<p class="del-hint">힌트 : ' + esc(DEL_HINT) + '</p>') +
+      '<div class="ap-sigbtns"><span style="flex:1"></span>' +
+      '<button class="reset" data-pin="cancel">취소</button><button class="reset go" data-pin="ok">' + (ceo ? '확인' : verb) + '</button></div></div>';
+    document.body.appendChild(bg);
+    var inp = bg.querySelector('.ap-pinin');
+    setTimeout(function () { inp.focus(); }, 0);
+    function done(v) { bg.remove(); resolve(v); }
+    function check() {
+      if (inp.value.trim() === PIN) { done(true); return; }
+      toast(verb + ' 비밀번호가 맞지 않습니다.' + (ceo ? '' : ' (힌트 : ' + DEL_HINT + ')'), 'err'); inp.value = ''; inp.focus();
+    }
+    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') check(); else if (e.key === 'Escape') done(false); });
+    bg.addEventListener('click', function (e) {
+      if (e.target === bg) { done(false); return; }
+      var b = e.target.closest('[data-pin]');
+      if (b) { if (b.dataset.pin === 'ok') check(); else done(false); }
+    });
+  });
+}
+/** 월간스케쥴 일정 삭제 비밀번호 (공통 삭제 비밀번호와 같게) */
+var SCHEDULE_DELETE_PW = DEL_PIN;
 
 function deleteRow(key, id) {
   state.busy = true;
@@ -3455,6 +3724,7 @@ function openSchedule(id, presetDate) {
   $('shEyebrow').textContent = 'SCHEDULE';
   $('shTitle').textContent = r ? '일정 수정' : '일정 추가';
   $('btnDelete').style.display = r ? '' : 'none';
+  $('btnSave').textContent = r ? '수정' : '저장';     // 기존 일정은 "수정" (비밀번호 확인)
 
   $('f_일자').value = r ? (r.일자 || '') : (presetDate || state.selDate);
   $('f_종료일').value = r ? (r.종료일 || '') : '';
@@ -3475,6 +3745,7 @@ function openWeekly(id, preset) {
   $('shEyebrow').textContent = 'WEEKLY · ' + weekLabel(state.monday);
   $('shTitle').textContent = r ? '주간업무 수정' : '주간업무 추가';
   $('btnDelete').style.display = r ? '' : 'none';
+  $('btnSave').textContent = '저장';
 
   fillSelect($('w_구분'), KINDS, r ? r.구분 : (preset && preset.kind) || '금주');
   fillSelect($('w_분류'), CATS, r ? r.분류 : (preset && preset.cat) || '안전');
@@ -3507,14 +3778,19 @@ function submitSheet() {
       ID: id || '', _base: cur ? cur.수정일자 : '',
       일자: date, 종료일: endDate, 시간: $('f_시간').value, 일정명: name, 구분: $('f_구분').value
     };
-    $('btnSave').disabled = true;
-    saveRows('schedule', [payload]).then(function () {
-      $('btnSave').disabled = false;
-      state.selDate = date;
-      state.month = startOfMonth(parseYmd(date));
-      closeSheet(); renderAll();
-      toast(id ? '일정을 수정했습니다.' : '일정을 추가했습니다.');
-    }).catch(function () { $('btnSave').disabled = false; });
+    var go = function () {
+      $('btnSave').disabled = true;
+      saveRows('schedule', [payload]).then(function () {
+        $('btnSave').disabled = false;
+        state.selDate = date;
+        state.month = startOfMonth(parseYmd(date));
+        closeSheet(); renderAll();
+        toast(id ? '일정을 수정했습니다.' : '일정을 추가했습니다.');
+      }).catch(function () { $('btnSave').disabled = false; });
+    };
+    // 기존 일정 수정은 공통 비밀번호(1004)를 묻습니다. 새 일정 추가는 그대로
+    if (id) delPin('"' + name + '" 일정을 수정합니다.', 'edit').then(function (ok) { if (ok) go(); });
+    else go();
 
   } else {
     var body = $('w_내용').value.trim();
@@ -3630,26 +3906,10 @@ function parseWorkbook(wb) {
     if (!sh) return;
     out[name] = XLSX.utils.sheet_to_json(sh, { defval: '', raw: false });
   });
-  // 예산은 머리글이 2줄이라 따로 읽습니다
+  // 예산은 표 모양이 달라(머리글 위 제목 · 합계 줄 · 실적 미집계 구역) 따로 읽습니다 → budParseSheet
   var bs = wb.Sheets['예산'];
   if (bs) {
-    var rows = XLSX.utils.sheet_to_json(bs, { header: 1, defval: '', raw: true });
-    var recs = [], cur = '';
-    for (var i = 3; i < rows.length; i++) {
-      var r = rows[i];
-      if (!r || (String(r[0] || '').trim() === '' && String(r[1] || '').trim() === '')) continue;
-      var g = String(r[0] || '').trim();
-      var isSum = g.indexOf('소계') === 0 || g === '총계';
-      if (g && !isSum) cur = g;
-      recs.push({
-        구분: isSum ? g : cur, 상세: String(r[1] || '').trim(), 소계: isSum,
-        월: [2, 3, 4, 5, 6, 7].map(function (c) { return num(r[c]); }),
-        상반기: num(r[8]), 집행율: num(r[9]),
-        하반기계획: [10, 11, 12, 13, 14, 15].map(function (c) { return num(r[c]); }),
-        연간실적: num(r[16]), 연간계획: num(r[18])
-      });
-    }
-    out['예산'] = recs;
+    out['예산'] = budParseSheet(XLSX.utils.sheet_to_json(bs, { header: 1, defval: '', raw: true }));
   }
   return out;
 }
@@ -5387,9 +5647,9 @@ function goBoard(tab, d) {
     renderAccident();
   } else if (tab === 'budget') {
     // 활동 현황 예산 카드에서 구분(안전 · 보건 · 환경 …)을 누르면 그 구분만 펼쳐서 보여 줍니다
-    state.budExpand = {};
-    if (kind !== 'all') state.budExpand[kind] = true;
+    state.budOpen = kind !== 'all' ? kind : '';
     state.budG = kind;
+    state.budT = 'all';
     renderBudget();
   }
   activateTab(tab);
@@ -5416,6 +5676,154 @@ function monFlash(key) {
     hit.classList.remove('mo-flash'); void hit.offsetWidth; hit.classList.add('mo-flash');
     hit.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }, 420);
+}
+
+/* ── 0-0. 내 메모장 : 월간 스케줄 "🗒️ 메모" → 오른쪽 서랍 ──
+ *  개인 메모라서 서버가 아니라 이 PC 브라우저(localStorage)에만 저장합니다.
+ *  기능 : 새 메모 · 자동 저장 · 검색 · 삭제(공통 삭제 비밀번호). 첫 줄이 제목이 됩니다. */
+var MEMO_KEY = 'ehs_memos_v1';
+var MEMO = { list: [], cur: null, q: '', timer: null, el: null };
+function memoLoad() {
+  try { MEMO.list = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]') || []; } catch (e) { MEMO.list = []; }
+  if (!Array.isArray(MEMO.list)) MEMO.list = [];
+}
+function memoSave() {
+  try { localStorage.setItem(MEMO_KEY, JSON.stringify(MEMO.list)); return true; }
+  catch (e) { toast('메모를 저장하지 못했습니다 (브라우저 저장소를 쓸 수 없음).', 'err'); return false; }
+}
+function memoTitle(m) { var l = String(m.text || '').trim().split('\n')[0]; return l || '새 메모'; }
+function memoWhen(ts) {
+  var d = new Date(ts), now = new Date();
+  if (ymd(d) === ymd(now)) return '오늘 ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  return d.getFullYear() + '.' + pad(d.getMonth() + 1) + '.' + pad(d.getDate());
+}
+function memoCount() {
+  var b = $('memoCnt'); if (!b) return;
+  memoLoad();
+  var n = MEMO.list.filter(function (m) { return !m.done; }).length;   // 버튼 숫자 = 미완료 메모
+  b.hidden = !n; b.textContent = n;
+}
+/** 완료 ↔ 미완료 (완료하면 목록 맨 아래 "완료" 묶음으로) */
+function memoToggle(id) {
+  var m = MEMO.list.filter(function (x) { return x.id === id; })[0]; if (!m) return;
+  m.done = !m.done; m.doneAt = m.done ? Date.now() : null;
+  memoSave(); memoListItems(); memoCount();
+}
+/** 맨 위 입력칸에서 Enter → 바로 한 줄 메모 추가 */
+function memoQuickAdd(inp) {
+  var v = inp.value.trim(); if (!v) return;
+  MEMO.list.push({ id: 'm' + Date.now().toString(36), text: v, at: Date.now(), done: false });
+  memoSave(); inp.value = ''; memoListItems(); memoCount();
+}
+function memoBuild() {
+  if (MEMO.el) return;
+  var dim = document.createElement('div'); dim.className = 'memo-dim';
+  var dr = document.createElement('aside'); dr.className = 'memo-drawer'; dr.setAttribute('aria-label', '내 메모장');
+  document.body.appendChild(dim); document.body.appendChild(dr);
+  MEMO.el = dr; MEMO.dim = dim;
+  dim.addEventListener('click', memoClose);
+  dr.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-memo]'); if (!b) return;
+    var a = b.dataset.memo;
+    if (a === 'close') memoClose();
+    else if (a === 'new') memoEdit(null);
+    else if (a === 'open') memoEdit(b.dataset.id);
+    else if (a === 'done') { e.stopPropagation(); memoToggle(b.dataset.id); }
+    else if (a === 'fold') { MEMO.fold = !MEMO.fold; memoListItems(); }
+    else if (a === 'donex') { var cid = MEMO.cur; memoFlush(); memoList(); if (MEMO.list.some(function (x) { return x.id === cid; })) memoToggle(cid); }
+    else if (a === 'back') { memoFlush(); memoList(); }
+    else if (a === 'del') memoDelete();
+  });
+  dr.addEventListener('input', function (e) {
+    if (e.target.id === 'memoQ') { MEMO.q = e.target.value; memoListItems(); }
+    if (e.target.id === 'memoTx') { clearTimeout(MEMO.timer); memoState('입력 중…'); MEMO.timer = setTimeout(memoFlush, 500); }
+  });
+  dr.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { e.stopPropagation(); memoClose(); return; }
+    if (e.key === 'Enter' && e.target.id === 'memoAdd' && !e.isComposing) { e.preventDefault(); memoQuickAdd(e.target); }
+  });
+}
+function memoOpen() {
+  memoBuild(); memoLoad();
+  MEMO.dim.classList.add('on'); MEMO.el.classList.add('on');
+  memoList();
+}
+function memoClose() {
+  if (!MEMO.el) return;
+  memoFlush();
+  MEMO.el.classList.remove('on'); MEMO.dim.classList.remove('on');
+  memoCount();
+}
+function memoIsOpen() { return !!(MEMO.el && MEMO.el.classList.contains('on')); }
+function memoList() {
+  MEMO.cur = null;
+  MEMO.el.innerHTML =
+    '<div class="memo-hd"><h3>🗒️ 메모장<span class="sub">이 PC에만 저장</span></h3><button class="memo-x" data-memo="close" aria-label="닫기">✕</button></div>' +
+    '<div class="memo-add"><span aria-hidden="true">＋</span><input type="text" id="memoAdd" placeholder="할 일 · 메모를 적고 Enter" autocomplete="off" maxlength="300"></div>' +
+    '<div class="memo-tools"><input type="search" id="memoQ" placeholder="검색" value="' + esc(MEMO.q) + '" autocomplete="off">' +
+      '<button class="memo-new" data-memo="new" title="여러 줄로 길게 쓰기">긴 메모</button></div>' +
+    '<div class="memo-list" id="memoList"></div>';
+  memoListItems();
+  setTimeout(function () { var a = $('memoAdd'); if (a) a.focus(); }, 60);
+}
+function memoListItems() {
+  var box = $('memoList'); if (!box) return;
+  var q = MEMO.q.trim().toLowerCase();
+  var hit = function (m) { return !q || String(m.text || '').toLowerCase().indexOf(q) !== -1; };
+  // 미완료 : 최근 순 / 완료 : 최근 완료 순 (맨 아래 묶음)
+  var open = MEMO.list.filter(function (m) { return !m.done && hit(m); }).sort(function (a, b) { return b.at - a.at; });
+  var done = MEMO.list.filter(function (m) { return m.done && hit(m); }).sort(function (a, b) { return (b.doneAt || b.at) - (a.doneAt || a.at); });
+  var row = function (m) {
+    var lines = String(m.text || '').trim().split('\n'), more = lines.slice(1).join(' ').trim();
+    return '<div class="memo-it' + (m.done ? ' done' : '') + '">' +
+      '<button class="memo-ck" data-memo="done" data-id="' + esc(m.id) + '" aria-label="' + (m.done ? '미완료로 되돌리기' : '완료') + '" title="' + (m.done ? '미완료로 되돌리기' : '완료') + '"></button>' +
+      '<button class="memo-body" data-memo="open" data-id="' + esc(m.id) + '"><span class="t">' + esc(memoTitle(m)) + '</span>' +
+        (more ? '<span class="p">' + esc(more) + '</span>' : '') +
+        '<span class="d">' + esc(m.done ? '완료 ' + memoWhen(m.doneAt || m.at) : memoWhen(m.at)) + '</span></button>' +
+      '<button class="memo-done" data-memo="done" data-id="' + esc(m.id) + '">' + (m.done ? '되돌리기' : '완료') + '</button></div>';
+  };
+  if (!open.length && !done.length) {
+    box.innerHTML = '<div class="memo-empty">' + (q ? '"' + esc(MEMO.q) + '" 검색 결과가 없습니다.' : '아직 메모가 없습니다.<br>맨 위 칸에 적고 <b>Enter</b> 를 누르세요.') + '</div>';
+    return;
+  }
+  box.innerHTML =
+    '<div class="memo-sec">할 일 · 메모 <b>' + open.length + '</b></div>' +
+    (open.length ? open.map(row).join('') : '<div class="memo-empty" style="padding:14px 10px">남은 메모가 없습니다 👍</div>') +
+    (done.length ? '<button class="memo-sec fold" data-memo="fold">완료 <b>' + done.length + '</b><span>' + (MEMO.fold ? '펼치기 ▾' : '접기 ▴') + '</span></button>' +
+      (MEMO.fold ? '' : done.map(row).join('')) : '');
+}
+function memoEdit(id) {
+  var m = id ? MEMO.list.filter(function (x) { return x.id === id; })[0] : null;
+  if (!m) { m = { id: 'm' + Date.now().toString(36), text: '', at: Date.now() }; MEMO.list.push(m); }
+  MEMO.cur = m.id;
+  MEMO.el.innerHTML =
+    '<div class="memo-hd"><button class="memo-x" data-memo="back" aria-label="목록으로">←</button><h3 style="font-size:15px">' + (id ? '메모' : '새 메모') + '</h3>' +
+      '<button class="memo-x" data-memo="close" aria-label="닫기">✕</button></div>' +
+    '<div class="memo-ed"><textarea id="memoTx" placeholder="첫 줄은 제목이 됩니다.&#10;&#10;자유롭게 적으세요 — 자동으로 저장됩니다.">' + esc(m.text) + '</textarea>' +
+      '<div class="memo-ft"><span class="st" id="memoSt">' + (id ? '마지막 저장 ' + esc(memoWhen(m.at)) : '자동 저장') + '</span>' +
+        '<button class="del" data-memo="del">삭제</button>' +
+        '<button data-memo="donex">' + (m.done ? '미완료로' : '완료 처리') + '</button><button data-memo="back">목록</button></div></div>';
+  var tx = $('memoTx'); tx.focus(); tx.setSelectionRange(tx.value.length, tx.value.length);
+}
+function memoState(s) { var el = $('memoSt'); if (el) el.textContent = s; }
+/** 편집 중인 내용 저장 (비어 있는 새 메모는 남기지 않습니다) */
+function memoFlush() {
+  clearTimeout(MEMO.timer);
+  if (!MEMO.cur) return;
+  var tx = $('memoTx'); if (!tx) return;
+  var m = MEMO.list.filter(function (x) { return x.id === MEMO.cur; })[0]; if (!m) return;
+  if (!tx.value.trim()) { MEMO.list = MEMO.list.filter(function (x) { return x.id !== m.id; }); memoSave(); return; }
+  if (m.text !== tx.value) { m.text = tx.value; m.at = Date.now(); if (memoSave()) memoState('저장됨 · ' + memoWhen(m.at)); }
+}
+function memoDelete() {
+  var id = MEMO.cur; if (!id) return;
+  var tx = $('memoTx');
+  if (tx && !tx.value.trim()) { MEMO.list = MEMO.list.filter(function (x) { return x.id !== id; }); memoSave(); memoList(); return; }
+  delPin('이 메모를 삭제합니다.').then(function (ok) {
+    if (!ok) return;
+    MEMO.list = MEMO.list.filter(function (x) { return x.id !== id; });
+    memoSave(); MEMO.cur = null; memoList(); toast('메모를 삭제했습니다.');
+  });
 }
 
 /* ── 0-1. 연간 업무 계획 : "25년 안전보건경영부 연간 업무 계획 최종.xlsx" 를 옮겨 둔 표 ──
@@ -5973,8 +6381,7 @@ function monDomainCards() {
     sdChip('미조치', safOpen + '건', sdGo('safinspect')),
     sdChip('이번 달 교육', ds('교육').filter(function (r) { return safMonthOf(r.일자) === thisMonth; }).length + '건', sdGo('edu', { month: thisMonth })),
     sdChip('안전장치', ds('안전장치').length + '건', sdGo('safdevice')),
-    sdChip('이번 달 대표님 라운딩', CR_ROWS.some(function (r) { return String(r.round_date).slice(0, 7) === thisMonth; }) ? '실시' : '미실시', sdGo('ceoround')),
-    sdChip(thisYear + '년 기타 안전보건 활동', actYearRows('etcact', thisYear).length + '건', sdGo('etcact', { year: thisYear }))
+    sdChip('이번 달 대표님 라운딩', CR_ROWS.some(function (r) { return String(r.round_date).slice(0, 7) === thisMonth; }) ? '실시' : '미실시', sdGo('ceoround'))
   ]);
 
   // 보건 : 보건활동 · 건강검진 · 작업환경측정 · 정기교육 · 신규교육 · 특별교육
@@ -6058,43 +6465,33 @@ function monAccidentCard() {
       sdChip('최근 사고', last ? last.replace(/-/g, '.') : '—', sdGo('accident'))
     ])) + '</div>';
 }
-/** 활동 현황 → 예산 요약 카드 : 예산 시트(ds('예산'))를 그대로 읽어 예산 탭과 같은 숫자를 보여 줍니다 */
+/** 활동 현황 → 예산 요약 카드 : 예산 탭과 같은 자료(budData())로 항목별 FY26 실적 / le9 목표를 보여 줍니다 */
 function monBudgetCard() {
-  var bd = ds('예산');
   var hd = '<button type="button" class="sd-hd"' + sdGo('budget') + ' title="예산으로 이동">' +
     '<span><span class="en">Budget</span><span class="nm">예산 요약</span></span>';
-  if (!bd.length) {
-    return '<div class="sd-card">' + hd + '<span class="mo-dhd"><span class="go" aria-hidden="true">→</span></span></button>' +
-      sdSec('구분별 집행률', '<div class="dim" style="font-size:13px">예산 자료가 아직 없습니다</div>') + '</div>';
-  }
-  var items = bd.filter(function (r) { return !r.소계; });
-  var subs = bd.filter(function (r) { return r.소계 && r.구분.indexOf('소계') === 0; });
-  var total = bd.filter(function (r) { return r.구분 === '총계'; })[0];
-  function sum(f) { return items.reduce(function (a, r) { return a + (r[f] || 0); }, 0); }
-  var plan = total ? total.연간계획 : sum('연간계획');
-  var exec = total ? total.상반기 : sum('상반기');
-  var fc = total ? total.연간실적 : sum('연간실적');
-  var asOf = budAsOf(items, total);
-  function man(v) { return nf(v / 1000000); }
-  var CAT_COLOR = { 안전: C.safe, 보건: C.health, 환경: C.env, 기타: C.ink3 };
-  var over = subs.filter(function (r) { return r.연간실적 > r.연간계획; }).length;
+  var B = budData(), items = B.items, tot = budAgg(items), man = budMan;
+  var over = BUD_CATS.filter(function (g) {
+    var a = budAgg(items.filter(function (it) { return it.cat === g; }));
+    return a.fy > a.le9;
+  }).length;
 
-  var bars = subs.map(function (r) {
-    var g = r.구분.replace(/소계\(|\)/g, '');
-    return sdBar(g, sdPct(r.상반기, r.연간계획), CAT_COLOR[g] || C.ink3,
-      r.연간계획 ? sdPct(r.상반기, r.연간계획) + '% · ' + man(r.상반기) + '/' + man(r.연간계획) : '—', sdGo('budget', { kind: g }));
+  var bars = BUD_CATS.map(function (g) {
+    var a = budAgg(items.filter(function (it) { return it.cat === g; }));
+    return sdBar(g, sdPct(a.fy, a.le9), budCatColor(g),
+      a.le9 ? sdPct(a.fy, a.le9) + '% · ' + man(a.fy) + '/' + man(a.le9) : '—', sdGo('budget', { kind: g }));
   });
-  bars.push(sdBar('총계', sdPct(exec, plan), C.ink, plan ? sdPct(exec, plan) + '% · ' + man(exec) + '/' + man(plan) : '—', sdGo('budget')));
+  bars.push(sdBar('총계', sdPct(tot.fy, tot.le9), C.ink,
+    tot.le9 ? sdPct(tot.fy, tot.le9) + '% · ' + man(tot.fy) + '/' + man(tot.le9) : '—', sdGo('budget')));
 
   return '<div class="sd-card">' + hd +
-      '<span class="mo-dhd">' + (over ? '<span class="cnt">초과 예상 ' + over + '건</span>' : '<span class="cnt ok">계획 내</span>') +
+      '<span class="mo-dhd">' + (over ? '<span class="cnt">목표 초과 ' + over + '개 항목</span>' : '<span class="cnt ok">목표 내</span>') +
       '<span class="go" aria-hidden="true">→</span></span></button>' +
-    sdSec('구분별 집행률 (' + asOf + '월 기준 · 백만원)', sdBars(bars)) +
+    sdSec('항목별 FY26 실적 / le9 목표 (백만원)', sdBars(bars)) +
     sdSec('주요 현황', sdChips([
-      sdChip('연간계획', man(plan) + '백만원', sdGo('budget')),
-      sdChip(asOf + '월 집행', man(exec) + '백만원', sdGo('budget')),
-      sdChip('연간예상', man(fc) + '백만원', sdGo('budget')),
-      sdChip('예상잔액', man(plan - fc) + '백만원', sdGo('budget'))
+      sdChip('le9 목표', man(tot.le9) + '백만원', sdGo('budget')),
+      sdChip('1~' + B.actualThru + '월 실적', man(tot.act) + '백만원', sdGo('budget')),
+      sdChip('FY26 실적', man(tot.fy) + '백만원', sdGo('budget')),
+      sdChip('목표 대비', budSigned(tot.fy - tot.le9) + '백만원', sdGo('budget'))
     ])) + '</div>';
 }
 /** 고정되는 상단 메뉴 바로 아래 위치를 --mo-top 으로 알려 주고, 붙어 있는 동안 그림자를 줍니다 */
@@ -7135,107 +7532,315 @@ function renderAccMonthly(stat, years) {
     '<div class="subttl">출/퇴근(교통) 제외 · 단위: 건 · 서울 = 안전사고(서울) 시트 · 팩토리움 = 안전사고(팩) 시트</div>';
 }
 
-/* ── 7. 예산 ── */
-/** 실적 1~6월 컬럼 중 값이 채워진 가장 마지막 달 = 이 엑셀 자료가 실제로 반영하는 최신 월
- *  (합계값 자체는 항상 채워진 달까지만 더한 값과 같으므로, 이 함수는 표시용 "○월 기준" 라벨에만 씁니다) */
-function budAsOf(items, total) {
-  var last = 0;
-  (items || []).concat(total ? [total] : []).forEach(function (r) {
-    if (!r || !r.월) return;
-    for (var i = 0; i < 6; i++) { if ((r.월[i] || 0) !== 0) last = Math.max(last, i + 1); }
-  });
-  return last || 6;
+/* ── 7. 예산 ──
+ *  자료 : 안전보건경영부 예산_26.10.2.xlsx → "26 실적+계획 상세(부서입력란)" 시트 (BUDGET_26, 아래 데이터)
+ *    fy  = FY26 실적 (1~8월 실적 + 9월 예상실적 + 10~12월 계획)
+ *    le9 = 목표
+ *    m   = 1~12월 금액 (actualThru 월까지 실적, forecastMonth 월은 예상, 그 뒤는 계획)
+ *    cat = 안전 · 보건 · 환경 · 기타 (상세내용을 보고 분류. 기타 = 유류비 · 우편료 · 회식 · 식대 · 사무용품 등)
+ *    levy = 실적 미집계 세금과공과(폐기물 · 포장재 부담금 등). 환경 항목에 합산합니다.
+ *  엑셀 불러오기로 자료양식의 "예산" 시트를 올리면 그 자료(ds('예산'))를 우선 쓰고,
+ *  아직 올린 적이 없을 때만 아래 BUDGET_26(26.10.2 기준)을 보여 줍니다. */
+var BUDGET_26 = {
+  src: '안전보건경영부 예산_26.10.2.xlsx', asOf: '2026.10.2', actualThru: 8, forecastMonth: 9,
+  items: [
+  {"team":"안전보건환경팀","cat":"보건","name":"감정노동자 대상 프로그램 실시비용","acct":"교육훈련비","levy":false,"m":[0,0,158000,0,0,0,0,0,0,0,0,0],"fy":158000,"le9":1156000,"memo":""},
+  {"team":"안전보건환경팀","cat":"안전","name":"신규/정기안전보건교육","acct":"교육훈련비","levy":false,"m":[0,0,0,0,0,0,3895000,0,0,0,0,7000000],"fy":10895000,"le9":14000000,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"대기환경 자가측정 수수료","acct":"기타수수료","levy":false,"m":[0,0,1035700,0,0,0,0,0,0,0,0,1067750],"fy":2103450,"le9":2135500,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"오수정화조 펌프 유지관리(테라스)","acct":"기타수수료","levy":false,"m":[800000,800000,800000,800000,800000,800000,800000,800000,800000,800000,800000,800000],"fy":9600000,"le9":9600000,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"오수처리시설 분리막 세정 비용","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,3600000,0,0,0,0,0,0],"fy":3600000,"le9":7525000,"memo":"10월 계획 예정이었던 작업 6월 실시"},
+  {"team":"안전보건환경팀","cat":"환경","name":"오수처리시설 오니수거","acct":"기타수수료","levy":false,"m":[0,0,1046000,0,0,0,0,0,0,1046000,0,0],"fy":2092000,"le9":1032000,"memo":"6월 예산 8월로 이월"},
+  {"team":"안전보건환경팀","cat":"환경","name":"오수처리시설 유지관리(팩토리움+스튜디오)","acct":"기타수수료","levy":false,"m":[1400000,1400000,1400000,1400000,1400000,1400000,1400000,1400000,1400000,1400000,1400000,1400000],"fy":16800000,"le9":16800000,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"오수처리시설 유지관리(장평리)","acct":"기타수수료","levy":false,"m":[1100000,1100000,1100000,1100000,1100000,1100000,1100000,1100000,1100000,1100000,1100000,1100000],"fy":13200000,"le9":13200000,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"오수처리시설 설비 공사 비용(설비유지보수)","acct":"기타수수료","levy":false,"m":[0,0,0,0,4840000,0,0,0,0,0,0,0],"fy":4840000,"le9":5000000,"memo":"6월 예정이었던 작업 5월 실시"},
+  {"team":"안전보건환경팀","cat":"안전","name":"위험성평가","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,0,0,5500000,0,0,0,0],"fy":5500000,"le9":5500000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"행사 구급차(일루미네이션 이외 행사)","acct":"기타수수료","levy":false,"m":[0,0,0,0,2960000,0,0,0,0,0,0,0],"fy":2960000,"le9":4500000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"일루미네이션 행사 기간 구급차","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,0,14060000],"fy":14060000,"le9":15582000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"식당 공기질 측정비","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,0,0],"fy":0,"le9":1600000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"작업환경측정","acct":"기타수수료","levy":false,"m":[0,0,0,0,4680000,0,0,0,0,0,0,4080000],"fy":8760000,"le9":8160000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"근골격계유해요인조사(1회/3년)","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,9000000,0],"fy":9000000,"le9":9000000,"memo":""},
+  {"team":"안전보건환경팀","cat":"안전","name":"고보라이트(위험요소 시각화 및 안전의식 개선 활동)","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,0,0],"fy":0,"le9":5000000,"memo":""},
+  {"team":"안전보건환경팀","cat":"안전","name":"ISO450001, ISO14001 인증심사비","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,13148000,0,0,0,0,0,0],"fy":13148000,"le9":13200000,"memo":"품질경영팀→안전보건환경팀 기타수수료 5,200,000원 이관,  8+10월 예산 사용"},
+  {"team":"안전보건환경팀","cat":"안전","name":"재해예방기술지도","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,500000,0,500000,0,0,366667,2366667],"fy":3733334,"le9":4400000,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"폐기물 처리비용_음식물 쓰레기","acct":"기타수수료","levy":false,"m":[289800,246500,297500,360400,272000,324700,306000,263500,338300,266700,266700,266700],"fy":3498800,"le9":3200400,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"폐기물 처리비용_팩토리움 폐기물_섬유","acct":"기타수수료","levy":false,"m":[1524000,2911500,5394000,3130500,3178500,3211500,3133500,6621000,5643000,3005458,3005458,3005458],"fy":43763875,"le9":36065500,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"폐기물 처리비용_팩토리움 폐기물_일반폐기물 등","acct":"기타수수료","levy":false,"m":[1440000,720000,720000,720000,720000,720000,1440000,720000,720000,1948908,1948908,1948908],"fy":13766725,"le9":23386900,"memo":"이천 스튜디오동 폐기물 정리로 인해 8월 폐기물 비용 증가"},
+  {"team":"안전보건환경팀","cat":"환경","name":"폐기물 처리비용_팩토리움 폐기물(폐목재)","acct":"기타수수료","levy":false,"m":[495600,0,638800,490000,490000,0,972000,651600,0,408600,408600,408600],"fy":4963800,"le9":4903200,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"폐기물 처리비용_팩토리움 폐기물(지정폐기물)","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,450000,450000],"fy":900000,"le9":900000,"memo":"6월 예산 11월로 변경"},
+  {"team":"안전보건환경팀","cat":"환경","name":"폐기물 처리장 일반폐기물 보관함 천막 공사 비용","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,0,0,0,0,6000000,0,0],"fy":6000000,"le9":6000000,"memo":"7월 천막 공사 10월 변경 (6백만원)"},
+  {"team":"안전보건환경팀","cat":"안전","name":"위험성평가, iso, 법적회의, 점검 결과 현장 개선비용","acct":"기타수수료","levy":false,"m":[0,0,6560000,0,0,7454545,0,0,0,2000000,2000000,2000000],"fy":20014545,"le9":20000000,"memo":"6월 포켓스프링 적재기 구동부 안전덮개 설치 : 불시점검건"},
+  {"team":"안전보건환경팀","cat":"안전","name":"아이디어 공모전 개선 반영 금액","acct":"기타수수료","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,0,0],"fy":0,"le9":0,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"AED 관리비","acct":"기타수수료","levy":false,"m":[640000,640000,640000,640000,640000,490000,550000,560000,560000,560000,560000,560000],"fy":7040000,"le9":7680000,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"기타 온습도계 서비스 신청비용, 미리캔버스 정기결제, 구독료 등","acct":"기타수수료","levy":false,"m":[435455,1240910,133964,97600,0,0,0,146182,0,0,100000,100000],"fy":2254111,"le9":3712727,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"연회비 (대한산업안전협회, 직업건강협회)","acct":"기타수수료","levy":false,"m":[0,0,0,0,360000,0,0,0,0,0,0,227273],"fy":587273,"le9":587273,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"식대 (연장근무, 주말 근무, 인증심사 식대)","acct":"복리후생비","levy":false,"m":[266187,207042,308700,216533,425601,494598,706083,260604,476287,689421,0,0],"fy":4051056,"le9":2700000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"의료비_임직원 건강검진 비용","acct":"복리후생비","levy":false,"m":[0,0,0,177320,179690,-357010,0,0,0,0,0,105000000],"fy":105000000,"le9":105000000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"의료비_임직원 예방 접종비(독감접종, 파상풍)","acct":"복리후생비","levy":false,"m":[0,0,0,0,0,0,0,0,0,55000,0,7500000],"fy":7555000,"le9":12000000,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"팀/부서 회식","acct":"복리후생비","levy":false,"m":[0,0,654546,0,0,628000,0,0,540000,0,180000,420000],"fy":2422546,"le9":3000000,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"회의비_대내/대외","acct":"복리후생비","levy":false,"m":[175000,0,114957,85916,82680,1370965,93506,37400,132019,8182,100000,100000],"fy":2300625,"le9":1200000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"26년 근로자 건강증진 활동 비용","acct":"복리후생비","levy":false,"m":[0,0,4450000,0,0,0,0,0,0,0,0,0],"fy":4450000,"le9":0,"memo":"오운완/걷기 챌린지 운영비, 기존 복리후생비 내에서 사용 후 예산 부족시 타계정에서 이관 예정"},
+  {"team":"안전보건기획팀","cat":"기타","name":"팀/부서 회식","acct":"복리후생비","levy":false,"m":[0,0,0,0,0,0,0,0,180000,0,120000,120000],"fy":420000,"le9":960000,"memo":""},
+  {"team":"안전보건기획팀","cat":"기타","name":"식대 (연장근무, 주말 근무, 인증심사 식대)","acct":"복리후생비","levy":false,"m":[39547,13637,39093,43637,17500,21002,13637,24910,90938,108130,50000,50000],"fy":512031,"le9":600000,"memo":""},
+  {"team":"안전보건기획팀","cat":"기타","name":"회의비_대내/대외","acct":"복리후생비","levy":false,"m":[0,0,0,0,0,6284,0,0,0,0,50000,50000],"fy":106284,"le9":600000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"매장 마스크 지급(감염 예방)","acct":"소모품비","levy":false,"m":[0,624365,0,0,0,0,0,0,700000,700000,700000,0],"fy":2724365,"le9":5600000,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"사무용품 구매","acct":"소모품비","levy":false,"m":[569643,144092,40819,86834,0,150202,83019,23455,0,0,70000,70000],"fy":1238064,"le9":840000,"memo":""},
+  {"team":"안전보건환경팀","cat":"안전","name":"일루미네이션 운영 현장 안전보건관리 비용","acct":"소모품비","levy":false,"m":[0,0,0,0,0,0,0,0,0,1478753,3087000,4695247],"fy":9261000,"le9":9261000,"memo":""},
+  {"team":"안전보건환경팀","cat":"안전","name":"안전용품 구매(보호구,현장안전보건관리)","acct":"소모품비","levy":false,"m":[483184,1809713,1987043,6903704,4552648,4946947,-2672745,4976249,828172,1407497,1000000,1000000],"fy":27222412,"le9":26900000,"memo":""},
+  {"team":"안전보건환경팀","cat":"안전","name":"매장 소화기 지급","acct":"소모품비","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,180000,180000],"fy":360000,"le9":2160000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"의약품 구매","acct":"소모품비","levy":false,"m":[42000,284000,136000,66000,0,557500,181000,71900,426000,0,103000,103000],"fy":1970400,"le9":1236000,"memo":""},
+  {"team":"안전보건기획팀","cat":"안전","name":"비상대응보관함 물품 보수/구매","acct":"소모품비","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,0,0],"fy":0,"le9":500000,"memo":""},
+  {"team":"안전보건기획팀","cat":"기타","name":"사무용품 구매","acct":"소모품비","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,20000,20000],"fy":40000,"le9":240000,"memo":""},
+  {"team":"안전보건환경팀","cat":"보건","name":"직원 챌린지, 행사 경품 증정 등","acct":"소모품비","levy":false,"m":[40910,0,65110,115037,177356,225657,397731,184484,377278,1301855,500000,0],"fy":3385418,"le9":6100000,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"국내출장비_교통비, 숙박비, 식비","acct":"여비교통비","levy":false,"m":[0,0,932553,469474,486180,1146755,997772,213700,1114733,659717,0,0],"fy":6020884,"le9":4500000,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"외근 유류비, 주차비, 통행료","acct":"여비교통비","levy":false,"m":[376146,567912,678950,413450,461871,1402798,889236,778209,1068023,834965,250000,250000],"fy":7971560,"le9":3000000,"memo":""},
+  {"team":"안전보건기획팀","cat":"안전","name":"안전보건슬로건 공모전 포상","acct":"기타수수료","levy":false,"m":[0,0,0,1279793,0,0,0,0,0,0,0,0],"fy":1279793,"le9":0,"memo":"슬로건 공모전 포상(상품권), 부서내 기타수수료 예산 내에서 사용 후 예산 부족시 타계정에서 이관 예정"},
+  {"team":"안전보건기획팀","cat":"기타","name":"외근 유류비, 주차비, 통행료","acct":"여비교통비","levy":false,"m":[8000,0,20000,50730,21600,426305,315660,174090,408035,302760,100000,100000],"fy":1927180,"le9":1200000,"memo":""},
+  {"team":"안전보건기획팀","cat":"기타","name":"국내출장비_교통비, 숙박비, 식비","acct":"여비교통비","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,150000,3000000],"fy":3150000,"le9":1800000,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"퀵/택배","acct":"운반비","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,0,0],"fy":0,"le9":0,"memo":""},
+  {"team":"안전보건기획팀","cat":"기타","name":"법인차량 주유비","acct":"차량유지비","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,13958,13958],"fy":27917,"le9":167500,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"법인차량 주유비","acct":"차량유지비","levy":false,"m":[0,0,50000,288358,130820,318166,322760,162225,142000,327305,41875,41875],"fy":1825384,"le9":502500,"memo":""},
+  {"team":"안전보건환경팀","cat":"기타","name":"우편료","acct":"통신비","levy":false,"m":[29200,38360,8800,7960,9600,9000,136300,36790,16000,6300,12000,12000],"fy":322310,"le9":144000,"memo":""},
+  {"team":"안전보건기획팀","cat":"기타","name":"우편료","acct":"통신비","levy":false,"m":[0,0,0,0,0,0,0,0,0,0,4000,4000],"fy":8000,"le9":48000,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"폐기물 처분 부담금(일시불 5월)","acct":"세금과공과","levy":true,"m":[0,0,0,2627270,0,0,0,0,0,0,0,0],"fy":2627270,"le9":5000000,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"포장재재활용분담금(분기/3/6/9/11)","acct":"세금과공과","levy":true,"m":[0,0,33680800,0,0,-25519700,0,0,20373700,0,36200000,0],"fy":64734800,"le9":144800000,"memo":"2분기분 환급"},
+  {"team":"안전보건환경팀","cat":"환경","name":"폐기물 부담금(년 6회)","acct":"세금과공과","levy":true,"m":[0,0,0,0,0,0,54591300,54591300,54591300,0,54591300,0],"fy":218365200,"le9":440000000,"memo":""},
+  {"team":"안전보건환경팀","cat":"환경","name":"자발적 협약 분담금(년 4회 분할납부)","acct":"세금과공과","levy":true,"m":[0,37800000,0,37800000,0,0,37800000,0,0,37800000,0,0],"fy":151200000,"le9":170000000,"memo":""}
+  ]
+};
+var BUD_CATS = ['안전', '보건', '환경', '기타'];
+var BUD_TEAMS = ['안전보건환경팀', '안전보건기획팀'];
+/** 상세내용으로 안전 · 보건 · 환경 · 기타를 정합니다 (위에서부터 먼저 맞는 것).
+ *  예산 시트에 "분류" 칸을 만들어 안전/보건/환경/기타를 적으면 그 값이 우선입니다. */
+var BUD_CAT_RULES = [
+  ['기타', /구독료|연회비|식대|회의비|회식|사무용품|출장비|유류비|퀵|택배|주유비|우편료|통신비/],
+  ['안전', /안전보건교육|위험성평가|고보라이트|ISO|재해예방|공모전|안전보건관리|안전용품|보호구|소화기|비상대응|슬로건/i],
+  ['보건', /감정노동자|구급차|공기질|작업환경측정|근골격계|AED|건강검진|예방\s*접종|건강증진|마스크|의약품|챌린지/],
+  ['환경', /대기환경|오수|폐기물|포장재|자발적\s*협약|폐수|온실가스/]
+];
+function budClassify(name) {
+  for (var i = 0; i < BUD_CAT_RULES.length; i++) if (BUD_CAT_RULES[i][1].test(name)) return BUD_CAT_RULES[i][0];
+  return '기타';
 }
-function renderBudget() {
-  var bd = ds('예산');
-  if (!bd.length) {
-    $('budKpi').innerHTML = ''; $('budGroup').innerHTML = ''; $('budFilter').innerHTML = '';
-    $('budList').innerHTML = noData('budget');
-    return;
-  }
-  var items = bd.filter(function (r) { return !r.소계; });
-  var subs = bd.filter(function (r) { return r.소계 && r.구분.indexOf('소계') === 0; });
-  var total = bd.filter(function (r) { return r.구분 === '총계'; })[0];
-
-  var asOf = budAsOf(items, total);
-
-  var plan = total ? total.연간계획 : items.reduce(function (a, r) { return a + r.연간계획; }, 0);
-  var exec = total ? total.상반기 : items.reduce(function (a, r) { return a + r.상반기; }, 0);
-  var fc = total ? total.연간실적 : items.reduce(function (a, r) { return a + r.연간실적; }, 0);
-  function man(v) { return nf(v / 1000000); }
-  function budDiffTd(r) {
-    var diff = r.연간실적 - r.연간계획;
-    return '<td class="n r" style="color:' + (diff > 0 ? C.safe : diff < 0 ? C.env : 'var(--ink3)') + ';font-weight:600">' +
-      (diff > 0 ? '+' : '') + man(diff) + '</td>';
-  }
-
-  $('budKpi').innerHTML =
-    kpiPair('연간계획 · 집행현황', C.ink,
-      { v: man(plan), u: '백만원', l: '연간계획' },
-      { v: man(exec), u: '백만원', l: asOf + '월 집행현황' },
-      '집행률 <b>' + pct(exec, plan) + '%</b> ' + gauge(exec, plan)) +
-    kpiPair('연간예상 · 예상잔액', fc > plan ? C.safe : C.env,
-      { v: man(fc), u: '백만원', l: '연간예상' },
-      { v: man(plan - fc), u: '백만원', l: '예상잔액' },
-      '계획 대비 <b>' + pct(fc, plan) + '%</b> · ' + (fc > plan ? '<b>초과 예상</b>' : '계획 내 집행 예상'));
-
-  // 구분별 (타일을 누르면 아래에 그 구분의 상세 항목이 펼쳐지고, 다시 누르면 접힙니다)
-  state.budExpand = state.budExpand || {};
-  var CAT_COLOR = { 안전: C.safe, 보건: C.health, 환경: C.env, 기타: C.ink3 };
-  var tiles = subs.map(function (r) {
-    var g = r.구분.replace(/소계\(|\)/g, '');
-    var open = !!state.budExpand[g];
-    return '<div class="bud-tile' + (open ? ' active' : '') + '" data-budtoggle="' + esc(g) +
-      '" style="border-top-color:' + (CAT_COLOR[g] || C.ink3) + '">' +
-      '<div class="bud-tile-top"><span class="bud-tile-g">' + esc(g) + '</span>' +
-      '<span class="bud-tile-pct">' + pct(r.상반기, r.연간계획) + '%</span></div>' +
-      '<div class="bud-tile-v">' + man(r.상반기) + '<em>/ ' + man(r.연간계획) + '백만원</em></div>' +
-      gauge(r.상반기, r.연간계획) +
-      '<div class="bud-tile-foot"><span>연간예상 ' + man(r.연간실적) + '백만원</span>' +
-      '<span class="bud-tile-toggle">' + (open ? '접기 ▴' : '상세보기 ▾') + '</span></div></div>';
+/** 자료양식 "예산" 시트 읽기 (rows = sheet_to_json header:1 결과)
+ *  머리글 줄 : 코스트센터그룹명 · 상세내용 · 항 · 구분 · 1~12 · FY 26 · le9 · 부서 입력란 (칸 위치는 머리글 이름으로 찾습니다)
+ *  "실적 / 예상실적 / 계획" 이 적힌 줄이 있으면 그것으로 실적 마감월 · 예상월을 정합니다. */
+function budParseSheet(rows) {
+  function s(v) { return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); }
+  function n(v) { var x = typeof v === 'number' ? v : parseFloat(String(v).replace(/,/g, '')); return isNaN(x) ? 0 : Math.round(x); }
+  var col = null, thru = 0, fc = 0, recs = [];
+  rows.forEach(function (r) {
+    if (!r) return;
+    var cells = r.map(s);
+    // 실적 / 예상실적 / 계획 줄
+    if (!thru && cells.indexOf('예상실적') !== -1) {
+      var a = 0;
+      cells.forEach(function (c, j) {
+        if (c === '실적') a++;
+        if (c === '예상실적' && !fc) fc = a + 1;
+      });
+      thru = a;
+      return;
+    }
+    // 첫 머리글 줄 : 칸 위치를 기억합니다
+    if (!col && cells.indexOf('상세내용') !== -1 && cells.some(function (c) { return /^FY\s*\d+$/i.test(c); })) {
+      col = { m: [] };
+      cells.forEach(function (c, j) {
+        if (c === '코스트센터그룹명' || c === '팀' || c === '부서') col.team = j;
+        else if (c === '상세내용') col.name = j;
+        else if (c === '항' || c === '계정') col.acct = j;
+        else if (c === '구분') col.kind = j;
+        else if (c === '분류' || c === '항목') col.cat = j;
+        else if (/^FY\s*\d+$/i.test(c)) col.fy = j;
+        else if (/^(le|LE)\s*\d+$/.test(c) || c === '목표') col.le = j;
+        else if (/부서\s*입력란|비고|사유/.test(c)) col.memo = j;
+        else if (/^\d{1,2}$/.test(c) && +c >= 1 && +c <= 12 && col.m[+c - 1] === undefined) col.m[+c - 1] = j;
+      });
+      return;
+    }
+    if (!col || col.name === undefined || col.fy === undefined) return;
+    var team = cells[col.team], name = cells[col.name];
+    if (!name || !/팀$/.test(team)) return;          // 합계 줄 · 두 번째 머리글 줄 등은 건너뜀
+    var kind = col.kind !== undefined ? cells[col.kind] : '';
+    var cat = col.cat !== undefined ? cells[col.cat] : '';
+    if (BUD_CATS.indexOf(cat) === -1) cat = budClassify(name);
+    var m = [];
+    for (var i = 0; i < 12; i++) m.push(col.m[i] !== undefined ? n(r[col.m[i]]) : 0);
+    recs.push({
+      team: team, cat: cat, name: name,
+      acct: col.acct !== undefined ? cells[col.acct].replace(/\/$/, '') : '',
+      levy: /미집계/.test(kind), m: m, fy: n(r[col.fy]), le9: col.le !== undefined ? n(r[col.le]) : 0,
+      memo: col.memo !== undefined ? cells[col.memo] : ''
+    });
   });
-  if (total) {
-    tiles.push('<div class="bud-tile total">' +
-      '<div class="bud-tile-top"><span class="bud-tile-g">총계</span>' +
-      '<span class="bud-tile-pct">' + pct(exec, total.연간계획) + '%</span></div>' +
-      '<div class="bud-tile-v">' + man(exec) + '<em>/ ' + man(total.연간계획) + '백만원</em></div>' +
-      gauge(exec, total.연간계획) +
-      '<div class="bud-tile-foot"><span>연간예상 ' + man(total.연간실적) + '백만원</span></div></div>');
+  thru = thru || BUDGET_26.actualThru;
+  fc = fc || thru + 1;
+  recs.forEach(function (x) { x.thru = thru; x.fc = fc; });
+  return recs;
+}
+/** 지금 보여 줄 예산 자료 : 업로드한 예산 시트(새 형식)가 있으면 그것, 없으면 BUDGET_26 */
+function budData() {
+  var d = ds('예산');
+  if (d.length && Array.isArray(d[0].m)) {
+    var at = state.dsMeta && state.dsMeta.at ? String(state.dsMeta.at).slice(0, 10).replace(/-/g, '.') : '';
+    return { src: '자료양식 예산 시트' + (at ? ' (' + at + ' 불러옴)' : ''), actualThru: d[0].thru || 8,
+      forecastMonth: d[0].fc || (d[0].thru || 8) + 1, items: d };
   }
-  var detailBlocks = subs.map(function (r) {
-    var g = r.구분.replace(/소계\(|\)/g, '');
-    if (!state.budExpand[g]) return '';
-    var subItems = items.filter(function (it) { return it.구분 === g; });
-    return '<div class="bud-detail"><div class="bud-detail-head">' + esc(g) + ' 상세 항목' +
-      '<span class="dim">' + subItems.length + '건</span></div>' + tbl(
-      [{ t: '상세내용' }, { t: '집행(백만원)', r: 1 }, { t: '집행률', w: '150px' },
-       { t: '연간예상(백만원)', r: 1 }, { t: '연간계획(백만원)', r: 1 }, { t: '차이', r: 1 }],
-      subItems.map(function (it) {
-        return '<tr><td class="k">' + esc(it.상세) + '</td><td class="n r">' + man(it.상반기) + '</td>' +
-          '<td>' + gauge(it.상반기, it.연간계획) + '</td><td class="n r">' + man(it.연간실적) + '</td>' +
-          '<td class="n r dim">' + man(it.연간계획) + '</td>' + budDiffTd(it) + '</tr>';
-      }), 760) + '</div>';
+  return BUDGET_26;
+}
+function budTeams() {
+  var t = BUD_TEAMS.slice();
+  budData().items.forEach(function (it) { if (t.indexOf(it.team) === -1) t.push(it.team); });
+  return t.filter(function (x) { return budData().items.some(function (it) { return it.team === x; }); });
+}
+function budCatColor(g) { return ({ 안전: C.safe, 보건: C.health, 환경: C.env, 기타: C.ink3 })[g] || C.ink3; }
+function budAct(it) {
+  var s = 0, thru = it.thru || BUDGET_26.actualThru;
+  for (var i = 0; i < thru; i++) s += it.m[i] || 0;
+  return s;
+}
+function budAgg(list) {
+  var a = { fy: 0, le9: 0, act: 0, n: list.length };
+  list.forEach(function (it) { a.fy += it.fy; a.le9 += it.le9; a.act += budAct(it); });
+  return a;
+}
+function budTeamItems(team) {
+  return budData().items.filter(function (it) { return !team || team === 'all' || it.team === team; });
+}
+function budMan(v) {
+  var r = Math.round(v / 100000) / 10;
+  return (r === 0 ? 0 : r).toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+}
+function budSigned(v) { return (v > 0 ? '+' : '') + budMan(v); }
+function budShortTeam(t) { return String(t).replace('안전보건', ''); }
+
+function renderBudget() {
+  var B = budData(), man = budMan, BUD_TEAMS = budTeams();
+  state.budT = state.budT || 'all';
+  if (state.budT !== 'all' && BUD_TEAMS.indexOf(state.budT) === -1) state.budT = 'all';
+  state.budG = state.budG || 'all';
+  if (state.budG !== 'all' && BUD_CATS.indexOf(state.budG) === -1) state.budG = 'all';
+  var items = budTeamItems(state.budT);
+  var tot = budAgg(items);
+  var diff = tot.fy - tot.le9;
+  var thru = B.actualThru;
+
+  $('budSrc').innerHTML = '기준 <b>' + esc(B.src) + '</b> · FY26 = 1~' + thru + '월 실적 + ' + B.forecastMonth +
+    '월 예상 + ' + (B.forecastMonth + 1) + '~12월 계획 · le9 = 목표';
+  $('budTeam').innerHTML = ['all'].concat(BUD_TEAMS).map(function (t) {
+    return '<button class="fb" data-budteam="' + esc(t) + '" aria-pressed="' + (state.budT === t) + '">' +
+      (t === 'all' ? '전체 부서' : esc(t)) + '</button>';
   }).join('');
+
+  // KPI
+  $('budKpi').innerHTML =
+    kpiPair('le9 목표 · FY26 실적', C.ink,
+      { v: man(tot.le9), u: '백만원', l: 'le9 목표' },
+      { v: man(tot.fy), u: '백만원', l: 'FY26 실적' },
+      '목표 대비 <b>' + pct(tot.fy, tot.le9) + '%</b> ' + gauge(tot.fy, tot.le9)) +
+    kpiPair('누적 실적 · 목표 대비 차이', diff > 0 ? C.safe : C.env,
+      { v: man(tot.act), u: '백만원', l: '1~' + thru + '월 누적 실적' },
+      { v: budSigned(diff), u: '백만원', l: 'FY26 − le9' },
+      '목표 대비 누적 집행 <b>' + pct(tot.act, tot.le9) + '%</b> · ' + (diff > 0 ? '<b>목표 초과</b>' : '목표 내'));
+
+  // 항목별 타일 (누르면 아래에 상세 항목이 펼쳐지고, 다시 누르면 접힙니다)
+  // 한 번에 한 항목만 열립니다 (같은 항목을 다시 누르면 닫힘)
+  if (state.budOpen && BUD_CATS.indexOf(state.budOpen) === -1) state.budOpen = '';
+  function tile(g, a, color, extra) {
+    var p = pct(a.fy, a.le9), d = a.fy - a.le9;
+    return '<div class="bud-tile' + extra + '>' +
+      '<div class="bud-tile-top"><span class="bud-tile-g"><i class="bud-dot" style="background:' + color + '"></i>' + esc(g) + '</span>' +
+      '<span class="bud-tile-pct' + (p > 100 ? ' over' : '') + '">' + p + '%</span></div>' +
+      '<div class="bud-tile-v">' + man(a.fy) + '<em>/ ' + man(a.le9) + '</em></div>' +
+      '<div class="bud-bar"><i style="width:' + Math.min(p, 100) + '%;background:' + color + '"></i></div>' +
+      '<div class="bud-tile-foot"><span>누적 ' + man(a.act) + '</span>' +
+      '<span class="' + (d > 0 ? 'over' : '') + '">차이 ' + budSigned(d) + '</span></div></div>';
+  }
+  var tiles = BUD_CATS.map(function (g) {
+    var a = budAgg(items.filter(function (it) { return it.cat === g; }));
+    return tile(g, a, budCatColor(g), (state.budOpen === g ? ' active' : '') + '" data-budtoggle="' + esc(g) + '"');
+  });
+  tiles.push(tile('총계', tot, '#fff', ' total"'));
+
+  function rowsHtml(list, showCat) {
+    return list.map(function (it) {
+      var d = it.fy - it.le9;
+      return '<tr><td><span class="b b-gray">' + esc(budShortTeam(it.team)) + '</span></td>' +
+        (showCat ? '<td><span class="b b-gray" style="border-color:' + budCatColor(it.cat) + ';color:' + budCatColor(it.cat) + '">' + esc(it.cat) + '</span></td>' : '') +
+        '<td class="k">' + esc(it.name) + (it.levy ? ' <span class="b b-gray">부담금</span>' : '') +
+        (it.memo ? '<span class="bud-memo">' + esc(it.memo) + '</span>' : '') + '</td>' +
+        '<td class="dim">' + esc(it.acct) + '</td>' +
+        '<td class="n r">' + man(budAct(it)) + '</td>' +
+        '<td class="n r">' + man(it.fy) + '</td>' +
+        '<td class="n r dim">' + man(it.le9) + '</td>' +
+        '<td class="n r" style="color:' + (d > 0 ? C.safe : d < 0 ? C.env : 'var(--ink3)') + ';font-weight:600">' + budSigned(d) + '</td>' +
+        '<td>' + (it.le9 ? gauge(it.fy, it.le9) : '<span class="dim">목표 없음</span>') + '</td></tr>';
+    });
+  }
+  function sumRow(list, showCat) {
+    var a = budAgg(list);
+    return '<tr class="sum"><td' + (showCat ? ' colspan="2"' : '') + '>합계</td><td>' + a.n + '건</td><td></td>' +
+      '<td class="n r">' + man(a.act) + '</td><td class="n r">' + man(a.fy) + '</td><td class="n r">' + man(a.le9) + '</td>' +
+      '<td class="n r">' + budSigned(a.fy - a.le9) + '</td><td>' + gauge(a.fy, a.le9) + '</td></tr>';
+  }
+  function cols(showCat) {
+    return [{ t: '팀', w: '64px' }].concat(showCat ? [{ t: '구분', w: '56px' }] : []).concat([
+      { t: '상세내용' }, { t: '계정', w: '84px' }, { t: '1~' + thru + '월 실적', r: 1 }, { t: 'FY26 실적', r: 1 },
+      { t: 'le9 목표', r: 1 }, { t: '차이', r: 1 }, { t: '목표 대비', w: '150px' }]);
+  }
+
+  var detailBlocks = '';
+  if (state.budOpen) {
+    var openList = items.filter(function (it) { return it.cat === state.budOpen; });
+    detailBlocks = '<div class="bud-detail"><div class="bud-detail-head">' + esc(state.budOpen) + ' 상세 항목' +
+      '<span class="dim">' + openList.length + '건 · 백만원</span></div>' +
+      tbl(cols(true), rowsHtml(openList, true).concat([sumRow(openList, true)]), 920) + '</div>';
+  }
   $('budGroup').innerHTML = '<div class="budgrid">' + tiles.join('') + '</div>' + detailBlocks;
 
-  // 상세
-  var groups = uniq(items.map(function (r) { return r.구분; }));
-  state.budG = state.budG || 'all';
-  if (state.budG !== 'all' && groups.indexOf(state.budG) === -1) state.budG = 'all';
-  $('budFilter').innerHTML = ['all'].concat(groups).map(function (g) {
+  // 팀별 × 항목별 (팀 필터와 상관없이 두 팀을 나란히 보여 줍니다)
+  function cell(list) {
+    var a = budAgg(list);
+    if (!a.n) return '<td class="r dim">—</td>';
+    return '<td class="r bud-cell"><b>' + man(a.fy) + '</b> <em>/ ' + man(a.le9) + '</em>' +
+      '<span class="' + (a.fy > a.le9 ? 'over' : '') + '">' + (a.le9 ? pct(a.fy, a.le9) + '%' : '목표 없음') + '</span></td>';
+  }
+  var all = B.items;
+  var mxRows = BUD_TEAMS.map(function (t) {
+    var tl = all.filter(function (it) { return it.team === t; });
+    return '<tr class="bud-team-row' + (state.budT === t ? ' on' : '') + '" data-budteam="' + esc(t) + '"><td class="k">' + esc(t) + '</td>' +
+      BUD_CATS.map(function (g) { return cell(tl.filter(function (it) { return it.cat === g; })); }).join('') +
+      cell(tl) + '</tr>';
+  });
+  mxRows.push('<tr class="sum bud-team-row" data-budteam="all"><td>부서 합계</td>' +
+    BUD_CATS.map(function (g) { return cell(all.filter(function (it) { return it.cat === g; })); }).join('') + cell(all) + '</tr>');
+  $('budMatrix').innerHTML = tbl([{ t: '팀' }].concat(BUD_CATS.map(function (g) { return { t: g, r: 1 }; }))
+    .concat([{ t: '합계', r: 1 }]), mxRows, 720);
+
+  // 월별 추이 (팀 · 항목 필터 반영)
+  var mList = items.filter(function (it) { return state.budG === 'all' || it.cat === state.budG; });
+  var months = [];
+  for (var i = 0; i < 12; i++) months.push(mList.reduce(function (s, it) { return s + (it.m[i] || 0); }, 0));
+  var mMax = Math.max.apply(null, months.map(Math.abs).concat([1]));
+  $('budMonNote').textContent = (state.budT === 'all' ? '전체 부서' : state.budT) + ' · ' +
+    (state.budG === 'all' ? '전체 항목' : state.budG) + ' · 백만원';
+  $('budMonth').innerHTML = '<div class="bud-mon">' + months.map(function (v, i) {
+    var mo = i + 1, k = mo <= thru ? '' : mo === B.forecastMonth ? ' fc' : ' pl';
+    var h = v > 0 ? (v / mMax * 100).toFixed(1) : 0;
+    return '<div class="col' + k + (v < 0 ? ' neg' : '') + '" title="' + mo + '월 ' + man(v) + '백만원">' +
+      '<span class="n">' + man(v) + '</span><span class="bw"><span class="c" style="height:' + h + '%"></span></span>' +
+      '<span class="m">' + mo + '월</span></div>';
+  }).join('') + '</div>' +
+    '<div class="bud-legend"><span><i></i>실적 (1~' + thru + '월)</span><span><i class="fc"></i>예상실적 (' + B.forecastMonth + '월)</span>' +
+    '<span><i class="pl"></i>계획 (' + (B.forecastMonth + 1) + '~12월)</span></div>';
+
+  // 상세 항목 (항목 필터)
+  $('budFilter').innerHTML = ['all'].concat(BUD_CATS).map(function (g) {
     return '<button class="fb" data-budg="' + esc(g) + '" aria-pressed="' + (state.budG === g) + '">' +
       (g === 'all' ? '전체' : esc(g)) + '</button>'; }).join('');
-
-  var list = items.filter(function (r) { return state.budG === 'all' || r.구분 === state.budG; });
-  $('budList').innerHTML = tbl(
-    [{ t: '구분', w: '56px' }, { t: '상세내용' }, { t: '집행(백만원)', r: 1 }, { t: '집행률', w: '140px' },
-     { t: '연간예상(백만원)', r: 1 }, { t: '연간계획(백만원)', r: 1 }, { t: '차이', r: 1 }],
-    list.map(function (r) {
-      return '<tr><td><span class="b b-gray">' + esc(r.구분) + '</span></td>' +
-        '<td class="k">' + esc(r.상세) + '</td><td class="n r">' + man(r.상반기) + '</td>' +
-        '<td>' + gauge(r.상반기, r.연간계획) + '</td><td class="n r">' + man(r.연간실적) + '</td>' +
-        '<td class="n r dim">' + man(r.연간계획) + '</td>' + budDiffTd(r) + '</tr>';
-    }), 820);
+  var list = mList.slice().sort(function (a, b) {
+    return BUD_CATS.indexOf(a.cat) - BUD_CATS.indexOf(b.cat) || BUD_TEAMS.indexOf(a.team) - BUD_TEAMS.indexOf(b.team);
+  });
+  $('budList').innerHTML = tbl(cols(true), rowsHtml(list, true).concat([sumRow(list, true)]), 920);
 }
 
 /* ── 7-2. 사규 (매뉴얼 · 규정 · 절차서 · 지침서) ──
@@ -8201,6 +8806,7 @@ function smModal(head, sub, title, opts, pick, memo, note, extraHtml, onSave, on
     if (!p) return;
     a.disabled = true;
     p.then(function (res) {
+      if (res && res.cancelled) { a.disabled = false; return; }
       if (res && res.error) throw res.error;
       close(); toast('저장했습니다. 현장 플랫폼에도 반영됩니다.'); loadSm(true);
     }).catch(function (err) { a.disabled = false; toast('저장 실패: ' + ((err && err.message) || err), 'err'); });
@@ -8235,7 +8841,11 @@ function smCellOpen(key) {
       return a ? PF.db.from('supervisor_activities').update({ done: v === '1', content: memo || null }).eq('id', a.id)
         : PF.db.from('supervisor_activities').insert([{ supervisor_id: s.id, ym: pfYm(m), item: it.k, done: v === '1', content: memo || null, files: [], created_by: 'ehs-dashboard' }]);
     },
-    a && !fs.length ? { label: '기록 지우기', run: function () { return confirm('이 칸의 기록을 지울까요?') ? PF.db.from('supervisor_activities').delete().eq('id', a.id) : null; } } : null);
+    a && !fs.length ? { label: '기록 지우기', run: function () {
+      return delPin('이 칸의 기록을 지웁니다.').then(function (ok) {
+        return ok ? PF.db.from('supervisor_activities').delete().eq('id', a.id) : { cancelled: true };
+      });
+    } } : null);
 }
 document.addEventListener('click', function (e) {
   if (!e.target.closest || !e.target.closest('#bd-svscore')) return;
@@ -8250,6 +8860,75 @@ document.addEventListener('click', function (e) {
     if (SM.who) $('smWhoCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 });
+/** 개인별 평가 점수 → PDF (A4 가로) : 지금 고른 구분(전체 · 서울사무소 · 팩토리움) · 점수순.
+ *  직접 입력한 점수만 넣고(빈칸 = 미입력), ISO 대상이 아니면 "–". 전자결재와 같은 html2canvas + jsPDF 를 씁니다. */
+function smScorePdf() {
+  if (!SM.loaded) { toast('평가 자료를 불러온 뒤 다시 눌러 주세요.', 'warn'); return; }
+  var btn = $('btnSmPdf'); btn.disabled = true; var old = btn.innerHTML; btn.textContent = 'PDF 만드는 중…';
+  var lastM = smLastM();
+  var rows = smPeople().filter(function (s) { return !pfIsoOnly(s); }).map(function (s) { var r = smScoreOf(s, lastM); r.s = s; return r; });
+  rows.sort(function (a, b) { return b.pct100 - a.pct100 || b.total - a.total || b.manual - a.manual; });
+  rows.forEach(function (r, i) { r.rank = (i && rows[i - 1].pct100 === r.pct100) ? rows[i - 1].rank : i + 1; });
+  var entered = rows.filter(function (r) { return r.manual; });
+  var avg = entered.length ? (entered.reduce(function (a, r) { return a + r.pct100; }, 0) / entered.length).toFixed(1) : '-';
+  var siteLabel = SM.site || '전체';
+  var cell = 'border:1px solid #333;padding:3px 4px;text-align:center;font-size:11px;line-height:1.35;white-space:nowrap';
+  var head = 'border:1px solid #333;padding:6px 4px;background:#f0f0f0;font-size:10px;font-weight:700;text-align:center;line-height:1.3';
+  var html = '<div style="width:1120px;padding:28px 32px;background:#fff;color:#111;font-family:\'Malgun Gothic\',\'맑은 고딕\',sans-serif;box-sizing:border-box">' +
+    '<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px">' +
+      '<div><div style="font-size:22px;font-weight:800;letter-spacing:-.02em">관리감독자 업무 수행 평가 · 개인별 평가 점수</div>' +
+      '<div style="font-size:12px;color:#555;margin-top:4px">' + PF_CFG.year + '년 · ' + esc(siteLabel) + ' ' + rows.length + '명 · 입력 완료 ' +
+        rows.filter(function (r) { return r.manual === r.cnt; }).length + '명 · 평균 ' + avg + '점 (100점 환산)</div></div>' +
+      '<div style="font-size:11px;color:#555">출력일 ' + ymd(new Date()).replace(/-/g, '.') + '</div></div>' +
+    '<table style="width:100%;border-collapse:collapse"><thead><tr>' +
+      '<th style="' + head + ';width:34px">순위</th><th style="' + head + ';width:210px">성명 · 소속</th>' +
+      SM_SCORE.map(function (it) { return '<th style="' + head + '">' + esc(it.t) + (it.s ? '<br>' + esc(it.s) : '') + '</th>'; }).join('') +
+      '<th style="' + head + ';width:62px">총점</th><th style="' + head + ';width:50px">100점<br>환산</th></tr></thead><tbody>' +
+    rows.map(function (r) {
+      return '<tr><td style="' + cell + '">' + r.rank + '</td>' +
+        '<td style="' + cell + ';text-align:left"><b>' + esc(r.s.name) + '</b> ' + esc(r.s.position || '') +
+          ' <span style="font-size:9.5px;color:#777">' + esc([r.s.site === '서울사무소' ? '서울' : r.s.site, r.s.dept !== r.s.name ? r.s.dept : ''].filter(Boolean).join(' · ')) + '</span></td>' +
+        SM_SCORE.map(function (it) {
+          var x = r.sc[it.k];
+          if (!x) return '<td style="' + cell + ';color:#aaa">–</td>';
+          if (!x.manual) return '<td style="' + cell + '"></td>';
+          var bg = x.v === 10 ? '#111;color:#fff' : x.v === 7 ? '#dcdcdc;color:#111' : '#fdecea;color:#c0392b';
+          return '<td style="' + cell + ';font-weight:700;background:' + bg + '">' + x.v + '</td>';
+        }).join('') +
+        '<td style="' + cell + ';font-weight:800">' + r.total + ' / ' + r.max + '</td><td style="' + cell + ';font-weight:800">' + (r.manual ? r.pct100 : '') + '</td></tr>';
+    }).join('') + '</tbody></table>' +
+    '<div style="margin-top:10px;font-size:10px;color:#555;line-height:1.7">양호 10 · 보통 7 · 미흡 4 · 빈칸 = 아직 입력 안 함 · "–" = ISO 팀목표 대상 아님 (ISO 대상 100점 · 그 외 90점 만점 → 100점 환산으로 순위)</div>' +
+  '</div>';
+  apLoadPdfLibs().then(function () {
+    var box = document.createElement('div');
+    box.style.cssText = 'position:fixed;left:-12000px;top:0;background:#fff';
+    box.innerHTML = html; document.body.appendChild(box);
+    return window.html2canvas(box.firstChild, { scale: 2, backgroundColor: '#ffffff', logging: false }).then(function (cv) {
+      box.remove();
+      var pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'landscape' });
+      var pw = 297, ph = 210, m = 8, iw = pw - m * 2, ih = ph - m * 2;
+      var pxPerMm = cv.width / iw, sliceH = Math.floor(ih * pxPerMm);
+      // 한 장보다 조금(1.7배 이내) 길면 줄이 잘리지 않게 한 장에 맞춰 줄여 넣습니다
+      var fullH = cv.height / pxPerMm;
+      if (fullH > ih && fullH <= ih * 1.7) {
+        var k = ih / fullH, w2 = iw * k;
+        pdf.addImage(cv.toDataURL('image/jpeg', 0.92), 'JPEG', m + (iw - w2) / 2, m, w2, ih);
+        sliceH = cv.height + 1;   // 아래 반복은 건너뜀
+      }
+      for (var y = fullH > ih && fullH <= ih * 1.7 ? cv.height : 0, page = 0; y < cv.height; y += sliceH, page++) {
+        var h = Math.min(sliceH, cv.height - y), part = document.createElement('canvas');
+        part.width = cv.width; part.height = h;
+        part.getContext('2d').drawImage(cv, 0, y, cv.width, h, 0, 0, cv.width, h);
+        if (page) pdf.addPage();
+        pdf.addImage(part.toDataURL('image/jpeg', 0.92), 'JPEG', m, m, iw, h / pxPerMm);
+      }
+      apDownloadBlob(pdf.output('blob'), '관리감독자_평가점수_' + PF_CFG.year + '_' + siteLabel + '_' + ymd(new Date()) + '.pdf');
+      toast('PDF를 내려받았습니다.');
+    }, function (e) { box.remove(); throw e; });
+  }).catch(function (e) { toast('PDF 만들기 실패: ' + ((e && e.message) || e), 'err'); })
+    .then(function () { btn.disabled = false; btn.innerHTML = old; });
+}
+document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#btnSmPdf')) smScorePdf(); });
 /** 중대재해처벌법 05 카드 진행율 = 평가 점수 입력 비율 */
 function smCsaProgress() {
   if (!SM.loaded) return null;
@@ -8361,7 +9040,9 @@ function isoSubmit(kind) {
   }).then(function () { btn.disabled = false; btn.textContent = '등록'; });
 }
 function isoDelete(id) {
-  if (!confirm('이 기록을 삭제할까요? 첨부 파일도 함께 지워집니다.')) return;
+  delPin('이 자료를 삭제합니다. 첨부 파일도 함께 지워집니다.').then(function (ok) { if (ok) isoDeleteNow(id); });
+}
+function isoDeleteNow(id) {
   var r = ISO.rows.filter(function (x) { return String(x.id) === String(id); })[0];
   var paths = isoFiles(r).map(function (f) { return f.path; }).filter(Boolean);
   (paths.length ? RPC.db.storage.from('ehs-evidence').remove(paths) : Promise.resolve())
@@ -9423,7 +10104,9 @@ function renderQseList() {
     }), 860) + '<div class="subttl">' + QSE_LIST.length + '건 표시</div>';
 }
 function deleteQse(id) {
-  if (!confirm('이 평가 기록을 삭제할까요?')) return;
+  delPin('이 적격수급인 평가 기록을 삭제합니다.').then(function (ok) { if (ok) deleteQseNow(id); });
+}
+function deleteQseNow(id) {
   var r = QSE_LIST.filter(function (x) { return x.id === id; })[0];
   var paths = ((r && r.evidence) || []).map(function (e) { return e.path; }).filter(Boolean);
   (paths.length ? RPC.db.storage.from('ehs-evidence').remove(paths) : Promise.resolve())
@@ -9505,31 +10188,259 @@ function renderLibSites() {
       '<span class="lib-site-go">↗</span></a>';
   }).join('');
 }
+/* ── 자료실 : 구분 · 본문 보기 · 본문 검색 ──
+ *  올릴 때 파일 본문을 브라우저에서 뽑아 dashboard_files.content 에 저장합니다.
+ *    docx · pptx · hwpx (JSZip) · xlsx/xls/csv (SheetJS) · pdf (pdf.js, 처음 쓸 때 불러옴) · txt/md
+ *  본문이 없는 예전 자료는 목록을 열 때 차례로 읽어 채웁니다(색인). */
+var LIB_CATS = ['안전', '보건', '환경', '기획', '공통', '기타'];
+var LIB_CAT_LABEL = { '기타': '기타 (대외 공문 등)' };
+var LIB = { cat: 'all', q: '', sort: 'recent', open: null, tab: 'text', hit: 0, hasCols: true, indexing: false };
+function libCat(r) { return LIB_CATS.indexOf(r.category) !== -1 ? r.category : '공통'; }
+function libExt(n) { var m = /\.([a-z0-9]+)$/i.exec(n || ''); return m ? m[1].toLowerCase() : ''; }
+function libSize(b) { b = +b || 0; return b >= 1048576 ? (b / 1048576).toFixed(1) + 'MB' : b >= 1024 ? Math.round(b / 1024) + 'KB' : b ? b + 'B' : ''; }
+function libTerms(q) { return String(q || '').toLowerCase().split(/\s+/).filter(Boolean); }
+function libHay(r) { return [r.title, r.file_name, r.note, r.content].join('\n').toLowerCase(); }
+function libMatch(r, terms) { if (!terms.length) return true; var h = libHay(r); return terms.every(function (t) { return h.indexOf(t) !== -1; }); }
+function libHl(s, terms) {
+  s = esc(s);
+  if (!terms.length) return s;
+  var re = new RegExp('(' + terms.map(function (t) { return esc(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'gi');
+  return s.replace(re, '<mark>$1</mark>');
+}
+function libSnippet(r, terms) {
+  var c = String(r.content || ''); if (!terms.length || !c) return '';
+  var lc = c.toLowerCase(), at = -1, n = 0;
+  terms.forEach(function (t) { var i = lc.indexOf(t); if (i !== -1 && (at === -1 || i < at)) at = i; var j = -1; while ((j = lc.indexOf(t, j + 1)) !== -1) n++; });
+  if (at === -1) return '';
+  var s = Math.max(0, at - 40), e = Math.min(c.length, at + 80);
+  return '<div class="lb-snip">' + (s ? '…' : '') + libHl(c.slice(s, e).replace(/\s+/g, ' '), terms) + (e < c.length ? '…' : '') +
+    '<span class="n">본문 ' + n + '곳</span></div>';
+}
+function libFileIcon(r) {
+  var x = libExt(r.file_name);
+  var k = /^(xlsx?|xlsm|csv)$/.test(x) ? 'XLS' : /^(docx?)$/.test(x) ? 'DOC' : /^(pptx?)$/.test(x) ? 'PPT' : x === 'pdf' ? 'PDF' :
+    /^(hwpx?)$/.test(x) ? 'HWP' : /^(png|jpe?g|gif|webp|bmp)$/.test(x) ? 'IMG' : x ? x.toUpperCase().slice(0, 4) : '—';
+  return '<span class="lb-ico lb-' + k.toLowerCase() + '">' + k + '</span>';
+}
 function renderLibList() {
-  if (!LIB_FILES.length) {
-    $('libList').innerHTML = '<div class="empty"><b>등록된 자료가 없습니다</b>위 양식으로 문서를 올려 두면 여기에 표시됩니다.</div>';
-    return;
+  if (!$('libList')) return;
+  var terms = libTerms(LIB.q);
+  // 구분 타일 (누르면 거르기)
+  var cnt = {}; LIB_CATS.forEach(function (c) { cnt[c] = 0; }); LIB_FILES.forEach(function (r) { cnt[libCat(r)]++; });
+  $('libCats').innerHTML = [['all', '전체', LIB_FILES.length]].concat(LIB_CATS.map(function (c) { return [c, LIB_CAT_LABEL[c] || c, cnt[c]]; }))
+    .map(function (x) {
+      return '<button type="button" class="lb-cat' + (LIB.cat === x[0] ? ' on' : '') + '" data-libcat="' + x[0] + '"><span class="k">' + esc(x[1]) + '</span><b>' + x[2] + '</b></button>';
+    }).join('');
+  if (!$('libCat').options.length) {
+    var opts = LIB_CATS.map(function (c) { return '<option value="' + c + '">' + esc(LIB_CAT_LABEL[c] || c) + '</option>'; }).join('');
+    $('libCat').innerHTML = opts; $('lbCatSel').innerHTML = opts;
   }
-  $('libList').innerHTML = tbl(
-    [{ t: '제목' }, { t: '등록일', w: '92px' }, { t: '', w: '110px' }],
-    LIB_FILES.map(function (r) {
-      return '<tr><td class="k">' + esc(r.title) + (r.file_name ? '<div class="dim" style="font-size:10.5px;margin-top:2px">' + esc(r.file_name) + '</div>' : '') + '</td>' +
-        '<td class="n dim">' + esc(String(r.created_at).slice(0, 10)) + '</td>' +
-        '<td>' + (r.file_url ? '<a href="' + esc(r.file_url) + '" target="_blank" rel="noopener" class="reset" style="padding:5px 10px;font-size:10.5px;text-decoration:none;display:inline-block">열기</a> ' : '') +
-        '<button class="reset" style="padding:5px 10px;font-size:10.5px" data-libdel="' + r.id + '">삭제</button></td></tr>';
-    }), 380);
+  var rows = LIB_FILES.filter(function (r) { return (LIB.cat === 'all' || libCat(r) === LIB.cat) && libMatch(r, terms); });
+  rows.sort(function (a, b) {
+    if (LIB.sort === 'title') return String(a.title).localeCompare(String(b.title), 'ko');
+    if (LIB.sort === 'date') return String(b.doc_date || b.created_at).localeCompare(String(a.doc_date || a.created_at));
+    return String(b.created_at).localeCompare(String(a.created_at));
+  });
+  $('libCount').textContent = (LIB.cat === 'all' ? '전체' : (LIB_CAT_LABEL[LIB.cat] || LIB.cat)) + ' · ' + rows.length + '건' + (terms.length ? ' (검색)' : '');
+  var noIdx = LIB_FILES.filter(function (r) { return r.file_url && r.content == null && libCanRead(r.file_name); }).length;
+  $('libIdx').hidden = !(noIdx && LIB.hasCols);
+  $('libIdx').innerHTML = LIB.indexing ? '본문을 읽어 검색에 넣는 중… (' + noIdx + '건 남음)' : '본문 검색에 아직 안 들어간 자료 ' + noIdx + '건 — 잠시 후 자동으로 읽습니다.';
+  $('libList').innerHTML = !LIB.hasCols ? '<div class="rg-issue" style="margin-bottom:10px">구분 · 본문 검색을 쓰려면 Supabase SQL Editor 에서 <b>schema_library.sql</b> 을 다시 실행해 주세요. (기존 자료는 그대로)</div>' : '';
+  $('libList').innerHTML += rows.length ? rows.map(function (r) {
+    return '<button type="button" class="lb-row" data-libopen="' + esc(r.id) + '">' + libFileIcon(r) +
+      '<span class="lb-main"><span class="lb-t"><span class="b b-gray">' + esc(libCat(r)) + '</span>' + libHl(r.title, terms) + '</span>' +
+        '<span class="lb-m">' + esc([r.file_name, libSize(r.file_size), r.doc_date ? '문서일 ' + String(r.doc_date).replace(/-/g, '.') : '',
+          '등록 ' + String(r.created_at).slice(0, 10).replace(/-/g, '.'), r.created_by].filter(Boolean).join(' · ')) + '</span>' +
+        (r.note ? '<span class="lb-n">' + libHl(r.note, terms) + '</span>' : '') + libSnippet(r, terms) + '</span>' +
+      '<span class="lb-go" aria-hidden="true">→</span></button>';
+  }).join('') : '<div class="empty"><b>' + (terms.length ? '"' + esc(LIB.q) + '" 검색 결과가 없습니다' : '등록된 자료가 없습니다') + '</b>' +
+    (terms.length ? '다른 단어로 찾아보세요. 본문은 워드 · 엑셀 · 파워포인트 · PDF · 한글(hwpx) · 텍스트 파일에서 검색됩니다.' : '아래 "자료 등록"으로 문서를 올려 주세요.') + '</div>';
+  if (LIB.open) libRenderView();
 }
 function loadLib() {
   if (!RPC.live) { LIB_FILES = []; renderLibList(); return Promise.resolve(); }
-  return RPC.db.from('dashboard_files').select('*').order('created_at', { ascending: false }).limit(200)
+  return RPC.db.from('dashboard_files').select('*').order('created_at', { ascending: false }).limit(1000)
     .then(function (res) {
       if (res.error) throw res.error;
       LIB_FILES = res.data || [];
+      LIB.hasCols = !LIB_FILES.length || ('content' in LIB_FILES[0]);
       renderLibList();
+      setTimeout(libIndexMissing, 1500);
     }).catch(function (e) {
       console.warn('[EHS] 자료실 조회 실패', e);
       LIB_FILES = []; renderLibList();
     });
+}
+
+/* ── 본문 뽑기 ── */
+function libCanRead(name) { return /^(docx|pptx|hwpx|xlsx|xls|xlsm|csv|pdf|txt|md|json|log)$/.test(libExt(name)); }
+var LIB_PDFJS = null;
+function libLoadPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  if (LIB_PDFJS) return LIB_PDFJS;
+  LIB_PDFJS = new Promise(function (res, rej) {
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = function () {
+      // 워커 스크립트를 페이지에 직접 불러 두면(window.pdfjsWorker) pdf.js 가 별도 작업자(Worker) 없이
+      // 이 페이지 안에서 읽습니다 — 다른 주소(CDN)의 Worker 를 띄우지 못하는 환경에서도 동작합니다
+      var W = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = W;
+      var w = document.createElement('script');
+      w.src = W;
+      w.onload = function () { res(window.pdfjsLib); };
+      w.onerror = function () { res(window.pdfjsLib); };
+      document.head.appendChild(w);
+    };
+    s.onerror = function () { LIB_PDFJS = null; rej(new Error('PDF 읽기 도구를 불러오지 못했습니다')); };
+    document.head.appendChild(s);
+  });
+  return LIB_PDFJS;
+}
+function libXmlText(xml, paraTag, textTag) {
+  var doc = new DOMParser().parseFromString(xml, 'application/xml');
+  var out = [];
+  [].forEach.call(doc.getElementsByTagNameNS('*', paraTag), function (p) {
+    var t = [].map.call(p.getElementsByTagNameNS('*', textTag), function (x) { return x.textContent; }).join('');
+    if (t.trim()) out.push(t);
+  });
+  return out.join('\n');
+}
+/** 파일(Blob/File)에서 본문 글자를 뽑습니다. 못 읽는 형식이면 '' */
+function libExtract(blob, name) {
+  var x = libExt(name);
+  var buf = function () { return blob.arrayBuffer ? blob.arrayBuffer() : new Response(blob).arrayBuffer(); };
+  var cut = function (s) { s = String(s || '').replace(/\u0000/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim(); return s.length > 400000 ? s.slice(0, 400000) : s; };
+  try {
+    if (/^(txt|md|json|log)$/.test(x)) return (blob.text ? blob.text() : new Response(blob).text()).then(cut);
+    if (/^(xlsx|xls|xlsm|csv)$/.test(x)) return buf().then(function (ab) {
+      var wb = XLSX.read(ab, { type: 'array' });
+      return cut(wb.SheetNames.map(function (sn) {
+        var csv = XLSX.utils.sheet_to_csv(wb.Sheets[sn], { blankrows: false });
+        return '[' + sn + ']\n' + csv.split('\n').map(function (l) { return l.replace(/,+$/, '').replace(/,{2,}/g, ', '); }).filter(Boolean).join('\n');
+      }).join('\n\n'));
+    });
+    if (x === 'docx') return buf().then(JSZip.loadAsync).then(function (z) {
+      var f = z.file('word/document.xml'); return f ? f.async('string') : '';
+    }).then(function (xml) { return cut(xml ? libXmlText(xml, 'p', 't') : ''); });
+    if (x === 'pptx') return buf().then(JSZip.loadAsync).then(function (z) {
+      var names = Object.keys(z.files).filter(function (n) { return /^ppt\/slides\/slide\d+\.xml$/.test(n); })
+        .sort(function (a, b) { return (+a.match(/(\d+)\.xml$/)[1]) - (+b.match(/(\d+)\.xml$/)[1]); });
+      return Promise.all(names.map(function (n) { return z.file(n).async('string'); })).then(function (xs) {
+        return cut(xs.map(function (xml, i) { return '[슬라이드 ' + (i + 1) + ']\n' + libXmlText(xml, 'p', 't'); }).join('\n\n'));
+      });
+    });
+    if (x === 'hwpx') return buf().then(JSZip.loadAsync).then(function (z) {
+      var names = Object.keys(z.files).filter(function (n) { return /^Contents\/section\d+\.xml$/i.test(n); }).sort();
+      return Promise.all(names.map(function (n) { return z.file(n).async('string'); })).then(function (xs) {
+        return cut(xs.map(function (xml) { return libXmlText(xml, 'p', 't'); }).join('\n\n'));
+      });
+    });
+    if (x === 'pdf') return Promise.all([libLoadPdfJs(), buf()]).then(function (a) {
+      return a[0].getDocument({ data: new Uint8Array(a[1]) }).promise.then(function (pdf) {
+        var pages = []; for (var i = 1; i <= Math.min(pdf.numPages, 300); i++) pages.push(i);
+        return Promise.all(pages.map(function (i) {
+          return pdf.getPage(i).then(function (pg) { return pg.getTextContent(); }).then(function (tc) {
+            var line = '', lines = [], lastY = null;
+            tc.items.forEach(function (it) {
+              var y = it.transform ? Math.round(it.transform[5]) : null;
+              if (lastY !== null && y !== null && Math.abs(y - lastY) > 2) { lines.push(line); line = ''; }
+              line += it.str; lastY = y;
+            });
+            lines.push(line);
+            return '[' + i + '쪽]\n' + lines.filter(function (l) { return l.trim(); }).join('\n');
+          });
+        })).then(function (ps) { return cut(ps.join('\n\n')); });
+      });
+    });
+  } catch (e) { return Promise.resolve(''); }
+  return Promise.resolve('');
+}
+/** 본문이 없는 예전 자료를 하나씩 읽어 content 를 채웁니다 */
+function libIndexMissing() {
+  if (LIB.indexing || !LIB.hasCols || !RPC.live) return;
+  var r = LIB_FILES.filter(function (x) { return x.file_url && x.content == null && libCanRead(x.file_name) && !x._idxFail; })[0];
+  if (!r) { LIB.indexing = false; renderLibList(); return; }
+  LIB.indexing = true; renderLibList();
+  fetch(r.file_url).then(function (res) { if (!res.ok) throw new Error(res.status); return res.blob(); })
+    .then(function (b) { if (!r.file_size) r.file_size = b.size; return libExtract(b, r.file_name); })
+    .then(function (txt) {
+      r.content = txt || '';
+      return RPC.db.from('dashboard_files').update({ content: r.content, file_size: r.file_size || null }).eq('id', r.id);
+    }).catch(function (e) { console.warn('[EHS] 자료 본문 읽기 실패', r.file_name, e); r._idxFail = true; })
+    .then(function () { LIB.indexing = false; setTimeout(libIndexMissing, 200); });
+}
+
+/* ── 자료 보기 ── */
+function libOpen(id) {
+  LIB.open = id; LIB.tab = 'text'; LIB.hit = 0;
+  libRenderView();
+  $('libScrim').classList.add('on');
+}
+function libClose() { $('libScrim').classList.remove('on'); LIB.open = null; $('lbBody').innerHTML = ''; }
+function libRenderView() {
+  var r = LIB_FILES.filter(function (x) { return String(x.id) === String(LIB.open); })[0];
+  if (!r) { libClose(); return; }
+  var terms = libTerms(LIB.q), x = libExt(r.file_name);
+  $('lbCat').textContent = LIB_CAT_LABEL[libCat(r)] || libCat(r);
+  $('lbTitle').textContent = r.title;
+  $('lbMeta').textContent = [r.file_name, libSize(r.file_size), r.doc_date ? '문서일 ' + String(r.doc_date).replace(/-/g, '.') : '',
+    '등록 ' + String(r.created_at).slice(0, 10).replace(/-/g, '.'), r.created_by, r.note].filter(Boolean).join(' · ');
+  $('lbCatSel').value = libCat(r); $('lbCatSel').disabled = !LIB.hasCols;
+  $('lbOpen').href = r.file_url || '#'; $('lbOpen').style.display = r.file_url ? '' : 'none';
+  $('lbDel').dataset.libdel = r.id;
+  document.querySelectorAll('#lbTabs [data-lbtab]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lbtab === LIB.tab)); });
+  var body = $('lbBody');
+  if (LIB.tab === 'orig') {
+    $('lbFind').innerHTML = '';
+    if (!r.file_url) { body.innerHTML = '<div class="empty"><b>첨부 파일이 없습니다</b></div>'; return; }
+    body.innerHTML = x === 'pdf' ? '<iframe class="lb-frame" src="' + esc(r.file_url) + '" title="원본"></iframe>'
+      : /^(png|jpe?g|gif|webp|bmp)$/.test(x) ? '<img class="lb-pic" src="' + esc(r.file_url) + '" alt="">'
+      : '<div class="empty"><b>이 형식은 화면에서 바로 미리 볼 수 없습니다</b>위의 "원본 열기"로 내려받아 확인하세요. 본문 탭에서 내용은 볼 수 있습니다.</div>';
+    return;
+  }
+  var c = r.content;
+  if (c == null && r.file_url && libCanRead(r.file_name)) {
+    body.innerHTML = '<div class="empty"><b>본문을 읽는 중…</b></div>'; $('lbFind').innerHTML = '';
+    libIndexOne(r); return;
+  }
+  if (!c) {
+    $('lbFind').innerHTML = '';
+    body.innerHTML = '<div class="empty"><b>뽑아 둔 본문이 없습니다</b>' +
+      (libCanRead(r.file_name) ? '파일에 글자가 없거나(스캔 이미지 등) 읽지 못했습니다.' : '이 형식(' + esc(x || '파일') + ')은 본문을 읽지 못해 제목 · 파일명으로만 검색됩니다.') +
+      ' "원본 미리보기"나 "원본 열기"로 확인하세요.</div>';
+    return;
+  }
+  body.innerHTML = '<div class="lb-text">' + String(c).split(/\n/).map(function (l) {
+    return /^\[(슬라이드 \d+|\d+쪽|.{1,31})\]$/.test(l) ? '<h4>' + esc(l.slice(1, -1)) + '</h4>' : '<p>' + (libHl(l, terms) || '&nbsp;') + '</p>';
+  }).join('') + '</div>';
+  var marks = body.querySelectorAll('mark');
+  $('lbFind').innerHTML = terms.length ? (marks.length
+    ? '<b>' + marks.length + '곳</b><button type="button" class="reset" data-lbhit="-1">↑</button><button type="button" class="reset" data-lbhit="1">↓</button>'
+    : '본문에 "' + esc(LIB.q) + '" 없음') : '';
+  if (marks.length) libJump(0);
+}
+function libJump(step) {
+  var marks = $('lbBody').querySelectorAll('mark'); if (!marks.length) return;
+  LIB.hit = step === 0 ? 0 : (LIB.hit + step + marks.length) % marks.length;
+  [].forEach.call(marks, function (m, i) { m.classList.toggle('cur', i === LIB.hit); });
+  marks[LIB.hit].scrollIntoView({ block: 'center', behavior: step === 0 ? 'auto' : 'smooth' });
+}
+function libIndexOne(r) {
+  fetch(r.file_url).then(function (res) { if (!res.ok) throw new Error(res.status); return res.blob(); })
+    .then(function (b) { if (!r.file_size) r.file_size = b.size; return libExtract(b, r.file_name); })
+    .then(function (txt) {
+      r.content = txt || '';
+      if (LIB.hasCols && RPC.live) RPC.db.from('dashboard_files').update({ content: r.content, file_size: r.file_size || null }).eq('id', r.id);
+    }).catch(function (e) { console.warn('[EHS] 본문 읽기 실패', e); r.content = ''; })
+    .then(function () { if (String(LIB.open) === String(r.id)) libRenderView(); renderLibList(); });
+}
+function libSetCat(cat) {
+  var r = LIB_FILES.filter(function (x) { return String(x.id) === String(LIB.open); })[0]; if (!r) return;
+  RPC.db.from('dashboard_files').update({ category: cat }).eq('id', r.id).then(function (res) {
+    if (res.error) { toast('구분 변경 실패: ' + res.error.message, 'err'); return; }
+    r.category = cat; toast('구분을 "' + (LIB_CAT_LABEL[cat] || cat) + '"(으)로 바꿨습니다.'); renderLibList();
+  });
 }
 function uploadLibFile(file) {
   var name = Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + safeExt(file.name);
@@ -9540,59 +10451,130 @@ function uploadLibFile(file) {
     return { path: path, url: url, name: file.name };
   });
 }
+/** 자료 등록 : 파일마다 본문을 뽑고 → 올리고 → 한 줄씩 저장 (여러 파일이면 제목 뒤에 파일 이름) */
 function submitLib() {
-  var title = $('libTitle').value.trim();
-  var file = $('libFile').files[0];
-  if (!title) { toast('제목을 입력해 주세요.', 'warn'); $('libTitle').focus(); return; }
+  var title = $('libTitle').value.trim(), cat = $('libCat').value || '공통';
+  var files = [].slice.call($('libFile').files || []);
+  if (!files.length && !title) { toast('파일을 고르거나 제목을 입력해 주세요.', 'warn'); return; }
   if (!RPC.live) { toast('Supabase에 연결되어야 저장할 수 있습니다.', 'warn'); return; }
-  var btn = $('btnLibUpload'); btn.disabled = true; btn.textContent = '업로드 중…';
-  (file ? uploadLibFile(file) : Promise.resolve(null)).then(function (up) {
-    return RPC.db.from('dashboard_files').insert({
-      title: title, file_url: up ? up.url : null, file_path: up ? up.path : null,
-      file_name: up ? up.name : null, created_by: state.user || null
+  var btn = $('btnLibUpload'); btn.disabled = true;
+  var base = function (n) { return String(n || '').replace(/\.[^.]+$/, ''); };
+  var jobs = files.length ? files : [null], done = 0;
+  var step = function (i) {
+    if (i >= jobs.length) return Promise.resolve();
+    var f = jobs[i];
+    btn.textContent = files.length ? '올리는 중 ' + (i + 1) + '/' + jobs.length + '…' : '저장 중…';
+    var t = !f ? title : (title ? (jobs.length > 1 ? title + ' - ' + base(f.name) : title) : base(f.name));
+    return (f && libCanRead(f.name) ? libExtract(f, f.name).catch(function () { return ''; }) : Promise.resolve(null)).then(function (txt) {
+      return (f ? uploadLibFile(f) : Promise.resolve(null)).then(function (up) {
+        var row = { title: t, file_url: up ? up.url : null, file_path: up ? up.path : null, file_name: up ? up.name : null, created_by: state.user || null };
+        if (LIB.hasCols) {
+          row.category = cat; row.doc_date = $('libDate').value || null; row.note = $('libNote').value.trim() || null;
+          row.content = txt; row.file_size = f ? f.size : null; row.mime = f ? (f.type || null) : null;
+        }
+        return RPC.db.from('dashboard_files').insert(row);
+      });
+    }).then(function (res) {
+      if (res.error) throw res.error;
+      done++;
+      return step(i + 1);
     });
-  }).then(function (res) {
-    if (res.error) throw res.error;
-    toast('자료를 등록했습니다.');
-    $('libTitle').value = ''; $('libFile').value = '';
-    loadLib();
+  };
+  step(0).then(function () {
+    toast(done > 1 ? '자료 ' + done + '건을 등록했습니다.' : '자료를 등록했습니다.');
+    $('libTitle').value = ''; $('libNote').value = ''; $('libFile').value = ''; $('libDate').value = '';
+    LIB.cat = 'all'; loadLib();
   }).catch(function (e) {
-    toast('등록 실패: ' + ((e && e.message) || e), 'err');
-  }).then(function () { btn.disabled = false; btn.textContent = '업로드'; });
+    var m = (e && e.message) || String(e);
+    toast(/category|content|column/i.test(m) ? 'Supabase 에서 schema_library.sql 을 다시 실행해 주세요 (구분 · 본문 칸 추가).' : '등록 실패: ' + m, 'err');
+    if (done) loadLib();
+  }).then(function () { btn.disabled = false; btn.textContent = '등록'; });
 }
 function deleteLib(id) {
-  if (!confirm('이 자료를 삭제할까요?')) return;
+  delPin('자료실의 이 자료를 삭제합니다.').then(function (ok) { if (ok) deleteLibNow(id); });
+}
+function deleteLibNow(id) {
   var r = LIB_FILES.filter(function (x) { return x.id === id; })[0];
   (r && r.file_path ? RPC.db.storage.from('ehs-evidence').remove([r.file_path]) : Promise.resolve())
     .then(function () { return RPC.db.from('dashboard_files').delete().eq('id', id); })
-    .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); loadLib(); })
+    .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); if (LIB.open) libClose(); loadLib(); })
     .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
 }
 
 /* ============================================================
- *  6-6-0. 안전보건의 날 (schema_safetyday.sql 실행 필요)
- *  · 월별 실시 현황 : 선택한 연도의 1~12월 실시 여부. 달을 누르면 아래 기록이 그 달만 보입니다.
- *  · 활동 등록 : 실시일 · 사업장 · 제목 · 내용 · 참석 인원 · 사진(여러 장, ehs-evidence/safetyday/)
+ *  6-6-0. 안전보건의 날
+ *  · 게시판 두 개 : 안전보건 회보(board='news', 발행 월) · 이벤트(board='event', 실시일)
+ *    → 현장근로자용 플랫폼 Supabase(PF_CFG)의 safety_day_board 표 · safety-day 버킷에 저장합니다.
+ *      현장 플랫폼 [안전보건의 날] 메뉴가 같은 표를 읽으므로 올리는 즉시 연동됩니다.
+ *      (플랫폼 폴더의 schema_safetyday.sql 을 플랫폼 Supabase 에서 먼저 실행)
+ *  · 예전 활동 기록(이 대시보드 Supabase 의 safety_day_posts)은 '내부 기록'으로 함께 보여 줍니다(현장 미게시).
+ *  · 월별 실시 현황 : 선택한 연도의 1~12월 게시 여부. 달을 누르면 아래 기록이 그 달만 보입니다.
  * ============================================================ */
 var SDY_ROWS = [];
-var SDY = { year: String(new Date().getFullYear()), month: '', openId: '', err: '' };
+var SDY = { year: String(new Date().getFullYear()), month: '', board: '', openId: '', err: '' };
+var SDY_BOARDS = { news: '안전보건 회보', event: '이벤트', '': '내부 기록' };
 function sdyPhotos(r) {
-  var p = r && r.photos;
+  var p = r && (r.photos || r.files);
   if (typeof p === 'string') { try { p = JSON.parse(p); } catch (e) { p = []; } }
   return Array.isArray(p) ? p : [];
 }
+function sdyIsPdf(f) { return /pdf/i.test(f.type || '') || /\.pdf($|\?)/i.test(f.name || f.url || ''); }
+function sdyPf() {
+  if (!PF.db && window.supabase) PF.db = window.supabase.createClient(PF_CFG.url, PF_CFG.key, { auth: { persistSession: false, autoRefreshToken: false, storageKey: 'pf-ro' } });
+  return PF.db;
+}
+function sdyKey(r) { return r._src + ':' + r.id; }
 function loadSdy() {
-  if (!RPC.live) { SDY_ROWS = []; renderSdy(); return Promise.resolve(); }
-  return RPC.db.from('safety_day_posts').select('*').order('event_date', { ascending: false }).limit(500)
-    .then(function (res) {
-      if (res.error) throw res.error;
-      SDY_ROWS = res.data || []; SDY.err = '';
-      renderSdy();
-    }).catch(function (e) {
-      console.warn('[EHS] 안전보건의 날 조회 실패', e);
-      SDY_ROWS = []; SDY.err = (e && e.message) || String(e);
-      renderSdy();
-    });
+  var pf = sdyPf();
+  var jobs = [
+    pf ? pf.from('safety_day_board').select('*').order('event_date', { ascending: false }).limit(1000)
+      .then(function (res) { if (res.error) throw res.error; return (res.data || []).map(function (r) { r._src = 'pf'; return r; }); })
+      .catch(function (e) { console.warn('[EHS] 안전보건의 날(현장 게시판) 조회 실패', e); SDY.err = (e && e.message) || String(e); return []; })
+      : Promise.resolve([]),
+    RPC.live ? RPC.db.from('safety_day_posts').select('*').order('event_date', { ascending: false }).limit(500)
+      .then(function (res) { if (res.error) throw res.error; var d = (res.data || []).map(function (r) { r._src = 'ehs'; r.board = ''; return r; }); d.ok = true; return d; })
+      .catch(function () { return []; })   // 예전 표가 없어도 괜찮습니다
+      : Promise.resolve([])
+  ];
+  SDY.err = '';
+  return Promise.all(jobs).then(function (res) {
+    var pfRows = res[0], legacy = res[1];
+    // 연동본(src_id 있는 글)은 원본(대시보드 기록)과 겹치므로 목록에서는 원본만 보여 줍니다
+    SDY_ROWS = pfRows.filter(function (r) { return !r.src_id; }).concat(legacy)
+      .sort(function (a, b) { return String(b.event_date).localeCompare(String(a.event_date)); });
+    renderSdy();
+    if (!SDY.err && legacy.ok) sdySyncLegacy(pfRows, legacy);
+  });
+}
+/* 대시보드 '안전보건의 날' 기록(safety_day_posts) → 현장 플랫폼 '안전보건 회보'(safety_day_board, board='news') 자동 연동
+ *  · 아직 연동 안 된 기록은 새로 넣고(src_id = 원본 id), 내용이 바뀐 것은 고치고, 원본이 지워진 연동본은 지웁니다.
+ *  · 첨부 사진은 원본 주소(ehs-evidence 공개 주소)를 그대로 씁니다. path 를 빼 두어 플랫폼 쪽에서 원본 파일을 지우지 않습니다. */
+function sdyMirrorOf(r) {
+  return {
+    src_id: r.id, board: 'news', event_date: r.event_date, title: r.title, content: r.content || null,
+    site: r.site || null, attendees: r.attendees || null, created_by: r.created_by || null,
+    files: sdyPhotos(r).map(function (p) { return { url: p.url, name: p.name || '', type: p.type || '' }; })
+  };
+}
+function sdySyncLegacy(pfRows, legacy) {
+  var pf = sdyPf(); if (!pf) return;
+  var bySrc = {};
+  pfRows.forEach(function (r) { if (r.src_id) bySrc[r.src_id] = r; });
+  var srcIds = {};
+  var ups = legacy.map(function (r) { srcIds[r.id] = 1; return sdyMirrorOf(r); }).filter(function (m) {
+    var cur = bySrc[m.src_id];
+    return !cur || cur.title !== m.title || (cur.content || null) !== m.content || String(cur.event_date) !== String(m.event_date) ||
+      JSON.stringify(sdyPhotos(cur).map(function (f) { return f.url; })) !== JSON.stringify(m.files.map(function (f) { return f.url; }));
+  });
+  var gone = Object.keys(bySrc).filter(function (id) { return !srcIds[id]; });
+  if (ups.length) pf.from('safety_day_board').upsert(ups, { onConflict: 'src_id' })
+    .then(function (res) { if (res.error) console.warn('[EHS] 안전보건의 날 → 현장 회보 연동 실패', res.error); });
+  if (gone.length) pf.from('safety_day_board').delete().in('src_id', gone)
+    .then(function (res) { if (res.error) console.warn('[EHS] 안전보건의 날 연동본 정리 실패', res.error); });
+}
+function sdyDateLabel(r) {
+  var d = String(r.event_date || '');
+  return r.board === 'news' ? d.slice(0, 4) + '.' + d.slice(5, 7) + '월호' : d.replace(/-/g, '.');
 }
 function renderSdy() {
   var now = new Date(), thisYear = String(now.getFullYear()), thisMonth = now.getMonth() + 1;
@@ -9602,8 +10584,11 @@ function renderSdy() {
   $('sdyYears').innerHTML = years.map(function (y) {
     return '<button class="fb" data-sdyyear="' + y + '" aria-pressed="' + (SDY.year === y) + '">' + y + '년</button>';
   }).join('');
+  var hasLegacy = SDY_ROWS.some(function (r) { return r._src === 'ehs'; });
+  $('sdyBoards').innerHTML = [['', '전체'], ['news', '안전보건 회보'], ['event', '이벤트']].concat(hasLegacy ? [['legacy', '내부 기록']] : [])
+    .map(function (b) { return '<button class="fb" data-sdyboard="' + b[0] + '" aria-pressed="' + (SDY.board === b[0]) + '">' + b[1] + '</button>'; }).join('');
 
-  var rows = SDY_ROWS.filter(function (r) { return String(r.event_date || '').slice(0, 4) === SDY.year; });
+  var rows = sdyBoardRows().filter(function (r) { return String(r.event_date || '').slice(0, 4) === SDY.year; });
   var done = 0;
   var cells = [];
   for (var m = 1; m <= 12; m++) {
@@ -9621,80 +10606,113 @@ function renderSdy() {
   }
   var dueMonths = SDY.year === thisYear ? thisMonth - 1 : SDY.year < thisYear ? 12 : 0;
   $('sdyMonths').innerHTML =
-    (SDY.err ? '<div class="rg-issue" style="margin:0 0 12px">기록을 불러오지 못했습니다 : ' + esc(SDY.err) +
-      '<br>Supabase SQL Editor 에서 <b>schema_safetyday.sql</b> 을 먼저 실행해 주세요.</div>' : '') +
+    (SDY.err ? '<div class="rg-issue" style="margin:0 0 12px">현장 플랫폼 게시판을 불러오지 못했습니다 : ' + esc(SDY.err) +
+      '<br>현장근로자용 플랫폼 Supabase 의 SQL Editor 에서 <b>2. 안전보건 통합 플랫폼(현장근로자 용)/schema_safetyday.sql</b> 을 먼저 실행해 주세요.</div>' : '') +
     '<div class="sdy-sum">' + SDY.year + '년 <b>' + done + '</b>개월 실시' +
       (dueMonths ? ' · 지난 달까지 기준 실시율 <b>' + Math.min(100, Math.round(done / dueMonths * 100)) + '%</b>' : '') +
       ' · 총 ' + rows.length + '건</div>' +
     '<div class="sdy-grid">' + cells.join('') + '</div>';
   renderSdyList();
 }
+function sdyBoardRows() {
+  return SDY_ROWS.filter(function (r) {
+    if (!SDY.board) return true;
+    if (SDY.board === 'legacy') return r._src === 'ehs';
+    return r._src === 'pf' && r.board === SDY.board;
+  });
+}
 function renderSdyList() {
-  var rows = SDY_ROWS.filter(function (r) {
+  var rows = sdyBoardRows().filter(function (r) {
     var d = String(r.event_date || '');
     return d.slice(0, 4) === SDY.year && (!SDY.month || d.slice(5, 7) === SDY.month);
   });
   $('sdyCount').textContent = SDY.year + '년' + (SDY.month ? ' ' + (+SDY.month) + '월' : '') + ' · ' + rows.length + '건';
   if (!rows.length) {
-    $('sdyList').innerHTML = '<div class="empty"><b>등록된 기록이 없습니다</b>' +
-      (RPC.live ? '왼쪽 양식으로 안전보건의 날 활동을 등록하면 여기에 쌓입니다.' : 'Supabase에 연결되어야 기록을 불러오고 저장할 수 있습니다.') + '</div>';
+    $('sdyList').innerHTML = '<div class="empty"><b>등록된 글이 없습니다</b>왼쪽 양식으로 안전보건 회보 · 이벤트를 올리면 여기와 현장 플랫폼에 함께 보입니다.</div>';
     return;
   }
   $('sdyList').innerHTML = rows.map(function (r) {
-    var ph = sdyPhotos(r), open = SDY.openId === String(r.id);
-    return '<div class="sdy-item' + (open ? ' open' : '') + '" data-sdyopen="' + esc(r.id) + '">' +
-      '<div class="hd"><span class="d">' + esc(String(r.event_date).replace(/-/g, '.')) + '</span>' +
+    var ph = sdyPhotos(r), key = sdyKey(r), open = SDY.openId === key;
+    var imgs = ph.filter(function (p) { return !sdyIsPdf(p); }), pdfs = ph.filter(sdyIsPdf);
+    var tag = r._src === 'ehs' ? '<span class="b b-gray">내부 기록</span>'
+      : '<span class="b ' + (r.board === 'news' ? 'b-blue' : 'b-green') + '">' + esc(SDY_BOARDS[r.board] || '') + '</span>';
+    return '<div class="sdy-item' + (open ? ' open' : '') + '" data-sdyopen="' + esc(key) + '">' +
+      '<div class="hd"><span class="d">' + esc(sdyDateLabel(r)) + '</span>' + tag +
         (r.site ? '<span class="b b-gray">' + esc(r.site) + '</span>' : '') +
         '<span class="t">' + esc(r.title) + '</span>' +
-        '<span class="meta">' + (r.attendees ? r.attendees + '명' : '') + (ph.length ? ' · 사진 ' + ph.length : '') + '</span></div>' +
+        '<span class="meta">' + [r.attendees ? r.attendees + '명' : '', imgs.length ? '사진 ' + imgs.length : '', pdfs.length ? 'PDF ' + pdfs.length : '']
+          .filter(Boolean).join(' · ') + '</span></div>' +
       (open
         ? '<div class="bd">' + (r.content ? '<p>' + esc(r.content) + '</p>' : '') +
-          (ph.length ? '<div class="ph">' + ph.map(function (p) {
+          (imgs.length ? '<div class="ph">' + imgs.map(function (p) {
             var u = esc(p.url);
             return '<img class="thumb" src="' + u + '" alt="' + esc(p.name || '') + '" data-lightbox="' + u + '" loading="lazy">';
           }).join('') + '</div>' : '') +
-          '<div class="ft"><span class="dim">' + esc(r.created_by || '') + '</span>' +
-          '<button class="reset" style="padding:5px 10px;font-size:10.5px" data-sdydel="' + esc(r.id) + '">삭제</button></div></div>'
+          (pdfs.length ? '<div class="ph">' + pdfs.map(function (p) {
+            return '<a class="reset" style="padding:5px 10px;font-size:11px;text-decoration:none" href="' + esc(p.url) + '" target="_blank" rel="noopener">📄 ' + esc(p.name || 'PDF') + '</a>';
+          }).join('') + '</div>' : '') +
+          '<div class="ft"><span class="dim">' + esc(r.created_by || '') + (r._src === 'pf' ? ' · 현장 플랫폼 게시 중' : ' · 현장 플랫폼 안전보건 회보에 자동 연동') + '</span>' +
+          '<button class="reset" style="padding:5px 10px;font-size:10.5px" data-sdydel="' + esc(key) + '">삭제</button></div></div>'
         : (r.content ? '<div class="pv">' + esc(String(r.content).replace(/\s+/g, ' ').slice(0, 90)) + '</div>' : '')) +
       '</div>';
   }).join('');
 }
-function uploadSdyPhoto(file) {
-  var path = 'safetyday/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + safeExt(file.name);
-  return RPC.db.storage.from('ehs-evidence').upload(path, file, { cacheControl: '3600' }).then(function (res) {
+function sdyFormBoard() {
+  var b = $('sdyBoard').value;
+  [].forEach.call(document.querySelectorAll('#bd-safeday [data-sdyfor]'), function (el) { el.hidden = el.dataset.sdyfor !== b; });
+}
+function uploadSdyFile(file, board, year) {
+  var path = board + '/' + year + '/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + safeExt(file.name);
+  var st = sdyPf().storage.from('safety-day');
+  return st.upload(path, file, { cacheControl: '3600', contentType: file.type || undefined }).then(function (res) {
     if (res.error) throw res.error;
-    return { path: path, url: RPC.db.storage.from('ehs-evidence').getPublicUrl(path).data.publicUrl, name: file.name };
+    return { path: path, url: st.getPublicUrl(path).data.publicUrl, name: file.name, type: file.type || '' };
   });
 }
 function submitSdy() {
-  var date = $('sdyDate').value, title = $('sdyTitle').value.trim();
-  if (!date) { toast('실시일을 입력해 주세요.', 'warn'); $('sdyDate').focus(); return; }
+  var board = $('sdyBoard').value, title = $('sdyTitle').value.trim();
+  var date = board === 'news' ? ($('sdyYm').value ? $('sdyYm').value + '-01' : '') : $('sdyDate').value;
+  if (!date) { toast(board === 'news' ? '발행 월을 입력해 주세요.' : '실시일을 입력해 주세요.', 'warn'); (board === 'news' ? $('sdyYm') : $('sdyDate')).focus(); return; }
   if (!title) { toast('제목을 입력해 주세요.', 'warn'); $('sdyTitle').focus(); return; }
-  if (!RPC.live) { toast('Supabase에 연결되어야 저장할 수 있습니다.', 'warn'); return; }
+  if (!sdyPf()) { toast('Supabase 라이브러리를 불러오지 못했습니다.', 'warn'); return; }
   var files = Array.prototype.slice.call($('sdyPhotos').files || []);
   var people = parseInt($('sdyPeople').value, 10);
-  var btn = $('btnSdySave'); btn.disabled = true; btn.textContent = files.length ? '사진 올리는 중…' : '저장 중…';
-  Promise.all(files.map(uploadSdyPhoto)).then(function (photos) {
-    return RPC.db.from('safety_day_posts').insert({
-      event_date: date, site: $('sdySite').value, title: title, content: $('sdyContent').value.trim() || null,
-      attendees: isNaN(people) ? null : people, photos: photos, created_by: state.user || null
+  var btn = $('btnSdySave'); btn.disabled = true; btn.textContent = files.length ? '파일 올리는 중…' : '저장 중…';
+  Promise.all(files.map(function (f) { return uploadSdyFile(f, board, date.slice(0, 4)); })).then(function (up) {
+    return sdyPf().from('safety_day_board').insert({
+      board: board, event_date: date, title: title, content: $('sdyContent').value.trim() || null,
+      site: board === 'event' ? $('sdySite').value : null,
+      attendees: board === 'event' && !isNaN(people) ? people : null,
+      files: up, created_by: state.user || null
+    }).then(function (res) {
+      if (!res.error) return res;
+      // 글 저장이 실패하면 방금 올린 파일은 지워 둡니다
+      var paths = up.map(function (u) { return u.path; });
+      return (paths.length ? sdyPf().storage.from('safety-day').remove(paths) : Promise.resolve()).then(function () { throw res.error; });
     });
-  }).then(function (res) {
-    if (res.error) throw res.error;
-    toast('안전보건의 날 기록을 등록했습니다.');
+  }).then(function () {
+    toast(SDY_BOARDS[board] + '에 게시했습니다. 현장 플랫폼에도 바로 보입니다.');
     $('sdyTitle').value = ''; $('sdyContent').value = ''; $('sdyPeople').value = ''; $('sdyPhotos').value = '';
-    SDY.year = date.slice(0, 4); SDY.month = date.slice(5, 7);
+    SDY.year = date.slice(0, 4); SDY.month = date.slice(5, 7); SDY.board = board;
     loadSdy();
   }).catch(function (e) {
     toast('등록 실패: ' + ((e && e.message) || e), 'err');
   }).then(function () { btn.disabled = false; btn.textContent = '등록'; });
 }
-function deleteSdy(id) {
-  if (!confirm('이 기록을 삭제할까요? 첨부한 사진도 함께 지워집니다.')) return;
-  var r = SDY_ROWS.filter(function (x) { return String(x.id) === String(id); })[0];
+function deleteSdy(key) {
+  var pf = String(key).indexOf('pf:') === 0;
+  delPin(pf ? '이 글을 삭제합니다. 현장 플랫폼에서도 사라지고 첨부 파일도 함께 지워집니다.'
+            : '이 안전보건의 날 기록을 삭제합니다. 첨부한 사진도 함께 지워집니다.').then(function (ok) { if (ok) deleteSdyNow(key); });
+}
+function deleteSdyNow(key) {
+  var r = SDY_ROWS.filter(function (x) { return sdyKey(x) === key; })[0];
+  if (!r) return;
   var paths = sdyPhotos(r).map(function (p) { return p.path; }).filter(Boolean);
-  (paths.length ? RPC.db.storage.from('ehs-evidence').remove(paths) : Promise.resolve())
-    .then(function () { return RPC.db.from('safety_day_posts').delete().eq('id', id); })
+  var db = r._src === 'pf' ? sdyPf() : RPC.db;
+  var bucket = r._src === 'pf' ? 'safety-day' : 'ehs-evidence';
+  var table = r._src === 'pf' ? 'safety_day_board' : 'safety_day_posts';
+  (paths.length ? db.storage.from(bucket).remove(paths) : Promise.resolve())
+    .then(function () { return db.from(table).delete().eq('id', r.id); })
     .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); SDY.openId = ''; loadSdy(); })
     .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
 }
@@ -9874,7 +10892,9 @@ function actSubmit(key) {
   }).then(function () { btn.disabled = false; btn.textContent = '등록'; });
 }
 function actDelete(key, id) {
-  if (!confirm('이 기록을 삭제할까요? 첨부한 사진도 함께 지워집니다.')) return;
+  delPin('이 활동 기록을 삭제합니다. 첨부한 사진도 함께 지워집니다.').then(function (ok) { if (ok) actDeleteNow(key, id); });
+}
+function actDeleteNow(key, id) {
   var r = ACT_ROWS.filter(function (x) { return String(x.id) === String(id); })[0];
   var paths = sdyPhotos(r).map(function (p) { return p.path; }).filter(Boolean);
   (paths.length ? RPC.db.storage.from('ehs-evidence').remove(paths) : Promise.resolve())
@@ -9947,8 +10967,6 @@ function crBuild() {
         '<div class="form" style="grid-template-columns:1fr 1fr">' +
           '<div class="f"><label>점검 일자</label><input type="date" id="crDate" value="' + ymd(new Date()) + '"></div>' +
           '<div class="f"><label>시작 시간</label><input type="time" id="crTime" value="14:00"></div>' +
-          '<div class="f"><label>점검 장소</label><select id="crPlace"><option>팩토리움</option><option>서울사무소</option><option>매장</option><option>배송센터</option><option>기타</option></select></div>' +
-          '<div class="f"><label>작성자</label><input type="text" id="crWriter" placeholder="이름 · 직책"></div>' +
           '<div class="f wide"><label>주요 점검 내용</label><textarea id="crSummary" rows="2" placeholder="예) 생산동, 물류동 현장 안전점검 및 전월 안전보건 주요 업무 보고"></textarea></div>' +
           '<div class="f wide"><label>동행자</label><input type="text" id="crComp" placeholder="예) 김동현이사, 최은성차장, 한기선차장"></div>' +
         '</div>' +
@@ -9969,12 +10987,15 @@ function crBuild() {
           '<div class="f wide"><label>후속 조치 (담당 · 기한)</label><textarea id="crAction" rows="3" placeholder="예) 전원 안전교육 실시 (안전보건경영부, ~4/10)"></textarea></div>' +
           '<div class="f wide"><label>현장 사진 (선택)</label><input type="file" id="crPhotos" accept="image/*" multiple></div>' +
         '</div>' +
-        '<div class="subttl">서명</div>' +
+        // 결재 순서 : ① 작성자 결재(결재하기) → ② 대표이사 결재 (점검 기록에서 일지를 열어 결재 · 반려)
+        '<div class="subttl">결재</div>' +
         '<div class="cr-sigs">' +
-          '<div class="cr-sig"><span class="k">작성자</span><span class="none" id="crSigW">서명 전</span><button class="reset" type="button" id="crSignW" style="padding:5px 10px;font-size:11px">서명</button></div>' +
-          '<div class="cr-sig"><span class="k">대표이사</span><span class="none" id="crSigC">서명 전 (나중에 가능)</span><button class="reset" type="button" id="crSignC" style="padding:5px 10px;font-size:11px">서명</button></div>' +
+          '<div class="cr-sig">' + crStamp('', '') + '<div class="f" style="flex:1"><label>① 작성자 이름</label>' +
+            '<input type="text" id="crWriter" placeholder="예) 한기선" style="margin-bottom:6px"><label>작성일</label><input type="date" id="crWDate" value="' + ymd(new Date()) + '"></div></div>' +
+          '<div class="cr-sig off">' + crStamp('', '') + '<div class="f" style="flex:1"><label>② 대표이사</label>' +
+            '<span class="cr-flow">작성자가 결재하면 "결재 대기"로 올라가고, 대표이사가 점검 기록에서 일지를 열어 결재합니다.</span></div></div>' +
         '</div>' +
-        '<div class="secthead" style="margin-top:14px"><button class="reset go" id="crSave">일지 저장</button></div>' +
+        '<div class="secthead" style="margin-top:14px"><button class="reset go" id="crSave">결재하기</button></div>' +
       '</div>' +
       '<div class="card"><header><h2>점검 기록</h2><span class="note" id="crCount"></span></header><div id="crList"></div></div>' +
     '</div>';
@@ -9984,12 +11005,6 @@ function crBuild() {
   });
   $('crAllGood').onclick = function () {
     CR_CHECK.forEach(function (c, i) { var el = sec.querySelector('input[name="crS' + i + '"][value="양호"]'); el.checked = true; crMarkRow(i); });
-  };
-  $('crSignW').onclick = function () {
-    apSign('작성자 서명', '대표이사 월간 안전보건 점검 일지를 작성합니다.', $('crWriter').value.trim()).then(function (s) { if (s) { CR.sigW = s; crSigShow('crSigW', s); } });
-  };
-  $('crSignC').onclick = function () {
-    apSign('대표이사 서명', '점검 결과와 총평을 확인합니다.').then(function (s) { if (s) { CR.sigC = s; crSigShow('crSigC', s); } });
   };
   $('crSave').onclick = crSubmit;
   sec.addEventListener('click', function (e) {
@@ -10025,7 +11040,7 @@ function crRender() {
     var mm = pad(m);
     var list = rows.filter(function (r) { return String(r.round_date).slice(5, 7) === mm; });
     var bad = list.reduce(function (a, r) { return a + crBad(r); }, 0);
-    var uns = list.filter(function (r) { return !r.sign_ceo; }).length;
+    var uns = list.filter(function (r) { return crStatus(r) !== '결재 완료'; }).length;
     if (list.length) done++;
     badAll += bad; unsigned += uns;
     var future = CR.year === thisYear ? m >= thisMonth : CR.year > thisYear;
@@ -10035,7 +11050,7 @@ function crRender() {
       '<span class="st">' + (list.length ? '점검 ' + (list.length > 1 ? list.length + '회' : '완료') : future ? '예정' : '미실시') + '</span>' +
       (list.length ? '<span class="dt">' + esc(String(list[list.length - 1].round_date).slice(5).replace('-', '.')) + '</span>' : '') +
       (bad ? '<span class="bd2">불량 ' + bad + '</span>' : '') +
-      (list.length ? '<span class="sg">' + (uns ? '대표 서명 대기' : '서명 완료') + '</span>' : '') +
+      (list.length ? '<span class="sg">' + (uns ? '대표 결재 대기' : '결재 완료') + '</span>' : '') +
       '</button>');
   }
   var due = CR.year === thisYear ? thisMonth - 1 : CR.year < thisYear ? 12 : 0;
@@ -10044,7 +11059,7 @@ function crRender() {
       '<br>Supabase SQL Editor 에서 <b>schema_ceoround.sql</b> 을 먼저 실행해 주세요.</div>' : '') +
     '<div class="sdy-sum">' + CR.year + '년 <b>' + done + '</b>개월 점검' +
       (due ? ' · 지난 달까지 기준 실시율 <b>' + Math.min(100, Math.round(done / due * 100)) + '%</b>' : '') +
-      ' · 불량 지적 <b>' + badAll + '</b>건 · 대표이사 서명 대기 <b>' + unsigned + '</b>건</div>' +
+      ' · 불량 지적 <b>' + badAll + '</b>건 · 대표이사 결재 대기 · 반려 <b>' + unsigned + '</b>건</div>' +
     '<div class="sdy-grid">' + cells.join('') + '</div>' +
     (RPC.live && !CR.err && !CR_ROWS.length
       ? '<div style="margin-top:12px;font-size:12px;color:var(--ink3)">기존 일지(pptx)의 2026년 2 · 3 · 4 · 5 · 9 · 10월 기록을 옮겨 둘 수 있습니다. ' +
@@ -10058,7 +11073,7 @@ function crRender() {
         '<span class="b b-gray">' + esc(r.place || '팩토리움') + '</span>' +
         (bad ? '<span class="b b-hi">불량 ' + bad + '</span>' : ck ? '<span class="b b-gray">전체 양호</span>' : '<span class="b b-gray">체크 미기록</span>') +
         '<span class="t"></span>' +
-        '<span class="meta">' + (r.sign_ceo ? '✔ 대표 서명' : '대표 서명 대기') + '</span></div>' +
+        '<span class="meta">' + crStatusBadge(r) + '</span></div>' +
       '<div class="pv" style="color:var(--ink);font-weight:600">' + esc(r.summary || '') + '</div>' +
       (r.review ? '<div class="pv">' + esc(String(r.review).replace(/\s+/g, ' ').slice(0, 90)) + '</div>' : '') +
     '</div>';
@@ -10075,10 +11090,12 @@ function crSubmit() {
   });
   var miss = checklist.filter(function (c) { return !c.s; }).length;
   if (miss) { toast('점검 결과를 선택하지 않은 항목이 ' + miss + '개 있습니다.', 'warn'); return; }
-  if (!CR.sigW) { toast('작성자 서명을 해 주세요.', 'warn'); return; }
+  var wDate = $('crWDate').value;
+  if (!$('crWriter').value.trim()) { toast('결재 칸에 작성자 이름을 적어 주세요.', 'warn'); $('crWriter').focus(); return; }
+  if (!wDate) { toast('작성일을 골라 주세요.', 'warn'); $('crWDate').focus(); return; }
   if (!RPC.live) { toast('Supabase에 연결되어야 저장할 수 있습니다.', 'warn'); return; }
   var files = Array.prototype.slice.call($('crPhotos').files || []);
-  var btn = $('crSave'); btn.disabled = true; btn.textContent = files.length ? '사진 올리는 중…' : '저장 중…';
+  var btn = $('crSave'); btn.disabled = true; btn.textContent = files.length ? '사진 올리는 중…' : '결재 올리는 중…';
   Promise.all(files.map(function (file) {
     var path = 'ceoround/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + safeExt(file.name);
     return RPC.db.storage.from('ehs-evidence').upload(path, file, { cacheControl: '3600' }).then(function (res) {
@@ -10087,27 +11104,25 @@ function crSubmit() {
     });
   })).then(function (photos) {
     return RPC.db.from('ceo_rounding').insert({
-      round_date: date, start_time: $('crTime').value || null, place: $('crPlace').value, summary: summary,
+      round_date: date, start_time: $('crTime').value || null, place: '팩토리움', summary: summary,   // 점검 장소 칸은 뺐습니다 (대표이사 월간 팩토리움 점검)
       companions: $('crComp').value.trim() || null, checklist: checklist, review: $('crReview').value.trim() || null,
       actions: $('crAction').value.trim() || null, photos: photos, writer: $('crWriter').value.trim() || state.user || null,
-      sign_writer: CR.sigW, sign_ceo: CR.sigC || null, ceo_signed_at: CR.sigC ? new Date().toISOString() : null, created_by: state.user || null
+      sign_writer: 'stamp|' + wDate, sign_ceo: null, ceo_signed_at: null,      // → 대표이사 결재 대기
+      created_by: state.user || null
     });
   }).then(function (res) {
     if (res.error) throw res.error;
-    toast('점검 일지를 저장했습니다.' + (CR.sigC ? '' : ' 대표이사 서명은 기록에서 받을 수 있습니다.'));
+    toast('결재를 올렸습니다. 대표이사 결재 대기 중입니다.');
     ['crSummary', 'crComp', 'crReview', 'crAction', 'crPhotos'].forEach(function (id) { $(id).value = ''; });
     CR_CHECK.forEach(function (c, i) {
       [].forEach.call(document.querySelectorAll('#bd-ceoround input[name="crS' + i + '"]'), function (x) { x.checked = false; });
       $('crMemo' + i).value = ''; crMarkRow(i);
     });
-    CR.sigW = ''; CR.sigC = '';
-    $('crSigW').outerHTML = '<span class="none" id="crSigW">서명 전</span>';
-    $('crSigC').outerHTML = '<span class="none" id="crSigC">서명 전 (나중에 가능)</span>';
     CR.year = date.slice(0, 4); CR.month = date.slice(5, 7);
     loadCr();
   }).catch(function (e) {
     toast('저장 실패: ' + ((e && e.message) || e), 'err');
-  }).then(function () { btn.disabled = false; btn.textContent = '일지 저장'; });
+  }).then(function () { btn.disabled = false; btn.textContent = '결재하기'; });
 }
 function crSeed() {
   if (!confirm('기존 pptx 일지 6건(2026년 2·3·4·5·9·10월)을 기록으로 옮길까요?\n세부 점검 결과는 원본에 표시가 없어 "미기록"으로 들어갑니다.')) return;
@@ -10120,16 +11135,80 @@ function crSeed() {
     toast('기존 일지 6건을 옮겼습니다.'); loadCr();
   }).catch(function (e) { toast('가져오기 실패: ' + ((e && e.message) || e), 'err'); });
 }
-/** 기록 보기 : pptx 일지와 같은 순서의 문서 화면 + 인쇄 · 대표이사 서명 · 삭제 */
+/* ── 승인 도장 : 서명 그림 대신 파란 원형 "승인" 도장 + 날짜 ──
+ *  sign_writer = 'stamp|YYYY-MM-DD' (작성일) · sign_ceo = 'stamp' + ceo_signed_at (승인일)
+ *  예전에 서명 그림으로 저장된 기록도 도장으로 보여 줍니다 */
+function crWriterDate(r) {
+  var s = String(r.sign_writer || '');
+  if (/^stamp\|\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(6, 16);
+  return String(r.created_at || r.round_date || '').slice(0, 10);
+}
+function crCeoDate(r) { return r.ceo_signed_at ? crLocalDate(r.ceo_signed_at) : ''; }
+function crLocalDate(v) { var d = new Date(v); return isNaN(d) ? String(v).slice(0, 10) : ymd(d); }
+function crStamp(date, name) {
+  return '<span style="display:inline-block;width:46px;height:46px;box-sizing:border-box;border:2.5px solid #2E9BD6;border-radius:50%;' +
+      'color:#2E9BD6;font-weight:800;font-size:14px;line-height:41px;text-align:center;letter-spacing:.02em;transform:rotate(-10deg);' +
+      'font-family:\'Malgun Gothic\',\'맑은 고딕\',sans-serif">승인</span>' +
+    (date ? '<div style="font-size:11px;color:#555;margin-top:3px;letter-spacing:0">' + esc(String(date).replace(/-/g, '.')) + '</div>' : '') +
+    (name ? '<div style="font-size:11.5px;color:#222;margin-top:2px">' + esc(name) + '</div>' : '');
+}
+/* ── 결재 진행 (안전작업허가처럼) : ① 작성자 결재(결재하기) → ② 대표이사 결재 또는 반려 ──
+ *  sign_ceo : null = 결재 대기 · 'stamp' = 결재 완료 · 'reject|사유' = 반려 (예전 서명 그림도 결재 완료로 봅니다) */
+function crStatus(r) {
+  var s = String(r.sign_ceo || '');
+  if (!s) return '결재 대기';
+  if (s.indexOf('reject|') === 0) return '반려';
+  return '결재 완료';
+}
+function crRejectReason(r) { var s = String(r.sign_ceo || ''); return s.indexOf('reject|') === 0 ? s.slice(7) : ''; }
+function crStatusBadge(r) {
+  var st = crStatus(r);
+  return st === '결재 완료' ? '✔ 결재 완료' : st === '반려' ? '<b style="color:#C0392B">반려</b>' : '대표이사 결재 대기';
+}
+/** 대표이사 결재(날짜) 또는 반려(사유) 창 → { date } · { reason } · null */
+function crCeoDialog(r, mode) {
+  return new Promise(function (resolve) {
+    var bg = document.createElement('div');
+    bg.className = 'ap-sigbg';
+    bg.innerHTML = '<div class="ap-sigbox" role="dialog" aria-label="대표이사 결재" style="max-width:380px">' +
+      '<h3>' + (mode === 'reject' ? '대표이사 반려' : '대표이사 결재') + '</h3>' +
+      '<p>' + esc(String(r.round_date).replace(/-/g, '.')) + ' 점검 일지 · 작성자 ' + esc(r.writer || '') + ' 결재 ' + esc(String(crWriterDate(r)).replace(/-/g, '.')) + '</p>' +
+      (mode === 'reject'
+        ? '<label class="lb" style="display:block;font-size:11.5px;font-weight:600;margin-bottom:6px">반려 사유</label>' +
+          '<textarea id="crRj" rows="3" style="width:100%;box-sizing:border-box" placeholder="예) 불량 항목 조치 내용 보완 후 다시 올려 주세요"></textarea>'
+        : '<div class="cr-appr">' + crStamp('', '') + '<div class="f"><label>결재일</label><input type="date" id="crCd" value="' + ymd(new Date()) + '"></div></div>') +
+      '<div class="ap-sigbtns" style="margin-top:12px"><span style="flex:1"></span><button class="reset" data-ap="cancel">취소</button>' +
+        '<button class="reset go" data-ap="ok">' + (mode === 'reject' ? '반려' : '결재') + '</button></div></div>';
+    document.body.appendChild(bg);
+    function done(v) { bg.remove(); resolve(v); }
+    bg.addEventListener('click', function (e) {
+      if (e.target === bg) { done(null); return; }
+      var b = e.target.closest('[data-ap]'); if (!b) return;
+      if (b.dataset.ap === 'cancel') { done(null); return; }
+      if (mode === 'reject') {
+        var rs = bg.querySelector('#crRj').value.trim();
+        if (!rs) { toast('반려 사유를 적어 주세요.', 'warn'); return; }
+        done({ reason: rs });
+      } else {
+        var d = bg.querySelector('#crCd').value;
+        if (!d) { toast('결재일을 골라 주세요.', 'warn'); return; }
+        done({ date: d });
+      }
+    });
+  });
+}
+/** 기록 보기 : pptx 일지와 같은 순서의 문서 화면 + 인쇄 · 승인 · 삭제 */
 function crDocHtml(r) {
-  var sig = function (s) { return s ? '<img class="sig" src="' + s + '" alt="서명">' : '<span style="color:#aaa">(서명)</span>'; };
   var ck = crJson(r.checklist), g0 = '';
   var ph = crJson(r.photos);
   return '<div class="apdoc">' +
     '<div class="h"><h1 style="font-size:19px;letter-spacing:0">대표이사 월간 ' + esc(r.place || '팩토리움') + ' 안전보건 점검 _ ' + (+String(r.round_date).slice(5, 7)) + '월</h1>' +
-      '<table class="line"><tr><th class="g" rowspan="2">확<br>인</th><th>작성자</th><th>대표이사</th></tr>' +
-      '<tr><td>' + sig(r.sign_writer) + '<br>' + esc(r.writer || '') + '</td><td>' + sig(r.sign_ceo) +
-        (r.ceo_signed_at ? '<br>' + esc(String(r.ceo_signed_at).slice(0, 10).replace(/-/g, '.')) : '') + '</td></tr></table></div>' +
+      // 머리글 : 작성자 이름 (대표이사 칸처럼) · 칸 안 : 승인 도장 + 날짜
+      '<table class="line"><tr><th class="g" rowspan="2">확<br>인</th><th>' + esc(r.writer || '작성자') + '</th><th>대표이사</th></tr>' +
+      '<tr><td style="height:86px;min-width:88px">' + (r.sign_writer ? crStamp(crWriterDate(r), '') : '<span style="color:#aaa">(미결재)</span>') + '</td>' +
+        '<td style="min-width:88px">' + (crStatus(r) === '결재 완료' ? crStamp(crCeoDate(r), '')
+          : crStatus(r) === '반려' ? '<b style="color:#C0392B">반려</b>' : '<span style="color:#aaa">결재 대기</span>') + '</td></tr></table></div>' +
+    (crStatus(r) === '반려' ? '<div style="margin:0 0 12px;border:1px solid #C0392B;color:#C0392B;padding:8px 12px;font-size:12px">반려 사유 : ' + esc(crRejectReason(r)) + '</div>' : '') +
     '<b style="display:block;margin:4px 0 6px">01. 기본 정보</b>' +
     '<table class="body"><tr><th>점검 일자</th><td>' + esc(String(r.round_date).replace(/-/g, '.')) + ' (' + crDow(r.round_date) + ')' + (r.start_time ? ' ' + esc(String(r.start_time).slice(0, 5)) + ' ~' : '') + '</td></tr>' +
       '<tr><th>주요 점검 내용</th><td><div class="pre">' + esc(r.summary) + '</div></td></tr>' +
@@ -10157,7 +11236,9 @@ function crOpen(id) {
   var bg = document.createElement('div');
   bg.className = 'cr-bg';
   bg.innerHTML = '<div class="cr-doc"><div class="bar">' +
-    (r.sign_ceo ? '' : '<button class="reset go" data-cr="sign">대표이사 서명</button>') +
+    '<span class="cr-st">' + esc(crStatus(r)) + '</span><span style="flex:1"></span>' +
+    (crStatus(r) === '결재 대기' ? '<button class="reset go" data-cr="ceo">대표이사 결재</button><button class="reset" data-cr="reject">반려</button>' : '') +
+    (crStatus(r) === '반려' ? '<button class="reset go" data-cr="resubmit">다시 결재 올리기</button>' : '') +
     '<button class="reset" data-cr="print">인쇄 / PDF</button><button class="reset" data-cr="del">삭제</button>' +
     '<button class="reset" data-cr="close">닫기</button></div>' + crDocHtml(r) + '</div>';
   document.body.appendChild(bg);
@@ -10175,22 +11256,34 @@ function crOpen(id) {
         '<style>body{margin:0;background:#eee;padding:20px 0}' + AP_DOC_CSS + '@media print{body{background:#fff;padding:0}.apdoc{width:auto;padding:0}}@page{size:A4;margin:12mm}</style></head><body>' +
         crDocHtml(r) + '<script>window.onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>');
       w.document.close();
-    } else if (a === 'sign') {
-      apSign('대표이사 서명', r.round_date + ' 점검 결과와 총평을 확인합니다.').then(function (s) {
-        if (!s) return;
-        RPC.db.from('ceo_rounding').update({ sign_ceo: s, ceo_signed_at: new Date().toISOString() }).eq('id', r.id).then(function (res) {
+    } else if (a === 'ceo' || a === 'reject' || a === 'resubmit') {
+      // ② 대표이사 결재 · 반려  /  반려된 일지 → 작성자가 다시 결재 올리기 (결재 대기로)
+      // 대표이사 결재 · 반려는 대표이사 결재 비밀번호(8587)를 먼저 묻습니다
+      var p = a === 'resubmit' ? Promise.resolve({ again: true })
+        : delPin(String(r.round_date).replace(/-/g, '.') + ' 점검 일지를 ' + (a === 'reject' ? '반려' : '결재') + '합니다.', 'ceo').then(function (ok) {
+            return ok ? crCeoDialog(r, a === 'reject' ? 'reject' : 'ok') : null;
+          });
+      p.then(function (v) {
+        if (!v) return;
+        var patch = v.again ? { sign_ceo: null, ceo_signed_at: null }
+          : v.reason ? { sign_ceo: 'reject|' + v.reason, ceo_signed_at: new Date().toISOString() }
+          : { sign_ceo: 'stamp', ceo_signed_at: v.date + 'T09:00:00+09:00' };
+        RPC.db.from('ceo_rounding').update(patch).eq('id', r.id).then(function (res) {
           if (res.error) throw res.error;
-          toast('대표이사 서명을 저장했습니다.'); close();
+          toast(v.again ? '다시 결재를 올렸습니다. 대표이사 결재 대기 중입니다.' : v.reason ? '반려했습니다.' : '대표이사 결재를 마쳤습니다.');
+          close();
           loadCr().then(function () { crOpen(r.id); });
-        }).catch(function (e) { toast('서명 저장 실패: ' + ((e && e.message) || e), 'err'); });
+        }).catch(function (e) { toast('결재 저장 실패: ' + ((e && e.message) || e), 'err'); });
       });
     } else if (a === 'del') {
-      if (!confirm('이 점검 일지를 삭제할까요? 첨부 사진도 함께 지워집니다.')) return;
-      var paths = crJson(r.photos).map(function (p) { return p.path; }).filter(Boolean);
-      (paths.length ? RPC.db.storage.from('ehs-evidence').remove(paths) : Promise.resolve())
-        .then(function () { return RPC.db.from('ceo_rounding').delete().eq('id', r.id); })
-        .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); close(); loadCr(); })
-        .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
+      delPin('이 점검 일지를 삭제합니다. 첨부 사진도 함께 지워집니다.').then(function (ok) {
+        if (!ok) return;
+        var paths = crJson(r.photos).map(function (p) { return p.path; }).filter(Boolean);
+        (paths.length ? RPC.db.storage.from('ehs-evidence').remove(paths) : Promise.resolve())
+          .then(function () { return RPC.db.from('ceo_rounding').delete().eq('id', r.id); })
+          .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); close(); loadCr(); })
+          .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
+      });
     }
   });
 }
@@ -10205,7 +11298,7 @@ function crOpen(id) {
  * ============================================================ */
 var AP_APPROVE_PIN = '1004';   // 안전팀장 결재(승인·반려·삭제) 비밀번호
 var AP_PIN_OFF = true;         // 잠시 비밀번호 없이 결재 (다시 쓰려면 false 로)
-var AP_DELETE_PIN = '8587';    // 문서 삭제 비밀번호 (결재 비밀번호를 꺼 둬도 항상 묻습니다)
+var AP_DELETE_PIN = DEL_PIN;   // 문서 삭제 비밀번호 = 공통 삭제 비밀번호 (결재 비밀번호를 꺼 둬도 항상 묻습니다)
 var AP_ROWS = [];
 var AP_UI = { tab: 'write', cat: '', viewId: null };
 
@@ -10717,7 +11810,7 @@ function apAskPin(what, pin) {
   return new Promise(function (resolve) {
     var bg = document.createElement('div');
     bg.className = 'ap-sigbg';
-    var head = pin === AP_DELETE_PIN ? '삭제 비밀번호' : '안전팀장 비밀번호';
+    var head = '안전팀장 비밀번호';   // 삭제는 delPin() 이 따로 묻습니다
     bg.innerHTML = '<div class="ap-sigbox" role="dialog" aria-label="' + head + '" style="max-width:340px">' +
       '<h3>' + head + '</h3><p>' + esc(what) + ' 하려면 비밀번호를 입력해 주세요.</p>' +
       '<input type="password" class="ap-pinin" autocomplete="off" inputmode="numeric" style="width:100%">' +
@@ -10774,8 +11867,8 @@ function deleteAp(id) {
   id = id || AP_UI.viewId;
   var r = AP_ROWS.filter(function (x) { return x.id === id; })[0];
   if (!r) return;
-  apAskPin('"' + r.title + '" 문서를 삭제', AP_DELETE_PIN).then(function (ok) {
-    if (ok && confirm('이 결재 문서를 삭제할까요?\n서버 폴더(A: 드라이브)에 저장된 파일도 1분 안에 함께 삭제됩니다.')) apDeleteNow(r);
+  delPin('"' + r.title + '" 결재 문서를 삭제합니다. 서버 폴더(A: 드라이브)에 저장된 파일도 1분 안에 함께 삭제됩니다.').then(function (ok) {
+    if (ok) apDeleteNow(r);
   });
 }
 function apDeleteNow(r) {
@@ -10867,7 +11960,7 @@ function bindAp() {
  *             화면도 열릴 때마다 한 번 더 지운 뒤 6개월 이내 건만 보여줍니다.
  * ============================================================ */
 var VISIT_LOG_PIN = '1004';
-var VISIT_DEL_PIN = '8587';   // 방문 기록 삭제 시 한 번 더 묻는 비밀번호
+var VISIT_DEL_PIN = DEL_PIN;  // 방문 기록 삭제 비밀번호 = 공통 삭제 비밀번호
 var VISIT_KEEP_MONTHS = 6;
 var VISIT_ROWS = [];
 var VISIT_LOG_UNLOCKED = false;
@@ -10972,12 +12065,12 @@ function renderVisitLog() {
     }), 860);
 }
 function deleteVisit(id) {
-  var pin = prompt('이 방문 기록을 삭제하려면 삭제 비밀번호를 입력하세요.');
-  if (pin === null) return;
-  if (pin.trim() !== VISIT_DEL_PIN) { toast('삭제 비밀번호가 올바르지 않습니다.', 'err'); return; }
-  RPC.db.from('visit_pledges').delete().eq('id', id)
-    .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); loadVisitLog(); })
-    .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
+  delPin('이 방문 기록을 삭제합니다.').then(function (ok) {
+    if (!ok) return;
+    RPC.db.from('visit_pledges').delete().eq('id', id)
+      .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); loadVisitLog(); })
+      .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
+  });
 }
 function exportVisitXlsx() {
   var rows = visitFiltered();
@@ -11709,7 +12802,7 @@ function startRealtime() {
 /* ============================================================
  *  8. 이벤트 연결
  * ============================================================ */
-var TAB_LIST = ['month', 'week', 'monitor', 'monact', 'kpi', 'safdash', 'safinspect', 'safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'heanew', 'heaspc', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'envact', 'accident', 'budget', 'csa', 'qse', 'svscore', 'library', 'rules', 'safeday', 'ceoround', 'etcact', 'approval', 'visit', 'visitlog', 'news'];
+var TAB_LIST = ['month', 'week', 'monitor', 'monact', 'kpi', 'safdash', 'safinspect', 'safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'heanew', 'heaspc', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'envact', 'accident', 'budget', 'csa', 'qse', 'svscore', 'aiadv', 'library', 'rules', 'safeday', 'ceoround', 'etcact', 'approval', 'visit', 'visitlog', 'news'];
 /** 상단 "공통" · "안전" 버튼이 묶고 있는 게시판들. 그룹을 누르면 아래 두 번째 줄에 이 목록이 펼쳐집니다. */
 var NAV_GROUPS = {
   monitor: { label: '모니터링', sub: [
@@ -11725,12 +12818,11 @@ var NAV_GROUPS = {
     { tab: 'rules', label: 'ISO14001&45001' },
     { tab: 'safeday', label: '안전보건의 날' },
     { tab: 'ceoround', label: '대표님 라운딩' },
-    { tab: 'etcact', label: '기타 안전보건 활동' },
+    // '기타 안전보건 활동'(etcact) 은 메뉴에서 뺐습니다 — 게시판 · 기록은 남아 있어 다시 넣으면 그대로 보입니다
     { tab: 'news', label: '데일리뉴스' },
     { tab: 'visit', label: '방문 서약서' },
-    // href가 있는 항목은 게시판 탭이 아니라 외부 사이트(새 창)로 연결됩니다.
-    { href: 'https://ai-assist.kosha.or.kr/law/', label: 'AI 어드바이저' },
-    { href: 'https://ai-assist.kosha.or.kr/mfg/', label: 'AI 위험요인 사진 업로드' }
+    // AI 어드바이저 : 안전보건공단 AI 두 가지(법령 질의 · 위험요인 사진)를 한 화면에 모아 각각 새 창으로 연결
+    { tab: 'aiadv', label: 'AI 어드바이저' }
   ] },
   safety: { label: '안전', sub: [
     // 첫 항목이 "안전"을 눌렀을 때 처음 열리는 화면입니다 → 다섯 게시판 요약 대시보드
@@ -11791,7 +12883,50 @@ function setNavHover(b) {
   document.querySelectorAll('.bnav > button').forEach(function (x) { x.classList.toggle('hov', x === b); });
   renderNavSub(state.tab, b && b.dataset.group);
 }
+/* ── 뒤로가기 : 마우스 · 브라우저 "뒤로"를 누르면 사이트를 떠나지 않고 바로 전 게시판으로 ──
+ *  게시판을 바꿀 때마다 브라우저 기록에 { ehsTab } 을 쌓습니다 (주소는 그대로 — # 은 로그인 링크가 씀).
+ *  창(모달)이 열려 있으면 뒤로가기는 먼저 그 창만 닫습니다. */
+var NAV_HIST = { ready: false, popping: false };
+function closeTopOverlay() {
+  // 나중에 그려진 창(동적)부터
+  var dyn = document.querySelectorAll('.scomod, .csam-bg, .cr-bg, .ap-sigbg');
+  if (dyn.length) { dyn[dyn.length - 1].remove(); return true; }
+  if (typeof memoIsOpen === 'function' && memoIsOpen()) { memoClose(); return true; }
+  var fixed = [['libScrim', libClose], ['rgScrim', rgClose], ['scrim', closeSheet], ['planScrim', closePlan], ['gpsWxModal', closeGpsWeather],
+    ['dayPopup', closeDayPopup], ['popupEditor', closePopupEditor], ['aiKeyEditor', closeAiKeyEditor],
+    ['imgbox'], ['storeScrim'], ['homePopup']];
+  for (var i = 0; i < fixed.length; i++) {
+    var el = $(fixed[i][0]);
+    if (el && el.classList.contains('on')) { if (fixed[i][1]) fixed[i][1](); else el.classList.remove('on'); return true; }
+  }
+  var av = $('apView');
+  if (av && !av.hidden) { closeApView(); return true; }
+  return false;
+}
+window.addEventListener('popstate', function (e) {
+  if (!NAV_HIST.ready) return;
+  if (closeTopOverlay()) {               // 창만 닫고 지금 게시판에 머뭅니다
+    history.pushState({ ehsTab: state.tab }, '');
+    return;
+  }
+  var t = e.state && e.state.ehsTab;
+  if (t && TAB_LIST.indexOf(t) !== -1) {
+    NAV_HIST.popping = true;
+    try { activateTab(t); } finally { NAV_HIST.popping = false; }
+  } else if (e.state && e.state.ehsGuard) {
+    // 처음 연 화면에서 뒤로 → 한 번 붙잡고 안내 (한 번 더 누르면 나갑니다)
+    toast('처음 화면입니다. 한 번 더 뒤로가기를 누르면 대시보드를 나갑니다.');
+  }
+});
+/** 처음 화면 아래에 "보호용" 기록을 하나 깔아 둡니다 → 첫 뒤로가기는 안내만, 두 번째에 나감 */
+function navHistInit() {
+  if (NAV_HIST.ready) return;
+  history.replaceState({ ehsGuard: true }, '');
+  history.pushState({ ehsTab: state.tab || 'month' }, '');
+  NAV_HIST.ready = true;
+}
 function activateTab(t) {
+  if (NAV_HIST.ready && !NAV_HIST.popping && t !== state.tab) history.pushState({ ehsTab: t }, '');
   state.tab = t;
   document.querySelectorAll('.bnav button[data-tab]').forEach(function (x) {
     x.setAttribute('aria-pressed', String(x.dataset.tab === t));
@@ -11922,11 +13057,12 @@ function bind() {
     if (fyc) { state.yrC = fyc.dataset.yrc; renderYearPlan(); return; }
     var fg = e.target.closest('[data-budg]');
     if (fg) { state.budG = fg.dataset.budg; renderBudget(); return; }
+    var ft = e.target.closest('[data-budteam]');
+    if (ft) { state.budT = ft.dataset.budteam; renderBudget(); return; }
     var bt = e.target.closest('[data-budtoggle]');
     if (bt) {
       var bg = bt.dataset.budtoggle;
-      state.budExpand = state.budExpand || {};
-      state.budExpand[bg] = !state.budExpand[bg];
+      state.budOpen = state.budOpen === bg ? '' : bg;
       renderBudget();
       return;
     }
@@ -12061,8 +13197,10 @@ function bind() {
     if (sdyy) { SDY.year = sdyy.dataset.sdyyear; SDY.month = ''; renderSdy(); return; }
     var sdym = e.target.closest('[data-sdymonth]');
     if (sdym) { SDY.month = SDY.month === sdym.dataset.sdymonth ? '' : sdym.dataset.sdymonth; renderSdy(); return; }
+    var sdyb = e.target.closest('[data-sdyboard]');
+    if (sdyb) { SDY.board = sdyb.dataset.sdyboard; SDY.month = ''; renderSdy(); return; }
     var sdyo = e.target.closest('[data-sdyopen]');
-    if (sdyo && !e.target.closest('[data-lightbox]')) { SDY.openId = SDY.openId === sdyo.dataset.sdyopen ? '' : sdyo.dataset.sdyopen; renderSdyList(); return; }
+    if (sdyo && !e.target.closest('[data-lightbox], a, .bd')) { SDY.openId = SDY.openId === sdyo.dataset.sdyopen ? '' : sdyo.dataset.sdyopen; renderSdyList(); return; }
     var visitdel = e.target.closest('[data-visitdel]');
     if (visitdel) { deleteVisit(visitdel.dataset.visitdel); return; }
     if (e.target.closest('#visitLogPinGo')) { tryVisitLogPin(); return; }
@@ -12133,8 +13271,32 @@ function bind() {
   $('btnQseReset').onclick = function () { if (confirm('작성 중인 평가 내용을 초기화할까요?')) resetQseForm(); };
 
   $('btnLibUpload').onclick = submitLib;
+  // 자료실 : 구분 타일 · 검색 · 정렬 · 자료 보기
+  var libT = null;
+  $('libQ').oninput = function () { var v = this.value; clearTimeout(libT); libT = setTimeout(function () { LIB.q = v; renderLibList(); }, 180); };
+  $('libSort').onchange = function () { LIB.sort = this.value; renderLibList(); };
+  $('bd-library').addEventListener('click', function (e) {
+    var b;
+    if ((b = e.target.closest('[data-libcat]'))) { LIB.cat = b.dataset.libcat; renderLibList(); return; }
+    if ((b = e.target.closest('[data-libopen]'))) { libOpen(b.dataset.libopen); }
+  });
+  $('libScrim').addEventListener('click', function (e) {
+    var b;
+    if (e.target === $('libScrim') || e.target.closest('#lbClose')) { libClose(); return; }
+    if ((b = e.target.closest('[data-lbtab]'))) { LIB.tab = b.dataset.lbtab; libRenderView(); return; }
+    if ((b = e.target.closest('[data-lbhit]'))) { libJump(+b.dataset.lbhit); }
+  });
+  $('lbCatSel').onchange = function () { libSetCat(this.value); };
+  document.addEventListener('keydown', function (e) {
+    if (!$('libScrim').classList.contains('on')) return;
+    if (e.key === 'Escape') libClose();
+    else if (e.key === 'Enter' && document.activeElement && !/input|textarea|select/i.test(document.activeElement.tagName)) libJump(e.shiftKey ? -1 : 1);
+  });
   $('btnSdySave').onclick = submitSdy;
   $('sdyDate').value = ymd(new Date());
+  $('sdyYm').value = ymd(new Date()).slice(0, 7);
+  $('sdyBoard').onchange = sdyFormBoard;
+  sdyFormBoard();
   bindAp();
 
   // 방문 서약서 탭 안의 visit.html 이 보내는 신호 : 높이 맞추기 · 맨 위로 · 제출 완료
@@ -12164,6 +13326,9 @@ function bind() {
   $('btnSave').onclick = submitSheet;
   bindOverlayClose($('scrim'), closeSheet);
   $('btnPlan').onclick = function () { openPlan(); };
+  $('btnMemo').onclick = function () { memoIsOpen() ? memoClose() : memoOpen(); };
+  memoCount();
+  window.addEventListener('beforeunload', function () { if (memoIsOpen()) memoFlush(); });
   $('planClose').onclick = closePlan;
   bindOverlayClose($('planScrim'), closePlan);
   $('storeShClose').onclick = function () { $('storeScrim').classList.remove('on'); };
@@ -12193,15 +13358,13 @@ function bind() {
   $('btnDelete').onclick = function () {
     if (!state.edit || !state.edit.id) return;
     var kind = state.edit.kind, id = state.edit.id;
-    if (kind === 'schedule') {
-      var pw = prompt('일정을 삭제하려면 비밀번호를 입력하세요.');
-      if (pw === null) return;
-      if (pw !== SCHEDULE_DELETE_PW) { toast('비밀번호가 올바르지 않습니다.', 'warn'); return; }
-    } else if (!confirm('이 업무를 삭제할까요?')) return;
-    deleteRow(kind, id).then(function () {
-      closeSheet();
-      kind === 'schedule' ? renderAll() : renderWeekPanel();
-      toast('삭제했습니다.');
+    delPin(kind === 'schedule' ? '이 일정을 삭제합니다.' : '이 업무를 삭제합니다.').then(function (ok) {
+      if (!ok) return;
+      deleteRow(kind, id).then(function () {
+        closeSheet();
+        kind === 'schedule' ? renderAll() : renderWeekPanel();
+        toast('삭제했습니다.');
+      });
     });
   };
 }
@@ -12278,6 +13441,7 @@ function bindLogin() {
 
 (function init() {
   bind();
+  navHistInit();     // 뒤로가기 → 바로 전 게시판
   renderInitial();
   loadWeather();
   setInterval(loadWeather, 30 * 60 * 1000);   // 30분마다 갱신
@@ -12309,7 +13473,7 @@ function bindLogin() {
   var NAMES = {
     month: ['Schedule', '월간 스케줄'], week: ['Weekly', '주간업무'], monitor: ['Monitoring', '주간/월간'], monact: ['Activity Status', '활동 현황'],
     kpi: ['KPI', 'KPI'], accident: ['Accident', '안전사고'], budget: ['Budget', '예산'],
-    library: ['Library', '자료실'], rules: ['ISO 14001 & 45001', 'ISO14001&45001'], safeday: ['Safety Day', '안전보건의 날'], etcact: ['EHS Activities', '기타 안전보건 활동'], ceoround: ['CEO Safety Rounding', '대표님 라운딩'], approval: ['E-Approval', '전자결재'], news: ['Daily News', '데일리뉴스'],
+    library: ['Library', '자료실'], aiadv: ['AI Advisor', 'AI 어드바이저'], rules: ['ISO 14001 & 45001', 'ISO14001&45001'], safeday: ['Safety Day', '안전보건의 날'], etcact: ['EHS Activities', '기타 안전보건 활동'], ceoround: ['CEO Safety Rounding', '대표님 라운딩'], approval: ['E-Approval', '전자결재'], news: ['Daily News', '데일리뉴스'],
     visit: ['Visitor Pledge', '방문 서약서'], visitlog: ['Visitor Log', '방문 기록대장'],
     safdash: ['Safety Overview', '현황'], headash: ['Health Overview', '현황'], envdash: ['Environment Overview', '현황'],
     safinspect: ['Inspection', '안전점검'], safrisk: ['Risk Assessment', '위험성평가'],
@@ -12326,7 +13490,7 @@ function bindLogin() {
     headash: '보건', envdash: '환경', monitor: '모니터링', monact: '모니터링',
     heaact: '보건', heaexam: '보건', heaenv: '보건', heaedu: '보건', heanew: '보건', heaspc: '보건',
     envwaste: '환경', envghg: '환경', envwater: '환경', envair: '환경', envact: '환경',
-    kpi: '공통', accident: '공통', budget: '공통', library: '공통', rules: '공통', safeday: '공통', ceoround: '공통', etcact: '공통', approval: '공통', news: '공통', visit: '공통', visitlog: '공통',
+    kpi: '공통', accident: '공통', budget: '공통', library: '공통', aiadv: '공통', rules: '공통', safeday: '공통', ceoround: '공통', etcact: '공통', approval: '공통', news: '공통', visit: '공통', visitlog: '공통',
     qse: '중대재해처벌법', svscore: '중대재해처벌법'
   };
   var big = document.getElementById('hxBig'), crumb = document.getElementById('hxCrumb');
