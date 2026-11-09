@@ -1530,6 +1530,24 @@ window.AI_CONFIG = {
   @media (max-width:760px){ .cr-ck td.g{display:none} .cr-ck td.r{width:auto} .cr-sigs{grid-template-columns:1fr} }
   @media (max-width:900px){ .sdy-grid{grid-template-columns:repeat(6,minmax(0,1fr))} }
   @media (max-width:520px){ .sdy-grid{grid-template-columns:repeat(4,minmax(0,1fr))} }
+  /* 순회점검일지 */
+  .pt-seg{display:flex;gap:6px;flex-wrap:wrap}
+  .pt-chip{all:unset;box-sizing:border-box;cursor:pointer;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12.5px;color:var(--ink2)}
+  .pt-chip[aria-pressed="true"]{background:#000;color:#fff;border-color:#000;font-weight:700}
+  .pt-cal5 .cal-h,.pt-cal5 .cal-g{grid-template-columns:repeat(5,1fr)}
+  .pt-cal5 .cal-d{min-height:86px}
+  .pt-cal5 .cal-d .ec{font-weight:400;cursor:inherit}
+  .pt-cal5 .cal-d .ec:hover{filter:none;box-shadow:none}
+  .pt-cal5 .cal-d .ec.pt-done{background:var(--panel2);color:var(--ink)}
+  .pt-cal5 .cal-d .ec.pt-plan{background:#FBF3EC;color:var(--ink)}
+  .pt-cal5 .cal-d .ec.pt-need{background:#F8E9DC;color:var(--ink)}
+  .pt-cal5 .cal-d .ec.pt-miss{background:#FDECEA;color:#C5221F}
+  .pt-cal5 .cal-d .ec.pt-hol{background:none;color:var(--ink3);padding-left:2px}
+  .pt-cal5 .cal-d.holiday{cursor:default;background:#FCFCFC}
+  .pt-alert{margin:0 0 14px;padding:12px 16px;border-radius:12px;font-size:12.5px;line-height:1.7;background:#FDECEA;color:#B3261E}
+  .pt-alert b{font-weight:700}
+  .cr-ck td.r3{white-space:nowrap;width:200px}
+  @media (max-width:760px){ .cr-ck td.r3{width:auto;white-space:normal} }
 
   /* ══════════ ISO 게시판 하위 탭 · 활동 실적 · 관련 자료 ══════════ */
   .iso-tabbar{margin-bottom:14px;overflow-x:auto}
@@ -2541,6 +2559,8 @@ window.AI_CONFIG = {
   <section class="bpanel" id="bd-envact" hidden></section>
   <!-- ══════════ 대표님 라운딩 (대표이사 월간 안전보건 점검 일지) — 내용은 JS(crBuild)가 채움, schema_ceoround.sql 실행 필요 ══════════ -->
   <section class="bpanel" id="bd-ceoround" hidden></section>
+  <!-- 순회점검일지 (안전 › 순회점검일지) : 화면은 ptBuild() 가 그립니다 · schema_patrol.sql 실행 필요 -->
+  <section class="bpanel" id="bd-safpatrol" hidden></section>
 
   <!-- ══════════ 전자결재 (결재선 : 작성자 → 안전팀장) ══════════ -->
   <section class="bpanel" id="bd-approval" hidden>
@@ -3246,7 +3266,7 @@ function closeLightbox() { $('imgbox').classList.remove('on'); $('imgboxImg').sr
  * ============================================================ */
 function renderAll() { renderHeader(); renderMonthPanel(); renderWeekPanel(); renderMonitorPage(); }
 
-function renderInitial() { renderAll(); renderDataTabs(); renderCsaDashboard(); renderCsaTable(); initQseForm(); renderLibSites(); renderLibList(); renderSdy(); actRenderAll(); crRender(); initApForm(); renderApLists(); renderVisitLog(); renderNews(); }
+function renderInitial() { renderAll(); renderDataTabs(); renderCsaDashboard(); renderCsaTable(); initQseForm(); renderLibSites(); renderLibList(); renderSdy(); actRenderAll(); crRender(); ptRender(); initApForm(); renderApLists(); renderVisitLog(); renderNews(); }
 
 function renderHeader() {
   var t = new Date();
@@ -11301,6 +11321,508 @@ function crOpen(id) {
 }
 
 /* ============================================================
+ *  6-5-4. 순회점검일지 (안전 › 순회점검일지)  (schema_patrol.sql 실행 필요)
+ *  · 법정 주기 : 2일에 1회 이상 → 토 · 일 · 공휴일(KR_HOLIDAYS)을 뺀 "근무일" 이틀 연속 기록이 없으면 누락으로 표시
+ *  · 결재 : ① 작성자(사업장별 고정, 올리면 자동 승인 도장) → ② 안전보건환경팀장(승인 누르면 도장)
+ *  · 서울사무소 점검 장소 = 파르나스타워 + 매장정보 시트의 매장 목록
+ * ============================================================ */
+var PT_SITES = {
+  '팩토리움': { places: ['생산동', '물류동', '운휴동', 'R&D센터', '테라스', '스튜디오동', '고백리창고'], writer: '김관수 대리' },
+  '서울사무소': { places: ['파르나스타워'], stores: true, writer: '한승배 대리' }
+};
+var PT_BOSS = { title: '안전보건환경팀장', name: '최은성 차장' };
+var PT_CK = ['양호', '불량', '해당없음'];
+var PT_CHECK = [
+  ['개인보호구', '안전보호구 관리 및 착용상태'],
+  ['작업환경관리', '작업장 정리정돈 상태'],
+  ['작업환경관리', '바닥의 미끄럽지 않은 상태'],
+  ['작업환경관리', '소음 및 조도 적정상태 여부'],
+  ['작업환경관리', '관리대상유해물질 취급장소에서 흡연이나 음식물 취식 금지 관리상태'],
+  ['안전관리', '작업장 안전통로 확보, 비상구 및 비상통로 확보 상태'],
+  ['안전관리', '지게차의 10km 미만 안전운행 여부'],
+  ['안전관리', '압력용기의 적정 압력 여부(6~7kgf 유지)'],
+  ['안전관리', '위험물 별도 보관장소 설치 상태'],
+  ['보건관리', '화학물질 사용 및 보관상태'],
+  ['보건관리', 'MSDS 게시 및 경고표지 부착 상태'],
+  ['보건관리', '작업장 내 환기상태'],
+  ['보건관리', '국소배기장치의 정상 작동 여부'],
+  ['보건관리', '근로자 중량물 운반 작업자세 적정상태 여부'],
+  ['화재감전사고예방', '소화기 정위치, 소화전함 내부 상태 확인'],
+  ['화재감전사고예방', '소화전 주변 적재물 보관상태(야외 주차장 포함)'],
+  ['화재감전사고예방', '분전반 관리상태'],
+  ['화재감전사고예방', '콘센트, 이동전선의 피복 손상 및 유지 관리 상태'],
+  ['기타', '기타 이상 여부']
+];
+var PT_ROWS = [];
+var PT = { site: '팩토리움', place: '', ym: ymd(new Date()).slice(0, 7), day: '', err: '', built: false };
+try { var _pts = localStorage.getItem('ptSite'); if (PT_SITES[_pts]) PT.site = _pts; } catch (e) {}
+
+/** 근무일 = 월~금 이면서 공휴일이 아닌 날 */
+function ptBiz(d) { var w = d.getDay(); return w > 0 && w < 6 && !KR_HOLIDAYS[ymd(d)]; }
+function ptPrevBiz(d) { var x = addDays(d, -1); for (var i = 0; i < 20 && !ptBiz(x); i++) x = addDays(x, -1); return x; }
+/** 기본 점검일 = 오늘 (주말 · 공휴일이면 바로 전 근무일) */
+function ptDefaultDate() { var t = new Date(); return ymd(ptBiz(t) ? t : ptPrevBiz(t)); }
+function ptStatus(r) {
+  var s = String(r.sign_boss || '');
+  if (!s) return '결재 대기';
+  if (s.indexOf('reject|') === 0) return '반려';
+  return '결재 완료';
+}
+function ptBad(r) { return crJson(r.checklist).filter(function (c) { return c.s === '불량'; }).length; }
+function ptDays(site) {
+  var o = {};
+  PT_ROWS.forEach(function (r) { if (r.site === site) (o[r.patrol_date] = o[r.patrol_date] || []).push(r); });
+  return o;
+}
+function loadPt() {
+  if (!RPC.live) { PT_ROWS = []; ptRender(); return Promise.resolve(); }
+  return RPC.db.from('patrol_log').select('*').order('patrol_date', { ascending: false }).limit(3000)
+    .then(function (res) {
+      if (res.error) throw res.error;
+      PT_ROWS = res.data || []; PT.err = ''; ptRender();
+    }).catch(function (e) {
+      console.warn('[EHS] 순회점검일지 조회 실패', e);
+      PT_ROWS = []; PT.err = (e && e.message) || String(e); ptRender();
+    });
+}
+function ptBuild() {
+  var sec = $('bd-safpatrol');
+  if (!sec || PT.built) return;
+  PT.built = true;
+  var g0 = '';
+  sec.innerHTML =
+    '<div class="card"><header><h2>순회점검 현황</h2><div class="filterbar" id="ptSiteTabs"></div>' +
+      '<div class="filterbar" style="margin-left:auto"><button class="fb" id="ptPrev">◀</button><span id="ptYm" style="font-weight:700;align-self:center;min-width:84px;text-align:center"></span><button class="fb" id="ptNext">▶</button></div></header>' +
+      '<div id="ptAlert"></div><div id="ptCal"></div></div>' +
+    '<div class="g-half" style="margin-top:12px;align-items:start">' +
+      '<div class="card"><header><h2>순회점검일지 작성</h2><span class="note">2일 1회 이상 · 주말 · 공휴일 제외</span></header>' +
+        '<div class="form" style="grid-template-columns:1fr 1fr">' +
+          '<div class="f"><label>점검 일자</label><input type="date" id="ptDate"><span id="ptDateNote" style="font-size:11px;color:var(--ink3)"></span></div>' +
+          '<div class="f"><label>사업장</label><div class="pt-seg" id="ptSiteSel"></div></div>' +
+          '<div class="f wide"><label>점검 장소</label><div class="pt-seg" id="ptPlaces"></div>' +
+            '<input type="text" id="ptStore" list="ptStoreList" placeholder="매장 검색 (매장정보) — 매장명 일부를 입력하세요" style="margin-top:8px" hidden><datalist id="ptStoreList"></datalist></div>' +
+        '</div>' +
+        '<div class="subttl">점검 항목</div>' +
+        '<div class="cr-ckbar"><button class="reset" type="button" data-ptall="양호" style="padding:5px 12px;font-size:11px">전체 양호</button>' +
+          '<button class="reset" type="button" data-ptall="해당없음" style="padding:5px 12px;font-size:11px">전체 해당없음</button>' +
+          '<button class="reset" type="button" data-ptall="" style="padding:5px 12px;font-size:11px">선택 지우기</button></div>' +
+        '<div class="tw"><table class="cr-ck"><thead><tr><th>구분</th><th>점검 내용</th><th>점검 결과</th></tr></thead><tbody>' +
+          PT_CHECK.map(function (c, i) {
+            var g = c[0] === g0 ? '' : c[0]; g0 = c[0];
+            return '<tr data-pti="' + i + '"><td class="g">' + esc(g) + '</td><td>' + (i + 1) + ') ' + esc(c[1]) +
+              '<input class="memo" id="ptMemo' + i + '" placeholder="불량 내용 · 조치 사항" hidden></td>' +
+              '<td class="r3">' + PT_CK.map(function (v) {
+                return '<label><input type="radio" name="ptS' + i + '" value="' + v + '"> ' + v + '</label>';
+              }).join('') + '</td></tr>';
+          }).join('') +
+        '</tbody></table></div>' +
+        '<div class="form" style="grid-template-columns:1fr;margin-top:12px">' +
+          '<div class="f wide"><label>특이사항 · 조치 내용 (선택)</label><textarea id="ptNote" rows="3"></textarea></div>' +
+          '<div class="f wide"><label>현장 사진 (선택)</label><input type="file" id="ptPhotos" accept="image/*" multiple></div>' +
+        '</div>' +
+        '<div class="subttl">결재</div>' +
+        '<div class="cr-sigs">' +
+          '<div class="cr-sig">' + crStamp('', '') + '<div class="f" style="flex:1"><label>① 작성</label><b id="ptWriter"></b>' +
+            '<span class="cr-flow">결재 올리기를 누르면 자동으로 승인 도장이 찍힙니다.</span></div></div>' +
+          '<div class="cr-sig off">' + crStamp('', '') + '<div class="f" style="flex:1"><label>② ' + PT_BOSS.title + '</label><b>' + PT_BOSS.name + '</b>' +
+            '<span class="cr-flow">점검 기록에서 승인을 누르면 도장이 찍힙니다.</span></div></div>' +
+        '</div>' +
+        '<div class="secthead" style="margin-top:14px"><button class="reset go" id="ptSave">결재 올리기</button></div>' +
+      '</div>' +
+      '<div class="card"><header><h2>점검 기록</h2><span class="note" id="ptCount"></span><span id="ptBulk"></span></header><div id="ptList"></div></div>' +
+    '</div>';
+  $('ptDate').value = ptDefaultDate();
+  sec.addEventListener('change', function (e) {
+    var m = /^ptS(\d+)$/.exec(e.target.name || '');
+    if (m) ptMarkRow(+m[1]);
+    if (e.target.id === 'ptDate') ptDateNote();
+  });
+  sec.addEventListener('focusin', function (e) { if (e.target.id === 'ptStore') ptPlacesRender(true); });
+  sec.addEventListener('input', function (e) {
+    if (e.target.id === 'ptStore') { PT.place = e.target.value.trim(); ptPlacesRender(true); }
+  });
+  $('ptPrev').onclick = function () { ptMoveMonth(-1); };
+  $('ptNext').onclick = function () { ptMoveMonth(1); };
+  $('ptSave').onclick = ptSubmit;
+  sec.addEventListener('click', function (e) {
+    var t;
+    if ((t = e.target.closest('[data-ptsite]'))) { ptSetSite(t.dataset.ptsite); return; }
+    if ((t = e.target.closest('[data-ptplace]'))) { PT.place = t.dataset.ptplace; $('ptStore').value = ''; ptPlacesRender(); return; }
+    if ((t = e.target.closest('[data-ptall]'))) {
+      var v = t.dataset.ptall;
+      PT_CHECK.forEach(function (c, i) {
+        [].forEach.call(sec.querySelectorAll('input[name="ptS' + i + '"]'), function (x) { x.checked = !!v && x.value === v; });
+        ptMarkRow(i);
+      });
+      return;
+    }
+    if ((t = e.target.closest('[data-ptday]'))) {
+      var d = t.dataset.ptday;
+      PT.day = PT.day === d ? '' : d;
+      if (PT.day) { $('ptDate').value = d; ptDateNote(); }
+      ptRender(); return;
+    }
+    if ((t = e.target.closest('[data-ptopen]'))) { ptOpen(t.dataset.ptopen); return; }
+    if (e.target.closest('#ptBulkBtn')) { ptBulkApprove(); return; }
+    if ((t = e.target.closest('#ptPdfBtn'))) { ptPdfAll(t); }
+  });
+}
+function ptSetSite(s) {
+  if (!PT_SITES[s]) return;
+  PT.site = s; PT.place = ''; PT.day = '';
+  try { localStorage.setItem('ptSite', s); } catch (e) {}
+  if ($('ptStore')) $('ptStore').value = '';
+  ptRender();
+}
+function ptMoveMonth(n) {
+  var p = PT.ym.split('-'), d = new Date(+p[0], +p[1] - 1 + n, 1);
+  PT.ym = ymd(d).slice(0, 7); PT.day = ''; ptRender();
+}
+function ptMarkRow(i) {
+  var bad = !!document.querySelector('#bd-safpatrol input[name="ptS' + i + '"][value="불량"]:checked');
+  var tr = document.querySelector('#bd-safpatrol tr[data-pti="' + i + '"]');
+  if (tr) tr.classList.toggle('bad', bad);
+  $('ptMemo' + i).hidden = !bad;
+}
+function ptDateNote() {
+  var d = parseYmd($('ptDate').value), el = $('ptDateNote');
+  if (!d) { el.textContent = ''; return; }
+  var h = KR_HOLIDAYS[ymd(d)];
+  el.innerHTML = ptBiz(d) ? '(' + DOW[d.getDay()] + ')'
+    : '<b style="color:#C0392B">(' + DOW[d.getDay()] + (h ? ' · ' + esc(h) : '') + ') 주말 · 공휴일은 점검 대상이 아닙니다</b>';
+}
+/** 점검 장소 버튼 + (서울사무소) 매장 검색 칸 */
+function ptPlacesRender(keepInput) {
+  var cfg = PT_SITES[PT.site];
+  var inList = cfg.places.indexOf(PT.place) !== -1;
+  $('ptPlaces').innerHTML = cfg.places.map(function (p) {
+    return '<button type="button" class="pt-chip" data-ptplace="' + esc(p) + '" aria-pressed="' + (PT.place === p) + '">' + esc(p) + '</button>';
+  }).join('');
+  var si = $('ptStore');
+  si.hidden = !cfg.stores;
+  if (cfg.stores) {
+    var stores = ds('매장정보');
+    if ($('ptStoreList').dataset.n !== String(stores.length)) {
+      $('ptStoreList').dataset.n = String(stores.length);
+      $('ptStoreList').innerHTML = stores.map(function (s) {
+        return '<option value="' + esc(s.매장명) + '">' + esc(s.채널 || '') + '</option>';
+      }).join('');
+    }
+    si.placeholder = stores.length ? '매장 검색 (매장정보 ' + stores.length + '곳) — 매장명 일부를 입력하세요' : '매장 이름 입력 (매장정보 자료를 아직 못 불러왔습니다)';
+    if (!keepInput && inList) si.value = '';
+  }
+}
+/** 한 사업장의 한 달 판정 → { cell: { 날짜: { k: done|miss|need|plan|skip|fut, t: 글자 } }, biz, done, miss, planN }
+ *  작성 필요 : 오늘부터 근무일을 차례로 보며 전 근무일이 기록(또는 예정)으로 채워지지 않았으면 그날을 "작성 필요"로
+ *  → 마지막 기록 다음부터 근무일 하루 걸러 하루씩 표시되고, 기록을 올리면 그 뒤 예정이 자동으로 다시 맞춰집니다. */
+function ptSiteMonth(site, y, mo, today) {
+  var days = ptDays(site), plan = {}, prevCov = true, monthEnd = new Date(y, mo + 1, 0);
+  for (var x = addDays(new Date(y, mo, 1), -14); x <= monthEnd; x = addDays(x, 1)) {
+    if (!ptBiz(x)) continue;
+    var xk = ymd(x), cov = !!days[xk];
+    if (!cov && xk >= today && !prevCov) { plan[xk] = true; cov = true; }
+    prevCov = cov;
+  }
+  var o = { cell: {}, biz: 0, done: 0, miss: 0, planN: 0 };
+  for (var d = new Date(y, mo, 1); d <= monthEnd; d = addDays(d, 1)) {
+    if (!ptBiz(d)) continue;
+    var key = ymd(d), list = days[key] || [], c;
+    if (key <= today) o.biz++;
+    if (list.length) { o.done++; c = { k: 'done', t: uniq(list.map(function (r) { return r.place; })).join(', ') }; }
+    else if (key < today) {
+      if (!days[ymd(ptPrevBiz(d))]) { o.miss++; c = { k: 'miss', t: '누락' }; } else c = { k: 'skip', t: '미작성' };
+    } else if (plan[key]) { o.planN++; c = key === today ? { k: 'need', t: '오늘 필수' } : { k: 'plan', t: '작성 필요' }; }
+    else c = { k: 'fut', t: '' };
+    o.cell[key] = c;
+  }
+  return o;
+}
+function ptRender() {
+  ptBuild();
+  if (!$('ptCal')) return;
+  var site = PT.site, cfg = PT_SITES[site];
+  $('ptSiteTabs').innerHTML = Object.keys(PT_SITES).map(function (s) {
+    return '<button class="fb" data-ptsite="' + esc(s) + '" aria-pressed="' + (s === site) + '">' + esc(s) + '</button>';
+  }).join('');
+  $('ptSiteSel').innerHTML = Object.keys(PT_SITES).map(function (s) {
+    return '<button type="button" class="pt-chip" data-ptsite="' + esc(s) + '" aria-pressed="' + (s === site) + '">' + esc(s) + '</button>';
+  }).join('');
+  $('ptWriter').textContent = cfg.writer;
+  ptPlacesRender(true);
+  ptDateNote();
+
+  // ── 달력 (월~금, 근무일만 판정) ──
+  //    한 칸에 팩토리움 · 서울사무소 두 줄을 함께 보여 주고, 2일 1회 판정은 사업장마다 따로 합니다.
+  var today = ymd(new Date());
+  var p = PT.ym.split('-'), y = +p[0], mo = +p[1] - 1;
+  $('ptYm').textContent = y + '년 ' + (mo + 1) + '월';
+  var sites = Object.keys(PT_SITES);
+  var info = {};
+  sites.forEach(function (s) { info[s] = ptSiteMonth(s, y, mo, today); });
+  var last = new Date(y, mo + 1, 0).getDate();
+  //    모양은 월간스케쥴 달력(cal-h · cal-g · cal-d · ec 칩)을 그대로 쓰고 5칸(월~금)으로만 바꿉니다.
+  //    ※ data-date 를 쓰지 않아 월간스케쥴 클릭 처리와 섞이지 않습니다 (이 달력은 data-ptday).
+  var cells = [], lead = true;
+  for (var dd = 1; dd <= last; dd++) {
+    var d = new Date(y, mo, dd), w = d.getDay();
+    if (w === 0 || w === 6) continue;
+    if (lead) { for (var b = 1; b < w; b++) cells.push('<div class="cal-d void"></div>'); lead = false; }
+    var key = ymd(d), cls = 'cal-d', chips = '';
+    if (KR_HOLIDAYS[key]) { cls += ' holiday'; chips = '<i class="ec pt-hol">' + esc(KR_HOLIDAYS[key]) + '</i>'; }
+    else {
+      // 해당 없는 날(작성 의무 없음 · 앞으로의 빈 날)은 칩을 그리지 않습니다
+      chips = sites.map(function (s) {
+        var c = info[s].cell[key] || { k: 'fut', t: '' };
+        if (c.k === 'fut' || c.k === 'skip') return '';
+        var nm = s === '서울사무소' ? '서울' : '팩토리움';
+        return '<i class="ec pt-' + c.k + '" title="' + esc(s + ' ' + c.t) + '">' + esc(nm) + ' · ' + esc(c.t) + '</i>';
+      }).join('');
+      if (chips) cls += ' has';
+    }
+    if (key === today) cls += ' today';
+    if (PT.day === key) cls += ' sel';
+    cells.push('<div class="' + cls + '"' + (KR_HOLIDAYS[key] ? '' : ' data-ptday="' + key + '" title="누르면 이 날짜로 작성 · 기록 보기"') + '>' +
+      '<div class="cal-top"><b>' + dd + '</b></div><div class="evs">' + chips + '</div></div>');
+  }
+  $('ptCal').innerHTML = '<div class="pt-cal5"><div class="cal-h"><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span></div>' +
+    '<div class="cal-g">' + cells.join('') + '</div></div>';
+
+  // ── 강조 안내 : 누락 일자 · 팀장 결재 대기가 있을 때만 빨간 상자 (그 외에는 아무것도 안 보입니다) ──
+  var warn = [];
+  sites.forEach(function (s) {
+    var missDays = Object.keys(info[s].cell).filter(function (k) { return info[s].cell[k].k === 'miss'; }).sort();
+    if (missDays.length) warn.push('<b>' + esc(s) + '</b> 누락 ' + missDays.length + '일 : ' +
+      missDays.map(function (k) { return (+k.slice(5, 7)) + '.' + (+k.slice(8)); }).join(', '));
+    var pend = PT_ROWS.filter(function (r) { return r.site === s && ptStatus(r) === '결재 대기'; }).length;
+    if (pend) warn.push('<b>' + esc(s) + '</b> 팀장 결재 대기 ' + pend + '건');
+  });
+  $('ptAlert').innerHTML = (PT.err ? '<div class="rg-issue" style="margin:0 0 12px">기록을 불러오지 못했습니다 : ' + esc(PT.err) +
+    '<br>Supabase SQL Editor 에서 <b>schema_patrol.sql</b> 을 먼저 실행해 주세요.</div>' : '') +
+    (warn.length ? '<div class="pt-alert">' + warn.join('<br>') + '</div>' : '');
+
+  // ── 목록 (위 사업장 버튼으로 고른 사업장) ──
+  var monthRows = PT_ROWS.filter(function (r) { return r.site === site && String(r.patrol_date).slice(0, 7) === PT.ym; });
+  var lst = monthRows.filter(function (r) { return !PT.day || r.patrol_date === PT.day; });
+  $('ptCount').textContent = site + ' · ' + (PT.day ? PT.day.slice(5).replace('-', '.') : (mo + 1) + '월') + ' · ' + lst.length + '건';
+  var pend = lst.filter(function (r) { return ptStatus(r) === '결재 대기'; }).length;
+  $('ptBulk').innerHTML = (pend ? '<button class="reset go" id="ptBulkBtn" style="padding:5px 12px;font-size:11px;margin-left:8px">결재 대기 ' + pend + '건 일괄 승인</button>' : '') +
+    (lst.length ? '<button class="reset" id="ptPdfBtn" style="padding:5px 12px;font-size:11px;margin-left:8px">PDF 일괄 다운로드</button>' : '');
+  $('ptList').innerHTML = lst.length ? lst.map(function (r) {
+    var bad = ptBad(r), st = ptStatus(r);
+    return '<div class="sdy-item" data-ptopen="' + esc(r.id) + '">' +
+      '<div class="hd"><span class="d">' + esc(String(r.patrol_date).replace(/-/g, '.')) + ' (' + crDow(r.patrol_date) + ')</span>' +
+        '<span class="b b-gray">' + esc(r.place || '') + '</span>' +
+        (bad ? '<span class="b b-hi">불량 ' + bad + '</span>' : '<span class="b b-gray">이상 없음</span>') +
+        '<span class="t"></span>' +
+        '<span class="meta">' + esc(r.writer || '') + ' · ' + (st === '결재 완료' ? '✔ 결재 완료' : st === '반려' ? '<b style="color:#C0392B">반려</b>' : '팀장 결재 대기') + '</span></div>' +
+      (r.note ? '<div class="pv">' + esc(String(r.note).replace(/\s+/g, ' ').slice(0, 90)) + '</div>' : '') +
+    '</div>';
+  }).join('') : '<div class="empty"><b>점검 기록이 없습니다</b>' +
+    (RPC.live ? '왼쪽 양식으로 순회점검일지를 작성하세요.' : 'Supabase에 연결되어야 기록을 불러오고 저장할 수 있습니다.') + '</div>';
+}
+function ptSubmit() {
+  var date = $('ptDate').value, site = PT.site, place = PT.place || $('ptStore').value.trim();
+  if (!date) { toast('점검 일자를 입력해 주세요.', 'warn'); return; }
+  var dObj = parseYmd(date);
+  if (dObj && !ptBiz(dObj) && !confirm(date + ' 은(는) 주말 · 공휴일입니다. 그래도 작성할까요?')) return;
+  if (!place) { toast('점검 장소를 골라 주세요.', 'warn'); return; }
+  var checklist = PT_CHECK.map(function (c, i) {
+    var s = document.querySelector('#bd-safpatrol input[name="ptS' + i + '"]:checked');
+    return { g: c[0], t: c[1], s: s ? s.value : '', m: s && s.value === '불량' ? $('ptMemo' + i).value.trim() : '' };
+  });
+  var miss = checklist.filter(function (c) { return !c.s; }).length;
+  if (miss) { toast('점검 결과를 선택하지 않은 항목이 ' + miss + '개 있습니다. (전체 양호 버튼으로 한 번에 체크할 수 있습니다)', 'warn'); return; }
+  if (!RPC.live) { toast('Supabase에 연결되어야 저장할 수 있습니다.', 'warn'); return; }
+  var dup = PT_ROWS.some(function (r) { return r.site === site && r.patrol_date === date && r.place === place; });
+  if (dup && !confirm(date + ' ' + place + ' 일지가 이미 있습니다. 한 건 더 올릴까요?')) return;
+  var files = Array.prototype.slice.call($('ptPhotos').files || []);
+  var btn = $('ptSave'); btn.disabled = true; btn.textContent = files.length ? '사진 올리는 중…' : '결재 올리는 중…';
+  var today = ymd(new Date());
+  Promise.all(files.map(function (file) {
+    var path = 'patrol/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + safeExt(file.name);
+    return RPC.db.storage.from('ehs-evidence').upload(path, file, { cacheControl: '3600' }).then(function (res) {
+      if (res.error) throw res.error;
+      return { path: path, url: RPC.db.storage.from('ehs-evidence').getPublicUrl(path).data.publicUrl, name: file.name };
+    });
+  })).then(function (photos) {
+    return RPC.db.from('patrol_log').insert({
+      patrol_date: date, site: site, place: place, checklist: checklist,
+      note: $('ptNote').value.trim() || null, photos: photos,
+      writer: PT_SITES[site].writer, sign_writer: 'stamp|' + today,          // ① 작성자 자동 승인 도장
+      approver: PT_BOSS.title + ' ' + PT_BOSS.name, sign_boss: null, boss_signed_at: null,   // ② 팀장 결재 대기
+      created_by: state.user || null
+    });
+  }).then(function (res) {
+    if (res.error) throw res.error;
+    toast('결재를 올렸습니다. ' + PT_BOSS.name + ' 결재 대기 중입니다.');
+    ['ptNote', 'ptPhotos'].forEach(function (id) { $(id).value = ''; });
+    PT_CHECK.forEach(function (c, i) {
+      [].forEach.call(document.querySelectorAll('#bd-safpatrol input[name="ptS' + i + '"]'), function (x) { x.checked = false; });
+      $('ptMemo' + i).value = ''; ptMarkRow(i);
+    });
+    PT.ym = date.slice(0, 7); PT.day = '';
+    loadPt();
+  }).catch(function (e) {
+    toast('저장 실패: ' + ((e && e.message) || e), 'err');
+  }).then(function () { btn.disabled = false; btn.textContent = '결재 올리기'; });
+}
+function ptBulkApprove() {
+  var ids = PT_ROWS.filter(function (r) {
+    return r.site === PT.site && String(r.patrol_date).slice(0, 7) === PT.ym && (!PT.day || r.patrol_date === PT.day) && ptStatus(r) === '결재 대기';
+  }).map(function (r) { return r.id; });
+  if (!ids.length) return;
+  apAskPin('일괄 승인').then(function (ok) {
+    if (!ok || !confirm(PT_BOSS.title + ' ' + PT_BOSS.name + ' 이름으로 ' + ids.length + '건을 승인합니다.')) return;
+    RPC.db.from('patrol_log').update({ sign_boss: 'stamp', boss_signed_at: new Date().toISOString() }).in('id', ids).then(function (res) {
+      if (res.error) throw res.error;
+      toast(ids.length + '건을 승인했습니다.'); loadPt();
+    }).catch(function (e) { toast('승인 실패: ' + ((e && e.message) || e), 'err'); });
+  });
+}
+/** 점검 기록 목록에 보이는 일지(사업장 · 월 · 고른 날짜 기준)를 날짜순으로 한 PDF 에 — 일지마다 새 쪽에서 시작 */
+function ptPdfAll(btn) {
+  var rows = PT_ROWS.filter(function (r) {
+    return r.site === PT.site && String(r.patrol_date).slice(0, 7) === PT.ym && (!PT.day || r.patrol_date === PT.day);
+  }).sort(function (a, b) { return String(a.patrol_date).localeCompare(String(b.patrol_date)) || String(a.place).localeCompare(String(b.place)); });
+  if (!rows.length) return;
+  var label = btn.textContent;
+  btn.disabled = true;
+  var box = null;
+  apLoadPdfLibs().then(function () {
+    var pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var pw = 210, ph = 297, m = 10, iw = pw - m * 2, ih = ph - m * 2, first = true;
+    box = document.createElement('div');
+    box.style.cssText = 'position:fixed;left:-10000px;top:0;width:720px;background:#fff';
+    document.body.appendChild(box);
+    var chain = Promise.resolve();
+    rows.forEach(function (r, n) {
+      chain = chain.then(function () {
+        btn.textContent = 'PDF 만드는 중… ' + (n + 1) + '/' + rows.length;
+        box.innerHTML = '<style>' + AP_DOC_CSS + '</style>' + ptDocHtml(r);
+        var imgs = [].slice.call(box.querySelectorAll('img'));
+        return Promise.all(imgs.map(function (im) {
+          return im.complete ? 0 : new Promise(function (res) { im.onload = im.onerror = res; });
+        })).then(function () {
+          return window.html2canvas(box.querySelector('.apdoc'), { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false });
+        }).then(function (cv) {
+          var pxPerMm = cv.width / iw, sliceH = Math.floor(ih * pxPerMm);
+          for (var y = 0; y < cv.height; y += sliceH) {
+            var h = Math.min(sliceH, cv.height - y), part = document.createElement('canvas');
+            part.width = cv.width; part.height = h;
+            part.getContext('2d').drawImage(cv, 0, y, cv.width, h, 0, 0, cv.width, h);
+            if (!first) pdf.addPage();
+            first = false;
+            pdf.addImage(part.toDataURL('image/jpeg', 0.9), 'JPEG', m, m, iw, h / pxPerMm);
+          }
+        });
+      });
+    });
+    return chain.then(function () {
+      var name = '순회점검일지_' + PT.site + '_' + (PT.day || PT.ym) + '(' + rows.length + '건).pdf';
+      apDownloadBlob(pdf.output('blob'), name);
+      toast(rows.length + '건을 PDF 한 파일로 내려받았습니다.');
+    });
+  }).catch(function (e) {
+    toast('PDF 만들기 실패: ' + ((e && e.message) || e), 'err');
+  }).then(function () {
+    if (box) box.remove();
+    btn.disabled = false; btn.textContent = label;
+  });
+}
+/** 기록 보기 : 점검표 양식 (구분 칸 병합 · ☑ 양호 ☐ 불량 ☐ 해당없음) */
+function ptDocHtml(r) {
+  var ck = crJson(r.checklist), ph = crJson(r.photos), st = ptStatus(r);
+  var span = {};
+  ck.forEach(function (c, i) { if (i === 0 || ck[i - 1].g !== c.g) { var n = 0; while (ck[i + n] && ck[i + n].g === c.g) n++; span[i] = n; } });
+  var boss = (r.approver || PT_BOSS.title + ' ' + PT_BOSS.name).replace(PT_BOSS.title + ' ', '');
+  return '<div class="apdoc">' +
+    '<div class="h"><h1 style="font-size:21px">순회점검일지</h1>' +
+      '<table class="line"><tr><th class="g" rowspan="2">결<br>재</th><th>작성<br><span style="font-weight:400">' + esc(r.writer || '') + '</span></th>' +
+        '<th>팀장<br><span style="font-weight:400">' + esc(boss) + '</span></th></tr>' +
+      '<tr><td style="height:80px;min-width:88px">' + crStamp(crWriterDate(r), '') + '</td>' +
+        '<td style="min-width:88px">' + (st === '결재 완료' ? crStamp(crLocalDate(r.boss_signed_at), '')
+          : st === '반려' ? '<b style="color:#C0392B">반려</b>' : '<span style="color:#aaa">결재 대기</span>') + '</td></tr></table></div>' +
+    (st === '반려' ? '<div style="margin:0 0 12px;border:1px solid #C0392B;color:#C0392B;padding:8px 12px;font-size:12px">반려 사유 : ' + esc(String(r.sign_boss).slice(7)) + '</div>' : '') +
+    '<table class="body"><tr><th>점검 일자</th><td>' + esc(String(r.patrol_date).replace(/-/g, '.')) + ' (' + crDow(r.patrol_date) + ')</td></tr>' +
+      '<tr><th>사업장</th><td>' + esc(r.site || '') + '</td></tr>' +
+      '<tr><th>점검 장소</th><td><b>' + esc(r.place || '') + '</b></td></tr></table>' +
+    '<table class="ck" style="margin-top:14px"><tr><th style="width:80px">구분</th><th>점검 내용</th><th style="width:190px">점검 결과</th><th style="width:120px">비고</th></tr>' +
+      ck.map(function (c, i) {
+        return '<tr>' + (span[i] ? '<td rowspan="' + span[i] + '" style="text-align:center;font-weight:700;font-size:11.5px">' + esc(c.g) + '</td>' : '') +
+          '<td style="text-align:center">' + (i + 1) + ') ' + esc(c.t) + '</td>' +
+          '<td style="white-space:nowrap;font-size:11px">' + PT_CK.map(function (v) {
+            return '<span style="margin-right:6px;' + (c.s === v && v === '불량' ? 'color:#C0392B;font-weight:700' : '') + '">' + (c.s === v ? '☑' : '☐') + ' ' + v + '</span>';
+          }).join('') + '</td><td>' + esc(c.m || '') + '</td></tr>';
+      }).join('') + '</table>' +
+    '<table class="body" style="margin-top:14px"><tr><th>특이사항</th><td><div class="pre" style="min-height:48px">' + esc(r.note || '') + '</div></td></tr>' +
+      (ph.length ? '<tr><th>현장 사진</th><td><div class="ph">' + ph.map(function (p, i) {
+        return '<div><img src="' + esc(p.url) + '" alt=""><div>사진' + (i + 1) + '</div></div>';
+      }).join('') + '</div></td></tr>' : '') +
+    '</table>' +
+  '</div>';
+}
+function ptOpen(id) {
+  var r = PT_ROWS.filter(function (x) { return String(x.id) === String(id); })[0];
+  if (!r) return;
+  var st = ptStatus(r);
+  var bg = document.createElement('div');
+  bg.className = 'cr-bg';
+  bg.innerHTML = '<div class="cr-doc"><div class="bar">' +
+    '<span class="cr-st">' + esc(st) + '</span><span style="flex:1"></span>' +
+    (st === '결재 대기' ? '<button class="reset go" data-pt="ok">팀장 승인</button><button class="reset" data-pt="reject">반려</button>' : '') +
+    (st === '반려' ? '<button class="reset go" data-pt="resubmit">다시 결재 올리기</button>' : '') +
+    '<button class="reset" data-pt="print">인쇄 / PDF</button><button class="reset" data-pt="del">삭제</button>' +
+    '<button class="reset" data-pt="close">닫기</button></div>' + ptDocHtml(r) + '</div>';
+  document.body.appendChild(bg);
+  function close() { bg.remove(); }
+  function save(patch, msg) {
+    RPC.db.from('patrol_log').update(patch).eq('id', r.id).then(function (res) {
+      if (res.error) throw res.error;
+      toast(msg); close();
+      loadPt().then(function () { ptOpen(r.id); });
+    }).catch(function (e) { toast('결재 저장 실패: ' + ((e && e.message) || e), 'err'); });
+  }
+  bg.addEventListener('click', function (e) {
+    if (e.target === bg) { close(); return; }
+    var b = e.target.closest('[data-pt]');
+    if (!b) return;
+    var a = b.dataset.pt;
+    if (a === 'close') close();
+    else if (a === 'print') {
+      var w = window.open('', '_blank');
+      if (!w) { toast('팝업이 막혀 있습니다. 팝업을 허용해 주세요.', 'warn'); return; }
+      w.document.write('<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>순회점검일지 ' + esc(r.patrol_date) + ' ' + esc(r.place || '') + '</title>' +
+        '<style>body{margin:0;background:#eee;padding:20px 0}' + AP_DOC_CSS + '@media print{body{background:#fff;padding:0}.apdoc{width:auto;padding:0}}@page{size:A4;margin:12mm}</style></head><body>' +
+        ptDocHtml(r) + '<script>window.onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>');
+      w.document.close();
+    } else if (a === 'ok') {
+      apAskPin('승인').then(function (ok) {
+        if (ok) save({ sign_boss: 'stamp', boss_signed_at: new Date().toISOString() }, '승인했습니다.');
+      });
+    } else if (a === 'reject') {
+      apAskPin('반려').then(function (ok) {
+        if (!ok) return;
+        var rs = prompt('반려 사유를 적어 주세요.');
+        if (rs == null) return;
+        if (!rs.trim()) { toast('반려 사유를 적어 주세요.', 'warn'); return; }
+        save({ sign_boss: 'reject|' + rs.trim(), boss_signed_at: new Date().toISOString() }, '반려했습니다.');
+      });
+    } else if (a === 'resubmit') {
+      save({ sign_boss: null, boss_signed_at: null, sign_writer: 'stamp|' + ymd(new Date()) }, '다시 결재를 올렸습니다.');
+    } else if (a === 'del') {
+      delPin('이 순회점검일지를 삭제합니다. 첨부 사진도 함께 지워집니다.').then(function (ok) {
+        if (!ok) return;
+        var paths = crJson(r.photos).map(function (p) { return p.path; }).filter(Boolean);
+        (paths.length ? RPC.db.storage.from('ehs-evidence').remove(paths) : Promise.resolve())
+          .then(function () { return RPC.db.from('patrol_log').delete().eq('id', r.id); })
+          .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); close(); loadPt(); })
+          .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
+      });
+    }
+  });
+}
+
+/* ============================================================
  *  6-6-1. 전자결재 (schema_approval.sql 실행 필요)
  *
  *  · 기안 작성 : 양식을 고르면 그 양식의 항목·체크리스트가 아래에 펼쳐집니다.
@@ -12880,6 +13402,7 @@ function refresh(silent) {
     loadSdy();
     loadAct();
     loadCr();
+    loadPt();
     loadIso();
     loadAp();
     if (VISIT_LOG_UNLOCKED) loadVisitLog();
@@ -12943,7 +13466,7 @@ function startRealtime() {
 /* ============================================================
  *  8. 이벤트 연결
  * ============================================================ */
-var TAB_LIST = ['month', 'week', 'monitor', 'monact', 'kpi', 'safdash', 'safinspect', 'safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'heanew', 'heaspc', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'envact', 'accident', 'budget', 'csa', 'qse', 'svscore', 'aiadv', 'library', 'rules', 'safeday', 'ceoround', 'etcact', 'approval', 'visit', 'visitlog', 'news'];
+var TAB_LIST = ['month', 'week', 'monitor', 'monact', 'kpi', 'safdash', 'safinspect', 'safpatrol','safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'heanew', 'heaspc', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'envact', 'accident', 'budget', 'csa', 'qse', 'svscore', 'aiadv', 'library', 'rules', 'safeday', 'ceoround', 'etcact', 'approval', 'visit', 'visitlog', 'news'];
 /** 상단 "공통" · "안전" 버튼이 묶고 있는 게시판들. 그룹을 누르면 아래 두 번째 줄에 이 목록이 펼쳐집니다. */
 var NAV_GROUPS = {
   monitor: { label: '모니터링', sub: [
@@ -12972,7 +13495,8 @@ var NAV_GROUPS = {
     { tab: 'safrisk', label: '위험성평가' },
     { tab: 'safmeet', label: '회의체' },
     { tab: 'edu', label: '교육' },
-    { tab: 'safdevice', label: '안전장치' }
+    { tab: 'safdevice', label: '안전장치' },
+    { tab: 'safpatrol', label: '순회점검일지' }
   ] },
   health: { label: '보건', sub: [
     { tab: 'headash', label: '현황' },
