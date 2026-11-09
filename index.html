@@ -675,6 +675,7 @@ window.AI_CONFIG = {
   .nwtabs button[aria-pressed="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--ink)}
   .nwtabs button i{font-style:normal;font-size:9.5px;font-weight:600;color:var(--ink3);
     border:1px solid var(--line);padding:1px 5px;margin-left:5px;font-variant-numeric:tabular-nums}
+  .nwtabs button i.hot{color:#fff;background:var(--safe);border-color:var(--safe);font-weight:700}
 
   .nwgrid{display:grid;grid-template-columns:1fr 420px;gap:12px;align-items:start}
   @media (max-width:1080px){ .nwgrid{grid-template-columns:1fr} }
@@ -689,6 +690,7 @@ window.AI_CONFIG = {
   .nw-i:hover{background:var(--panel2)}
   .nw-i-c{flex:0 0 46px;font-size:9.5px;font-weight:600;color:var(--ink2);border:1px solid var(--line);
     text-align:center;padding:3px 0;letter-spacing:.02em}
+  .nw-i-c.nw-law{color:var(--safe);border-color:var(--safe);font-weight:700}
   .nw-i-b{flex:1;min-width:0}
   .nw-i-t{display:block;font-size:13px;font-weight:500;line-height:1.5;letter-spacing:-.025em;color:var(--ink)}
   .nw-i:hover .nw-i-t{text-decoration:underline;text-underline-offset:3px}
@@ -2641,6 +2643,7 @@ window.AI_CONFIG = {
     <div class="nwtabs">
       <button data-newsview="news" aria-pressed="true">최신 뉴스</button>
       <button data-newsview="history" aria-pressed="false">AI 요약 히스토리 <i id="nwHistCount">0</i></button>
+      <button data-newsview="law" aria-pressed="false">입법·행정예고 <i id="nwLawCount">0</i></button>
     </div>
 
     <div class="nwgrid" id="nwMain">
@@ -2661,6 +2664,15 @@ window.AI_CONFIG = {
     <div class="card" id="nwHistoryCard" hidden>
       <header><h2>AI 요약 히스토리</h2><span class="note">최근 30건</span></header>
       <div id="nwHistory"></div>
+    </div>
+
+    <div class="card" id="nwLawCard" hidden>
+      <header><h2>고용노동부 입법·행정예고</h2><div class="filterbar" id="nwLawFilter"></div></header>
+      <div class="secthead" style="margin:0 0 14px">
+        <button class="reset go" id="btnLawCollect">예고 불러오기</button>
+        <span class="hint" id="nwLawMeta" style="margin-left:auto;text-align:right"></span>
+      </div>
+      <div id="nwLawList"></div>
     </div>
   </section>
 
@@ -12129,8 +12141,20 @@ var NEWS_FEEDS = [
   { cat: '환경',    q: '사업장 폐기물 OR 대기오염 OR 수질오염' },
   { cat: '환경',    q: '온실가스 배출권 OR 탄소중립 기업' },
   { cat: '법·정책', q: '고용노동부 산업안전' },
-  { cat: '법·정책', q: '안전보건공단 OR 산업안전보건법 개정' }
+  { cat: '법·정책', q: '안전보건공단 OR 산업안전보건법 개정' },
+  // 법률 본문이 아니라 고시·지침·시행령으로 바뀌는 것들 — 제목에 '산업안전보건법'이 안 나오는 경우가 많습니다
+  { cat: '법·정책', q: '위험성평가' },
+  { cat: '법·정책', q: '고용노동부 고시 OR 지침 개정 OR 행정예고' },
+  { cat: '법·정책', q: '산업안전보건법 시행령 OR 시행규칙 OR 입법예고' },
+  { cat: '법·정책', q: '사업장 과태료 OR 의무화 안전보건' },
+  { cat: '법·정책', q: '환경부 시행령 OR 시행규칙 개정 사업장' }
 ];
+/** 제목이 이 패턴에 걸리면 어느 검색어로 왔든 '법·정책'으로 옮기고 [법령] 표시를 붙입니다 */
+var NEWS_LAW_RE = /입법예고|행정예고|시행령|시행규칙|과태료|의무화|(법|령|규칙|고시|지침|기준)[^\s]{0,3}\s?(전부\s?)?(개정|제정|시행|통과)|국회\s?(본회의|통과)/;
+function nwTagLaw(it) {
+  if (it && NEWS_LAW_RE.test(it.title || '')) { it.law = true; it.cat = '법·정책'; }
+  return it;
+}
 function newsFeedUrl(q) {
   return 'https://news.google.com/rss/search?q=' + encodeURIComponent(q + ' when:3d') +
          '&hl=ko&gl=KR&ceid=KR:ko';
@@ -12232,11 +12256,11 @@ function newsParse(xml, cat) {
     }
     var when = nwTag(n, 'pubDate') || nwTag(n, 'published') || nwTag(n, 'updated');
     var d = when ? new Date(when) : null;
-    out.push({
+    out.push(nwTagLaw({
       key: nwKey(title), title: title.trim(), url: link,
       source: src.trim(), host: host, cat: cat,
       at: (d && !isNaN(d.getTime())) ? d.toISOString() : ''
-    });
+    }));
   }
   return out;
 }
@@ -12290,6 +12314,82 @@ function collectNews(auto) {
   });
 }
 
+/* ── 고용노동부 입법·행정예고 ─────────────────────
+ *  고용노동부 공식 RSS(최근 10건)를 받아 쌓아 둡니다. 뉴스와 따로 1년치를 보관합니다.
+ *  뉴스와 같은 중계 주소(NEWS_PROXIES)를 거칩니다. */
+var LAW_RSS = 'https://www.moel.go.kr/rss/lawinfo.do';
+var LAW_KEEP_DAYS = 365, LAW_MAX = 200;
+var LAW_SAFETY_RE = /산업안전|안전보건|안전인증|안전검사|산업재해|산재|중대재해|위험|유해|화학물질|작업환경|건강진단|석면|근골격|보호구|재해/;
+var LAW = { items: [], collectedAt: '', busy: false, filter: '전체' };
+
+function lawParse(xml) {
+  var doc;
+  try { doc = new DOMParser().parseFromString(xml, 'application/xml'); } catch (e) { return []; }
+  if (!doc || doc.getElementsByTagName('parsererror').length) return [];
+  var nodes = doc.getElementsByTagName('item'), out = [];
+  for (var i = 0; i < nodes.length; i++) {
+    var n = nodes[i];
+    var title = nwDecode(nwTag(n, 'title')).replace(/\s+/g, ' ').trim();
+    var link = nwUrl(nwTag(n, 'link'));
+    if (!title || !link) continue;
+    var de = n.getElementsByTagName('dc:date')[0] ||
+             (n.getElementsByTagNameNS ? n.getElementsByTagNameNS('*', 'date')[0] : null);
+    var raw = de ? String(de.textContent || '').trim() : nwTag(n, 'pubDate');
+    var d = raw ? new Date(raw.replace(' ', 'T')) : null;     // "2026-11-04 09:45:44" = 한국 시각
+    out.push({
+      key: (/bbs_seq=(\d+)/.exec(link) || [])[1] || nwKey(title),
+      title: title, url: link,
+      kind: /입법예고/.test(title) ? '입법예고' : (/행정예고/.test(title) ? '행정예고' : '예고'),
+      safety: LAW_SAFETY_RE.test(title),
+      at: (d && !isNaN(d.getTime())) ? d.toISOString() : ''
+    });
+  }
+  return out;
+}
+
+function collectLaw(auto) {
+  if (LAW.busy) return Promise.resolve(false);
+  LAW.busy = true;
+  var btn = $('btnLawCollect');
+  if (btn) { btn.disabled = true; btn.textContent = '불러오는 중…'; }
+  return newsFetch(LAW_RSS).then(function (xml) {
+    var got = lawParse(xml);
+    if (!got.length) throw new Error('예고 목록을 읽지 못했습니다');
+    var seen = {}, added = 0;
+    LAW.items.forEach(function (it) { seen[it.key] = 1; });
+    got.forEach(function (it) {
+      if (seen[it.key]) return;
+      seen[it.key] = 1; LAW.items.push(it); added++;
+    });
+    var floor = Date.now() - LAW_KEEP_DAYS * 86400000;
+    LAW.items = LAW.items.filter(function (it) { return !it.at || new Date(it.at).getTime() >= floor; })
+      .sort(function (a, b) { return String(b.at || '').localeCompare(String(a.at || '')); })
+      .slice(0, LAW_MAX);
+    LAW.collectedAt = new Date().toISOString();
+    renderNews();
+    saveNews();
+    if (!auto || added) toast(added ? '새 입법·행정예고 ' + added + '건을 불러왔습니다.' : '새로 올라온 입법·행정예고가 없습니다.');
+    return true;
+  }).catch(function (e) {
+    if (auto) console.warn('[EHS] 입법·행정예고 자동 수집 실패', e);
+    else toast('입법·행정예고를 가져오지 못했습니다: ' + ((e && e.message) || e), 'err');
+    return false;
+  }).then(function (ok) {
+    LAW.busy = false;
+    if (btn) { btn.disabled = false; btn.textContent = '예고 불러오기'; }
+    return ok;
+  });
+}
+/** 오늘 아직 안 받았으면 받습니다 — 탭을 열 때, 자동 수집 때 부릅니다 */
+var lawAutoTried = 0;
+function lawAutoRun() {
+  var d = LAW.collectedAt ? new Date(LAW.collectedAt) : null;
+  if (d && !isNaN(d.getTime()) && ymd(d) === ymd(new Date())) return;
+  if (lawAutoTried && Date.now() - lawAutoTried < 30 * 60 * 1000) return;  // 실패하면 30분 쉬었다 다시
+  lawAutoTried = Date.now();
+  collectLaw(true);
+}
+
 /* ── 매일 오전 8시 자동 수집 ────────────────────── */
 var newsAutoTimer = null, newsAutoTried = 0;
 
@@ -12313,6 +12413,7 @@ function newsAutoDue() {
 function newsAutoRun() {
   if (NEWS.busy) return;
   if (!NEWS.loaded) { loadNews().then(newsAutoRun); return; }   // 기존 목록을 먼저 불러온 뒤에 모읍니다
+  if (new Date().getHours() >= NEWS_AUTO_HOUR) lawAutoRun();   // 예고는 뉴스와 따로 하루 한 번
   if (!newsAutoDue()) return;
   if (newsAutoTried && Date.now() - newsAutoTried < 30 * 60 * 1000) return;  // 실패하면 30분 쉬었다 다시
   newsAutoTried = Date.now();
@@ -12358,11 +12459,12 @@ var NEWS_PROMPT_HEAD =
   '- 분야 순서는 안전 → 보건 → 환경 → 법·제도. 각 분야는 "## 안전" 처럼 소제목을 붙이고, 해당 뉴스가 없는 분야는 통째로 생략합니다.\n' +
   '- 분야마다 핵심만 2~4개의 "- " 항목으로 씁니다. 비슷한 기사는 하나로 묶고 매체 이름은 적지 않습니다.\n' +
   '- 마지막에 "## 우리 회사 시사점" 을 두고, 침대·매트리스 제조와 물류·매장 현장에서 당장 챙길 점을 2~3가지 적습니다.\n' +
+  '- [·법령] 표시가 붙은 법·고시·지침 개정, 과태료, 의무화 소식은 빠뜨리지 말고 "## 법·제도" 맨 앞에 쓰며, 제목에 시행 시기가 있으면 함께 적습니다.\n' +
   '- 제목에 없는 사실은 지어내지 않습니다. 전체 600자 내외로 짧게 씁니다.';
 
 function newsPromptText(items) {
   return items.map(function (it) {
-    return '[' + it.cat + '] ' + it.title +
+    return '[' + it.cat + (it.law ? '·법령' : '') + '] ' + it.title +
            ' (' + (it.source || '출처미상') + (it.at ? ', ' + ymd(new Date(it.at)) : '') + ')';
   }).join('\n');
 }
@@ -12442,7 +12544,13 @@ function nwKeywords(items, n) {
 /** auto = 자동 수집에 이어서 부른 경우 — 오늘 요약이 이미 있으면 건너뜁니다 */
 function aiSummarize(auto) {
   if (NEWS.busy) return;
-  var pool = NEWS.items.slice(0, 60);
+  // 법령 기사는 최신순 60건 밖으로 밀려나도 최근 7일치를 먼저 넣습니다
+  var lawFloor = Date.now() - 7 * 86400000;
+  var lawPool = NEWS.items.filter(function (it) {
+    return it.law && (!it.at || new Date(it.at).getTime() >= lawFloor);
+  }).slice(0, 20);
+  var pool = lawPool.concat(NEWS.items.filter(function (it) { return lawPool.indexOf(it) === -1; }))
+    .slice(0, 60);
   if (!pool.length) { if (!auto) toast('먼저 「뉴스 수집」을 눌러 주세요.', 'warn'); return; }
   if (auto) {
     var s0 = NEWS.summaries[0], d0 = s0 ? new Date(s0.at) : null;
@@ -12474,7 +12582,8 @@ function aiSummarize(auto) {
 /* ── 저장 · 불러오기 ────────────────────────────── */
 function newsPayload() {
   return { items: NEWS.items, summaries: NEWS.summaries,
-           collectedAt: NEWS.collectedAt, autoAt: NEWS.autoAt };
+           collectedAt: NEWS.collectedAt, autoAt: NEWS.autoAt,
+           law: LAW.items, lawAt: LAW.collectedAt };
 }
 function saveNews() {
   try { localStorage.setItem(NEWS_LS_KEY, JSON.stringify(newsPayload())); } catch (e) {}
@@ -12489,9 +12598,11 @@ function applyNewsPayload(p) {
   // host 가 없는 기사 = 국내 여부를 가리기 전에 모은 옛 자료. 버리고 다시 모읍니다.
   NEWS.items = (Array.isArray(p.items) ? p.items : []).filter(function (it) {
     return it && it.host && nwIsDomestic(it.host);
-  });
+  }).map(nwTagLaw);                                  // 이미 모아 둔 기사도 법령 표시를 다시 매깁니다
   NEWS.summaries = Array.isArray(p.summaries) ? p.summaries : [];
   NEWS.collectedAt = p.collectedAt || '';
+  LAW.items = Array.isArray(p.law) ? p.law.filter(function (it) { return it && it.key && nwUrl(it.url); }) : [];
+  LAW.collectedAt = p.lawAt || '';
   // 다른 사람 화면이 오늘 몫을 이미 모았다면 그 기록을 이어받습니다(같은 날 중복 수집 방지)
   if (p.autoAt && p.autoAt > (NEWS.autoAt || '')) NEWS.autoAt = p.autoAt;
   return true;
@@ -12574,10 +12685,40 @@ function renderNews() {
   });
   $('nwMain').hidden = NEWS.view !== 'news';
   $('nwHistoryCard').hidden = NEWS.view !== 'history';
+  $('nwLawCard').hidden = NEWS.view !== 'law';
   renderNewsFilter();
   renderNewsList();
   renderNewsSummary();
   renderNewsHistory();
+  renderLaw();
+}
+function renderLaw() {
+  if (!$('nwLawList')) return;
+  var nSafe = LAW.items.filter(function (it) { return it.safety; }).length;
+  $('nwLawCount').textContent = LAW.items.length;
+  $('nwLawCount').classList.toggle('hot', LAW.items.length > 0);   // 1건 이상이면 빨간색
+  $('nwLawMeta').textContent = (LAW.collectedAt ? '최근 확인 ' + nwStamp(LAW.collectedAt) : '아직 불러오지 않음') +
+    ' · 출처 고용노동부 입법·행정예고 · 매일 오전 ' + NEWS_AUTO_HOUR + '시 자동 확인';
+  $('nwLawFilter').innerHTML = [['전체', LAW.items.length], ['안전보건', nSafe]].map(function (f) {
+    return '<button class="fb" data-lawfilter="' + f[0] + '" aria-pressed="' + (LAW.filter === f[0]) + '">' +
+      (f[0] === '안전보건' ? '안전보건 관련' : f[0]) + ' ' + f[1] + '</button>';
+  }).join('');
+  var list = LAW.items.filter(function (it) { return LAW.filter === '전체' || it.safety; });
+  if (!list.length) {
+    $('nwLawList').innerHTML = '<div class="empty"><b>표시할 예고가 없습니다</b>' +
+      '「예고 불러오기」를 누르면 고용노동부 입법·행정예고 최근 10건을 받아 오고, 이후로는 1년치를 쌓아 둡니다.</div>';
+    return;
+  }
+  $('nwLawList').innerHTML = '<div class="nw-day">' + list.map(function (it) {
+    var d = it.at ? new Date(it.at) : null;
+    var day = (d && !isNaN(d.getTime())) ? (d.getMonth() + 1) + '.' + d.getDate() : '';
+    return '<a class="nw-i" href="' + esc(it.url) + '" target="_blank" rel="noopener">' +
+      '<span class="nw-i-c' + (it.safety ? ' nw-law' : '') + '">' + esc(it.kind) + '</span>' +
+      '<span class="nw-i-b"><span class="nw-i-t">' + esc(it.title) + '</span>' +
+      '<span class="nw-i-s">' + (it.safety ? '안전보건 관련 · ' : '') + '고용노동부' +
+      (d && !isNaN(d.getTime()) ? ' · ' + d.getFullYear() + '년' : '') + '</span></span>' +
+      '<span class="nw-i-g">' + esc(day) + '</span></a>';
+  }).join('') + '</div>';
 }
 function renderNewsFilter() {
   var counts = { '전체': NEWS.items.length };
@@ -12604,7 +12745,7 @@ function renderNewsList() {
   $('nwList').innerHTML = order.map(function (d) {
     var rows = byDay[d].map(function (it) {
       return '<a class="nw-i" href="' + esc(it.url) + '" target="_blank" rel="noopener">' +
-        '<span class="nw-i-c">' + esc(it.cat) + '</span>' +
+        '<span class="nw-i-c' + (it.law ? ' nw-law' : '') + '">' + esc(it.law ? '법령' : it.cat) + '</span>' +
         '<span class="nw-i-b"><span class="nw-i-t">' + esc(it.title) + '</span>' +
         '<span class="nw-i-s">' + esc(it.source || '출처 미상') + '</span></span>' +
         '<span class="nw-i-g">' + esc(nwHhmm(it.at)) + '</span></a>';
@@ -13206,7 +13347,13 @@ function bind() {
     if (e.target.closest('#visitLogPinGo')) { tryVisitLogPin(); return; }
 
     var nvw = e.target.closest('[data-newsview]');
-    if (nvw) { NEWS.view = nvw.dataset.newsview; renderNews(); return; }
+    if (nvw) {
+      NEWS.view = nvw.dataset.newsview; renderNews();
+      if (NEWS.view === 'law' && NEWS.loaded) lawAutoRun();     // 탭을 열면 오늘 몫을 확인
+      return;
+    }
+    var lflt = e.target.closest('[data-lawfilter]');
+    if (lflt) { LAW.filter = lflt.dataset.lawfilter; renderLaw(); return; }
     var ncat = e.target.closest('[data-newscat]');
     if (ncat) { NEWS.cat = ncat.dataset.newscat; renderNewsFilter(); renderNewsList(); return; }
     var nhst = e.target.closest('[data-newshist]');
@@ -13314,6 +13461,7 @@ function bind() {
   $('btnVisitXlsx').onclick = exportVisitXlsx;
 
   $('btnNewsCollect').onclick = function () { collectNews(); };
+  $('btnLawCollect').onclick = function () { collectLaw(); };
   $('btnNewsAi').onclick = function () { aiSummarize(); };
   $('btnNewsAiKey').onclick = openAiKeyEditor;
   $('btnAiKeyCancel').onclick = closeAiKeyEditor;
