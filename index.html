@@ -1157,6 +1157,13 @@ window.AI_CONFIG = {
   .nw-day{border-top-color:#000}
   .lib-site{background:#fff;border:none;border-radius:var(--r-m)}
   .lib-site:hover{background:#fff;box-shadow:inset 0 0 0 1px #000}
+  .ds-upd{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:12px;color:var(--ink3)}
+  .ds-upd b{color:var(--ink);font-weight:700}
+  .ds-upd .ds-upd-sh{font-size:11px}
+  .ds-upd .reset{font-size:11.5px;padding:5px 12px}
+  #sitesModal .sheet{max-width:520px}
+  #sitesModal .lib-site{border:1px solid var(--line);margin-top:0}
+  #sitesModal #libSites{margin:4px 0 16px}
   .pin-box{background:var(--panel2);border:none;border-radius:var(--r-xl)}
   .diag{border-radius:var(--r-l);border-left-width:1px}
   .thumb{border-radius:var(--r-s)}
@@ -2386,6 +2393,16 @@ window.AI_CONFIG = {
   <!-- 자료실 : 구분(안전 · 보건 · 환경 · 기획 · 공통 · 기타) · 본문 보기 · 본문 검색 (schema_library.sql 다시 실행 필요) -->
   <section class="bpanel" id="bd-library" hidden>
     <div class="lb-cats" id="libCats"></div>
+    <!-- 자료 등록을 위, 자료 목록을 아래에 둡니다. 안전 · 보건 관련 사이트는 데일리뉴스 버튼으로 옮겼습니다. -->
+      <div class="card" style="margin-top:12px">
+        <header><h2>자료 등록</h2><span class="note">여러 파일 한 번에 · 본문 자동 색인 · 서버 "대시보드 자료실" 폴더에 자동 저장</span></header>
+        <div class="form" style="grid-template-columns:1fr 1fr">
+          <div class="f wide"><label>구분</label><select id="libCat"></select></div>
+          <div class="f wide"><label>파일</label><input type="file" id="libFile" multiple></div>
+        </div>
+        <p class="lb-hint">워드(docx) · 엑셀 · 파워포인트(pptx) · PDF · 한글(hwpx) · 텍스트는 본문을 읽어 검색되고, 그 밖의 파일(hwp · 그림 등)은 제목 · 파일명으로 검색됩니다.</p>
+        <div class="secthead" style="margin-top:14px"><button class="reset go" id="btnLibUpload">등록</button></div>
+      </div>
     <div class="card" style="margin-top:12px">
       <header><h2>자료 목록</h2><span class="note" id="libCount"></span></header>
       <div class="rg-tools">
@@ -2397,24 +2414,6 @@ window.AI_CONFIG = {
       </div>
       <div id="libIdx" class="lb-idx" hidden></div>
       <div id="libList"></div>
-    </div>
-    <div class="g-half" style="margin-top:12px;align-items:start">
-      <div class="card">
-        <header><h2>자료 등록</h2><span class="note">여러 파일 한 번에 · 본문 자동 색인</span></header>
-        <div class="form" style="grid-template-columns:1fr 1fr">
-          <div class="f"><label>구분</label><select id="libCat"></select></div>
-          <div class="f"><label>문서 일자 (선택)</label><input type="date" id="libDate"></div>
-          <div class="f wide"><label>제목 <i style="font-style:normal;color:var(--ink3);font-weight:400">· 비우면 파일 이름</i></label><input type="text" id="libTitle" placeholder="예) 2026년 위험성평가 지침"></div>
-          <div class="f wide"><label>설명 (선택)</label><input type="text" id="libNote" placeholder="예) 고용노동부 성남지청 공문 · 회신 기한 12/10"></div>
-          <div class="f wide"><label>파일</label><input type="file" id="libFile" multiple></div>
-        </div>
-        <p class="lb-hint">워드(docx) · 엑셀 · 파워포인트(pptx) · PDF · 한글(hwpx) · 텍스트는 본문을 읽어 검색되고, 그 밖의 파일(hwp · 그림 등)은 제목 · 파일명으로 검색됩니다.</p>
-        <div class="secthead" style="margin-top:14px"><button class="reset go" id="btnLibUpload">등록</button></div>
-      </div>
-      <div class="card">
-        <header><h2>안전 · 보건 관련 사이트</h2><span class="note">WEB SITE</span></header>
-        <div id="libSites"></div>
-      </div>
     </div>
   </section>
 
@@ -2655,6 +2654,7 @@ window.AI_CONFIG = {
         </div>
       </div>
       <div class="nw-act">
+        <button class="reset" id="btnNewsSites">안전보건 관련 사이트</button>
         <button class="reset" id="btnNewsAiKey">AI 연결 설정</button>
         <button class="reset go" id="btnNewsCollect">뉴스 수집</button>
       </div>
@@ -2835,6 +2835,21 @@ window.AI_CONFIG = {
 </div>
 
 <!-- 데일리뉴스 AI 연결 설정 -->
+<!-- 안전 · 보건 관련 사이트 (데일리뉴스 버튼으로 열림) -->
+<div class="scrim" id="sitesModal">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sitesTitle">
+    <div class="sheet-hd">
+      <p class="eyebrow">WEB SITE</p>
+      <h3 id="sitesTitle">안전 · 보건 관련 사이트</h3>
+    </div>
+    <div id="libSites"></div>
+    <div class="sheet-ft">
+      <div class="spacer"></div>
+      <button class="reset" id="btnSitesClose">닫기</button>
+    </div>
+  </div>
+</div>
+
 <div class="scrim" id="aiKeyEditor">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="aiKeyTitle">
     <div class="sheet-hd">
@@ -3921,7 +3936,8 @@ function canonSite(v) {
 }
 function normalizeDataset(obj) {
   Object.keys(obj).forEach(function (sheet) {
-    (obj[sheet] || []).forEach(function (r) {
+    if (!Array.isArray(obj[sheet])) return;   // __meta (시트별 업데이트 날짜) 등은 건너뜀
+    obj[sheet].forEach(function (r) {
       DATE_COLS.forEach(function (c) { if (r[c] !== undefined) r[c] = normDate(r[c]); });
       if (r.사업장 !== undefined) r.사업장 = canonSite(r.사업장);
     });
@@ -4253,7 +4269,43 @@ function attachEmbeddedPhotos(wb, parsed) {
   })).then(function () { return summary; });
 }
 
-function importExcel(file) {
+/* ── 시트별 업데이트 날짜 ──
+ *  엑셀을 올릴 때 시트마다 내용을 저장된 것과 비교해서, 실제로 바뀐 시트만 날짜를 오늘로 바꿉니다.
+ *  날짜는 payload.__meta = { 시트이름: { at: ISO, h: 내용지문 } } 에 함께 저장됩니다.
+ *  (삽입 사진 주소는 올릴 때마다 새로 생기므로 비교에서 뺍니다) */
+function dsSheetHash(rows) {
+  var s = JSON.stringify(rows || [], function (k, v) { return typeof v === 'string' && isImgUrl(v) ? '' : v; });
+  var h = 5381;
+  for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  return s.length + ':' + (h >>> 0).toString(36);
+}
+function dsSheetAt(name) {
+  var m = state.ds && state.ds.__meta && state.ds.__meta[name];
+  return (m && m.at) || (state.ds && state.ds[name] && state.dsMeta && state.dsMeta.at) || '';
+}
+/** 게시판(탭)이 쓰는 시트들 중 가장 최근 업데이트 날짜 */
+var UPD_SHEETS = Object.assign({}, TAB_SHEETS, {
+  safdash: ['안전점검', '위험성평가', '회의체', '교육', '안전장치'],
+  headash: ['보건활동', '건강검진 현황', '건강검진 상담', '작업환경측정'],
+  envdash: ['전체 폐기물', '온실가스', '오수처리', '대기오염']
+});
+delete UPD_SHEETS.month;
+function renderDsUpdated() {
+  Object.keys(UPD_SHEETS).forEach(function (tab) {
+    var sec = $('bd-' + tab); if (!sec) return;
+    var el = sec.querySelector(':scope > .ds-upd');
+    if (!el) { el = document.createElement('div'); el.className = 'ds-upd'; sec.insertBefore(el, sec.firstChild); }
+    var at = '';
+    UPD_SHEETS[tab].forEach(function (n) { var a = dsSheetAt(n); if (a > at) at = a; });
+    var d = at ? new Date(at) : null;
+    el.innerHTML = '<span>자료 업데이트 <b>' + (d ? d.getFullYear() + '.' + pad(d.getMonth() + 1) + '.' + pad(d.getDate()) : '—') + '</b></span>' +
+      '<span class="ds-upd-sh">' + esc(UPD_SHEETS[tab].join(' · ')) + ' 시트</span>' +
+      '<button type="button" class="reset" data-importtab="' + tab + '" title="고른 엑셀 파일에서 이 게시판 시트만 반영합니다">이 항목만 엑셀 업데이트</button>';
+  });
+}
+
+/** onlySheets : 이 시트들만 반영 (게시판별 "엑셀 업데이트" 버튼). 없으면 파일에 있는 시트 전부 */
+function importExcel(file, onlySheets) {
   if (typeof XLSX === 'undefined') {
     toast('엑셀 처리 모듈을 불러오지 못했습니다. 사내망에서 cdn.jsdelivr.net 이 차단됐는지 확인하세요.', 'err');
     return;
@@ -4268,11 +4320,31 @@ function importExcel(file) {
     } catch (err) {
       toast('엑셀을 읽지 못했습니다: ' + (err.message || err), 'err'); return;
     }
+    if (onlySheets) Object.keys(parsed).forEach(function (k) { if (onlySheets.indexOf(k) === -1) delete parsed[k]; });
     var got = Object.keys(parsed).filter(function (k) { return parsed[k].length; });
-    if (!got.length) { toast('알아볼 수 있는 시트가 없습니다. 자료양식 파일인지 확인하세요.', 'warn'); return; }
+    if (!got.length) {
+      toast(onlySheets ? '이 파일에 ' + onlySheets.join(' · ') + ' 시트가 없습니다.' : '알아볼 수 있는 시트가 없습니다. 자료양식 파일인지 확인하세요.', 'warn');
+      return;
+    }
+
+    // 시트별 비교 : 바뀐 시트만 오늘 날짜, 그대로인 시트는 예전 날짜 유지
+    var prev = state.ds || {}, now = new Date().toISOString();
+    var meta = Object.assign({}, prev.__meta || {}), changed = [];
+    Object.keys(parsed).forEach(function (k) {
+      var h = dsSheetHash(parsed[k]);
+      var old = meta[k] ? meta[k].h : (prev[k] ? dsSheetHash(prev[k]) : null);
+      if (old === h) meta[k] = { at: dsSheetAt(k) || now, h: h };
+      else { meta[k] = { at: now, h: h }; changed.push(k); }
+    });
+    // 파일에 없는 시트는 예전 자료를 그대로 둡니다 (시트 하나만 든 파일을 올려도 됨)
+    var merged = {};
+    Object.keys(prev).forEach(function (k) { if (k !== '__meta' && !(k in parsed)) merged[k] = prev[k]; });
+    Object.keys(parsed).forEach(function (k) { merged[k] = parsed[k]; });
+    merged.__meta = meta;
+    var chMsg = changed.length ? ' 바뀐 시트 ' + changed.length + '개(' + changed.join(', ') + ')만 날짜를 갱신했습니다.' : ' 바뀐 시트가 없어 날짜는 그대로입니다.';
 
     if (!RPC.live) {
-      state.ds = parsed; state.dsMeta = { at: new Date().toISOString() }; renderDataTabs();
+      state.ds = merged; state.dsMeta = { at: now }; renderDataTabs();
       toast('미리보기로 ' + got.length + '개 시트를 불러왔습니다. 저장은 되지 않습니다.', 'warn');
       return;
     }
@@ -4282,10 +4354,10 @@ function importExcel(file) {
     attachEmbeddedPhotos(wb, parsed).then(function (summary) {
       photoSummary = summary;
       console.log('[EHS] 삽입 사진 처리 결과', summary);
-      return RPC.saveDataset(parsed);
+      return RPC.saveDataset(merged);
     }).then(function (row) {
       state.busy = false;
-      state.ds = parsed; state.dsMeta = { at: row.updated_at };
+      state.ds = merged; state.dsMeta = { at: row.updated_at };
       renderDataTabs();
       var photoMsg = '';
       if (photoSummary && photoSummary.found) {
@@ -4293,7 +4365,7 @@ function importExcel(file) {
         if (photoSummary.matched < photoSummary.found) photoMsg += ' (행 매칭 실패 ' + (photoSummary.found - photoSummary.matched) + '개, 콘솔 참고)';
         if (photoSummary.failed) photoMsg += ' (업로드 실패 ' + photoSummary.failed + '개)';
       }
-      toast(got.length + '개 시트를 저장했습니다. 팀원 화면에도 바로 반영됩니다.' + photoMsg);
+      toast(got.length + '개 시트를 저장했습니다.' + chMsg + photoMsg);
     }).catch(function (err) {
       state.busy = false;
       console.error('[EHS] 자료 저장 실패', err);
@@ -4529,6 +4601,7 @@ function renderDataTabs() {
   renderEnvWastePage(); renderEnvGhgPage(); renderEnvWaterPage(); renderEnvAirPage();
   renderHeaDashPage(); renderEnvDashPage(); renderMonitorPage();
   renderAccident(); renderBudget();
+  renderDsUpdated();
 }
 
 /* ── 3. 안전 (안전점검 · 위험성평가 · 회의체) ── */
@@ -7713,7 +7786,7 @@ function budParseSheet(rows) {
 function budData() {
   var d = ds('예산');
   if (d.length && Array.isArray(d[0].m)) {
-    var at = state.dsMeta && state.dsMeta.at ? String(state.dsMeta.at).slice(0, 10).replace(/-/g, '.') : '';
+    var at = dsSheetAt('예산'); at = at ? ymd(new Date(at)).replace(/-/g, '.') : '';
     return { src: '자료양식 예산 시트' + (at ? ' (' + at + ' 불러옴)' : ''), actualThru: d[0].thru || 8,
       forecastMonth: d[0].fc || (d[0].thru || 8) + 1, items: d };
   }
@@ -10485,9 +10558,9 @@ function uploadLibFile(file) {
 }
 /** 자료 등록 : 파일마다 본문을 뽑고 → 올리고 → 한 줄씩 저장 (여러 파일이면 제목 뒤에 파일 이름) */
 function submitLib() {
-  var title = $('libTitle').value.trim(), cat = $('libCat').value || '공통';
+  var title = '', cat = $('libCat').value || '공통';   // 제목 칸은 없앴습니다 → 제목 = 파일 이름
   var files = [].slice.call($('libFile').files || []);
-  if (!files.length && !title) { toast('파일을 고르거나 제목을 입력해 주세요.', 'warn'); return; }
+  if (!files.length) { toast('올릴 파일을 골라 주세요.', 'warn'); return; }
   if (!RPC.live) { toast('Supabase에 연결되어야 저장할 수 있습니다.', 'warn'); return; }
   var btn = $('btnLibUpload'); btn.disabled = true;
   var base = function (n) { return String(n || '').replace(/\.[^.]+$/, ''); };
@@ -10501,8 +10574,7 @@ function submitLib() {
       return (f ? uploadLibFile(f) : Promise.resolve(null)).then(function (up) {
         var row = { title: t, file_url: up ? up.url : null, file_path: up ? up.path : null, file_name: up ? up.name : null, created_by: state.user || null };
         if (LIB.hasCols) {
-          row.category = cat; row.doc_date = $('libDate').value || null; row.note = $('libNote').value.trim() || null;
-          row.content = txt; row.file_size = f ? f.size : null; row.mime = f ? (f.type || null) : null;
+          row.category = cat; row.doc_date = ymd(new Date()); /* 문서 일자 = 등록한 날 */          row.content = txt; row.file_size = f ? f.size : null; row.mime = f ? (f.type || null) : null;
         }
         return RPC.db.from('dashboard_files').insert(row);
       });
@@ -10514,8 +10586,8 @@ function submitLib() {
   };
   step(0).then(function () {
     toast(done > 1 ? '자료 ' + done + '건을 등록했습니다.' : '자료를 등록했습니다.');
-    $('libTitle').value = ''; $('libNote').value = ''; $('libFile').value = ''; $('libDate').value = '';
-    LIB.cat = 'all'; loadLib();
+    $('libFile').value = '';
+    LIB.cat = cat; loadLib();   // 방금 등록한 구분을 펼쳐서 바로 확인
   }).catch(function (e) {
     var m = (e && e.message) || String(e);
     toast(/category|content|column/i.test(m) ? 'Supabase 에서 schema_library.sql 을 다시 실행해 주세요 (구분 · 본문 칸 추가).' : '등록 실패: ' + m, 'err');
@@ -13474,7 +13546,7 @@ var NAV_GROUPS = {
     { tab: 'monact', label: '활동 현황' }
   ] },
   common: { label: '공통', sub: [
-    { tab: 'approval', label: '전자결재' },
+    // '전자결재'(approval) 는 메뉴에서 뺐습니다 — 게시판 · 결재 기록은 남아 있어 다시 넣으면 그대로 보입니다
     { tab: 'kpi', label: 'KPI' },
     { tab: 'accident', label: '안전사고' },
     { tab: 'budget', label: '예산' },
@@ -13559,7 +13631,7 @@ function closeTopOverlay() {
   if (typeof memoIsOpen === 'function' && memoIsOpen()) { memoClose(); return true; }
   var fixed = [['libScrim', libClose], ['rgScrim', rgClose], ['scrim', closeSheet], ['planScrim', closePlan], ['gpsWxModal', closeGpsWeather],
     ['dayPopup', closeDayPopup], ['popupEditor', closePopupEditor], ['aiKeyEditor', closeAiKeyEditor],
-    ['imgbox'], ['storeScrim'], ['homePopup']];
+    ['imgbox'], ['storeScrim'], ['homePopup'], ['sitesModal']];
   for (var i = 0; i < fixed.length; i++) {
     var el = $(fixed[i][0]);
     if (el && el.classList.contains('on')) { if (fixed[i][1]) fixed[i][1](); else el.classList.remove('on'); return true; }
@@ -13705,7 +13777,9 @@ function bind() {
 
     if (e.target.closest('#heaExamPinGo')) { tryHeaExamPin(); return; }
 
-    if (e.target.closest('[data-import]')) { $('xlsxFile').click(); return; }
+    if (e.target.closest('[data-import]')) { $('xlsxFile').dataset.only = ''; $('xlsxFile').click(); return; }
+    var itb = e.target.closest('[data-importtab]');
+    if (itb) { $('xlsxFile').dataset.only = itb.dataset.importtab; $('xlsxFile').click(); return; }
 
     var fy = e.target.closest('[data-accy]');
     if (fy) { state.accY = fy.dataset.accy; renderAccident(); return; }
@@ -13922,8 +13996,9 @@ function bind() {
   });
 
   $('xlsxFile').onchange = function () {
-    if (this.files && this.files[0]) importExcel(this.files[0]);
-    this.value = '';
+    var only = this.dataset.only && UPD_SHEETS[this.dataset.only];
+    if (this.files && this.files[0]) importExcel(this.files[0], only || null);
+    this.value = ''; this.dataset.only = '';
   };
 
   $('qThreshold').onchange = function () {
@@ -13948,7 +14023,12 @@ function bind() {
   $('libSort').onchange = function () { LIB.sort = this.value; renderLibList(); };
   $('bd-library').addEventListener('click', function (e) {
     var b;
-    if ((b = e.target.closest('[data-libcat]'))) { LIB.cat = b.dataset.libcat; renderLibList(); return; }
+    if ((b = e.target.closest('[data-libcat]'))) {
+      LIB.cat = b.dataset.libcat; renderLibList();
+      // 위 구분 타일을 누르면 "자료 등록"의 구분도 같이 맞춥니다 (기획을 보고 올리면 기획으로 등록)
+      if (LIB.cat !== 'all') $('libCat').value = LIB.cat;
+      return;
+    }
     if ((b = e.target.closest('[data-libopen]'))) { libOpen(b.dataset.libopen); }
   });
   $('libScrim').addEventListener('click', function (e) {
@@ -13988,6 +14068,9 @@ function bind() {
   $('btnLawCollect').onclick = function () { collectLaw(); };
   $('btnNewsAi').onclick = function () { aiSummarize(); };
   $('btnNewsAiKey').onclick = openAiKeyEditor;
+  $('btnNewsSites').onclick = function () { $('sitesModal').classList.add('on'); };
+  $('btnSitesClose').onclick = function () { $('sitesModal').classList.remove('on'); };
+  bindOverlayClose($('sitesModal'), function () { $('sitesModal').classList.remove('on'); });
   $('btnAiKeyCancel').onclick = closeAiKeyEditor;
   $('btnAiKeySave').onclick = saveAiKey;
   $('btnAiKeyClear').onclick = function () { $('aiKeyInput').value = ''; saveAiKey(); };
