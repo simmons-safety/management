@@ -6,6 +6,164 @@
 <title>안전보건 대시보드</title>
 <link rel="icon" href="data:,">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- ══ 업로드 자동 용량 줄이기 (모든 업로드 칸 공통) ══════════════════════
+     Supabase 저장소 upload() 를 감싸서, 용량 초과로 올라가지 않으면
+     사진은 해상도 · 화질을, PDF 는 페이지를 이미지로 바꿔 줄인 뒤 자동으로 다시 올립니다.
+     · 50MB 가 넘는 사진 · PDF 는 처음부터 줄여서 올립니다 (서버 한도)
+     · 한글 · 워드 · 엑셀 · 압축파일은 줄일 수 없어 안내만 띄웁니다
+     · PDF 를 줄이면 글자 선택 · 검색은 안 되는 이미지 PDF 가 됩니다
+     끄려면 아래 AUTO_SHRINK_ON 을 false 로 바꾸세요. -->
+<script>
+(function(){
+  var AUTO_SHRINK_ON = true;
+  var HARD = 50 * 1048576;                       // 이 크기를 넘으면 올리기 전에 먼저 줄임
+  if(!AUTO_SHRINK_ON || !window.supabase || !window.supabase.createClient) return;
+  var mb = function(n){ return (n / 1048576).toFixed(n >= 10485760 ? 0 : 1) + 'MB'; };
+
+  function note(msg, bad){
+    try{
+      var el = document.getElementById('autoShrinkNote');
+      if(!el){
+        el = document.createElement('div'); el.id = 'autoShrinkNote';
+        el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99999;max-width:min(92vw,560px);'
+          + 'padding:12px 18px;border-radius:14px;font:600 13px/1.5 "Malgun Gothic",sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:opacity .3s';
+        document.body.appendChild(el);
+      }
+      el.style.background = bad ? '#c0392b' : '#111'; el.style.color = '#fff';
+      el.textContent = msg; el.style.opacity = '1';
+      clearTimeout(el._t); el._t = setTimeout(function(){ el.style.opacity = '0'; }, bad ? 6000 : 3500);
+    }catch(e){}
+  }
+  function kindOf(b){
+    var t = (b.type || '').toLowerCase(), n = (b.name || '').toLowerCase();
+    if(/^image\/(jpe?g|png|webp|bmp)$/.test(t) || /\.(jpe?g|png|webp|bmp)$/.test(n)) return 'img';
+    if(t === 'application/pdf' || /\.pdf$/.test(n)) return 'pdf';
+    return '';
+  }
+  function isSizeErr(err){
+    if(!err) return false;
+    var s = String(err.statusCode || err.status || '') + ' ' + String(err.message || err.error || '');
+    return /413|exceed|too large|maximum allowed size|payload/i.test(s);
+  }
+  function loadScript(src){
+    return new Promise(function(ok, no){
+      var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = function(){ no(new Error('라이브러리를 불러오지 못했습니다')); };
+      document.head.appendChild(s);
+    });
+  }
+  function toBlob(c, q){ return new Promise(function(ok){ c.toBlob(ok, 'image/jpeg', q); }); }
+  function asFile(blob, name){ try{ return new File([blob], name || 'file', { type: blob.type }); }catch(e){ return blob; } }
+
+  /* 사진 : 긴 변 · 화질을 단계적으로 낮춰 target 이하가 되는 첫 결과 */
+  async function shrinkImg(file, target){
+    var bmp;
+    try{ bmp = await createImageBitmap(file); }catch(e){ return null; }
+    var steps = [[4000,.85],[3000,.8],[2400,.78],[1920,.72],[1600,.68],[1280,.62],[1024,.55],[800,.5]];
+    var best = null;
+    for(var i = 0; i < steps.length; i++){
+      var r = Math.min(1, steps[i][0] / Math.max(bmp.width, bmp.height));
+      var c = document.createElement('canvas');
+      c.width = Math.round(bmp.width * r); c.height = Math.round(bmp.height * r);
+      var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);  // 투명 PNG → 흰 바탕
+      g.drawImage(bmp, 0, 0, c.width, c.height);
+      var b = await toBlob(c, steps[i][1]);
+      if(b && (!best || b.size < best.size)) best = b;
+      if(b && b.size <= target) break;
+    }
+    return best;
+  }
+  /* PDF : 페이지마다 이미지로 그린 뒤 다시 PDF 로 묶습니다 (pdf.js + jsPDF, 필요할 때만 불러옴) */
+  async function shrinkPdf(file, target){
+    if(typeof pdfjsLib === 'undefined') await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+    if(!pdfjsLib.GlobalWorkerOptions.workerSrc)
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/' + (pdfjsLib.version || '3.11.174') + '/pdf.worker.min.js';
+    if(!window.jspdf) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    var pdf = await pdfjsLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+    var tiers = [[1.6,.72],[1.3,.62],[1.05,.52],[0.85,.45],[0.7,.38]];
+    var best = null;
+    for(var t = 0; t < tiers.length; t++){
+      var doc = null;
+      for(var p = 1; p <= pdf.numPages; p++){
+        var page = await pdf.getPage(p);
+        var v1 = page.getViewport({ scale: 1 }), v = page.getViewport({ scale: tiers[t][0] });
+        var c = document.createElement('canvas'); c.width = Math.ceil(v.width); c.height = Math.ceil(v.height);
+        var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+        await page.render({ canvasContext: g, viewport: v }).promise;
+        var img = c.toDataURL('image/jpeg', tiers[t][1]);
+        var o = v1.width > v1.height ? 'l' : 'p';
+        if(!doc) doc = new window.jspdf.jsPDF({ unit: 'pt', format: [v1.width, v1.height], orientation: o, compress: true });
+        else doc.addPage([v1.width, v1.height], o);
+        doc.addImage(img, 'JPEG', 0, 0, v1.width, v1.height);
+        c.width = c.height = 0;
+      }
+      var b = doc.output('blob');
+      if(!best || b.size < best.size) best = b;
+      if(b.size <= target) break;
+    }
+    return best;
+  }
+  async function reduce(file, kind, target){
+    try{
+      var out = kind === 'img' ? await shrinkImg(file, target) : await shrinkPdf(file, target);
+      return out && out.size < file.size ? out : null;
+    }catch(e){ console.warn('자동 용량 줄이기 실패', e); return null; }
+  }
+
+  async function smartUpload(up, path, body, opts){
+    if(!(body instanceof Blob)) return up(path, body, opts);
+    var kind = kindOf(body), name = body.name, orig = body.size, cur = body;
+    var send = function(b){
+      var o = Object.assign({}, opts || {});
+      if(b !== body) o.contentType = b.type;
+      return up(path, b === body ? body : asFile(b, name), o);
+    };
+    if(kind && orig > HARD){
+      note('용량이 커서 줄이는 중입니다… (' + mb(orig) + ')');
+      var r0 = await reduce(body, kind, HARD * 0.8);
+      if(r0) cur = r0;
+    }
+    var res = await send(cur);
+    if(!res || !res.error || !isSizeErr(res.error)){
+      if(cur !== body && res && !res.error) note('용량이 커서 자동으로 줄여 올렸습니다 · ' + mb(orig) + ' → ' + mb(cur.size));
+      return res;
+    }
+    if(!kind){
+      res.error.message = '파일 용량이 너무 커서 올릴 수 없습니다 (' + (name || '') + ' · ' + mb(orig) + '). '
+        + '사진 · PDF 만 자동으로 줄일 수 있으니, 이 파일은 용량을 줄여(또는 PDF 로 바꿔) 다시 올려 주세요.';
+      note(res.error.message, true);
+      return res;
+    }
+    for(var i = 0; i < 6; i++){                    // 올라갈 때까지 절반씩 줄여 다시 시도 (최대 6번)
+      note('용량이 커서 줄여서 다시 올리는 중입니다… (' + mb(orig) + ')');
+      var r = await reduce(body, kind, cur.size * 0.5);
+      if(!r || r.size >= cur.size * 0.95) break;   // 더 줄어들지 않으면 멈춤
+      cur = r;
+      res = await send(cur);
+      if(!res.error){ note('용량이 커서 자동으로 줄여 올렸습니다 · ' + mb(orig) + ' → ' + mb(cur.size)); return res; }
+      if(!isSizeErr(res.error)) return res;
+    }
+    res.error.message = '용량을 줄여도 올릴 수 없습니다 (' + (name || '') + ' · ' + mb(orig) + '). 파일을 나눠서 올려 주세요.';
+    note(res.error.message, true);
+    return res;
+  }
+
+  /* createClient 로 만든 모든 연결의 저장소 upload() 를 한 번만 감쌉니다 */
+  function patch(client){
+    try{
+      var api = client.storage.from('__probe__');
+      var proto = Object.getPrototypeOf(api);
+      if(!proto || proto.__autoShrink || typeof proto.upload !== 'function') return;
+      var up0 = proto.upload;
+      proto.upload = function(path, body, opts){ return smartUpload(up0.bind(this), path, body, opts); };
+      proto.__autoShrink = true;
+    }catch(e){ console.warn('자동 용량 줄이기 연결 실패', e); }
+  }
+  var lib = window.supabase, cc = lib.createClient;
+  window.supabase = Object.assign({}, lib, {
+    createClient: function(){ var c = cc.apply(lib, arguments); patch(c); return c; }
+  });
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <!-- 사규 게시판 자료 (사규_목록_갱신.ps1 이 만듭니다) -->
@@ -7110,20 +7268,54 @@ function renderStoreList() {
 }
 
 /* ── 3-2. 매장 상세 (정보 + 점검·평가 이력) ── */
-function openStoreDetail(name) {
-  var info = ds('매장정보').find(function (s) { return s.매장명 === name; });
-  var hist = ds('안전점검').filter(function (r) { return r.부서 === name && r.사업장 === '서울사무소'; })
+/** 매장명 · 부서명 비교용 : 띄어쓰기 · 대소문자 차이는 같은 곳으로 봅니다 (예: "갤러리울산" = "갤러리 울산") */
+function storeNorm(s) { return String(s == null ? '' : s).replace(/\s+/g, '').toLowerCase(); }
+/** 해당 매장/부서의 사고 발생 내역 (두 사업장 시트 모두, "집계 제외" 빼고) */
+function storeAccidents(name, site) {
+  var n = storeNorm(name), out = [];
+  [{ n: '팩토리움', sheet: '안전사고(팩)' }, { n: '서울사무소', sheet: '안전사고(서울)' }].forEach(function (s) {
+    if (site && s.n !== site) return;
+    ds(s.sheet).forEach(function (r) {
+      if (String(r.사고유형 || '').indexOf('집계 제외') !== -1) return;
+      if (storeNorm(r.소속) !== n) return;
+      var o = {}; for (var k in r) o[k] = r[k]; o._site = s.n; out.push(o);
+    });
+  });
+  return out.sort(function (a, b) { return String(b.발생일).localeCompare(String(a.발생일)); });
+}
+
+/** 매장(부서) 이력 창 — site 를 주지 않으면 매장(서울사무소) 기준. 안전사고 소속을 눌렀을 때는 그 사고의 사업장 */
+function openStoreDetail(name, site) {
+  var n = storeNorm(name);
+  var info = ds('매장정보').find(function (s) { return storeNorm(s.매장명) === n; });
+  site = site || '서울사무소';
+  if (info) site = '서울사무소';
+  var accs = storeAccidents(name, site);
+  var hist = ds('안전점검').filter(function (r) { return storeNorm(r.부서) === n && r.사업장 === site; })
     .map(function (r) {
       return { 일자: r.점검일, 구분: r.점검구분, 내용: inspContentText(r), 상태: inspStatusText(r), _raw: r, _sheet: '안전점검', _key: inspRowKey(r) };
     })
-    .concat(ds('위험성평가').filter(function (r) { return r['매장/부서'] === name && r.사업장 === '서울사무소'; })
+    .concat(ds('위험성평가').filter(function (r) { return storeNorm(r['매장/부서']) === n && r.사업장 === site; })
       .map(function (r) {
         return { 일자: r.점검일, 구분: '위험성평가', 내용: riskContentText(r), 상태: riskStatusText(r), _raw: r, _sheet: '위험성평가', _key: riskRowKey(r) };
       }))
     .sort(function (a, b) { return String(b.일자).localeCompare(String(a.일자)); });
 
-  $('storeShTitle').textContent = name;
+  function clean(v) { v = String(v == null ? '' : v).replace(/\n/g, ' ').trim(); return v && v !== '-' ? v : ''; }
+  var TYPEB = { '인적': 'b-hi', '인적(산재)': 'b-hi', '출/퇴근(교통)': 'b-mid', '물적': 'b-lo' };
+  var nProp = accs.filter(function (r) { return String(r.사고유형 || '').indexOf('물적') === 0; }).length;
+  var riskN = hist.filter(function (r) { return r._sheet === '위험성평가'; }).length;
+
+  $('storeShTitle').textContent = (info ? info.매장명 : name) + (info || site === '서울사무소' ? '' : ' · ' + site);
   $('storeShBody').innerHTML =
+    '<div class="rg-meta" style="margin:0 24px 12px">' +
+      '<div><label>사고 발생</label><b style="color:' + (accs.length ? '#C5221F' : 'var(--ink)') + '">' + accs.length + '건</b>' +
+        '<div class="dim" style="font-size:11.5px;margin-top:3px">물적 ' + nProp + ' · 인적 등 ' + (accs.length - nProp) + '</div></div>' +
+      '<div><label>최근 사고</label><b>' + esc(accs.length ? String(accs[0].발생일 || '').slice(0, 10) : '—') + '</b></div>' +
+      '<div><label>점검 · 평가</label><b>' + hist.length + '건</b>' +
+        '<div class="dim" style="font-size:11.5px;margin-top:3px">점검 ' + (hist.length - riskN) + ' · 위험성평가 ' + riskN + '</div></div>' +
+      '<div><label>최근 점검</label><b>' + esc(hist.length ? String(hist[0].일자 || '').slice(0, 10) : '—') + '</b></div>' +
+    '</div>' +
     (info
       ? '<div class="form">' +
         '<div class="f"><label>채널</label><div class="k">' + esc(info.채널) + '</div></div>' +
@@ -7134,7 +7326,22 @@ function openStoreDetail(name) {
         '<div class="f wide"><label>연락처</label><div class="k">' + esc(info.연락처) + '</div></div>' +
         (info.비고 ? '<div class="f wide"><label>비고</label><div class="k">' + esc(info.비고) + '</div></div>' : '') +
         '</div>'
-      : '<p class="meta-line">매장정보 시트에 등록되지 않은 매장/부서입니다.</p>') +
+      : '<p class="meta-line">' + (site === '서울사무소' ? '매장정보 시트에 등록되지 않은 매장/부서입니다.' : esc(site) + ' 부서 — 아래 사고 · 점검 이력을 모아 보여 줍니다.') + '</p>') +
+    '<div class="subttl" style="margin:14px 24px 9px">사고 발생 내역 (' + accs.length + '건)</div>' +
+    (accs.length
+      ? '<div style="padding:0 24px">' + tbl(
+          [{ t: '사고일자', w: '86px' }, { t: '유형', w: '92px' }, { t: '내용' }, { t: '비고', w: '200px' }],
+          accs.map(function (r) {
+            var how = clean(r['발생경위(육하원칙)']), fix = clean(r['위험성평가(개선후)']);
+            var memo = accMemoText(accMemoKey(r)), who = clean(r.성함);
+            return '<tr><td class="n">' + esc(String(r.발생일 || '').slice(0, 10)) + '</td>' +
+              '<td><span class="b ' + (TYPEB[r.사고유형] || 'b-gray') + '">' + esc(r.사고유형 || '—') + '</span>' +
+                (clean(r.사고형태) ? '<div class="dim" style="font-size:11px;margin-top:3px">' + esc(clean(r.사고형태)) + '</div>' : '') + '</td>' +
+              '<td class="k">' + (who ? '<b>' + esc(who) + '</b> · ' : '') + esc(how || '발생경위 기록 없음') +
+                (fix ? '<div class="dim" style="font-size:11.5px;margin-top:3px"><b>개선대책</b> ' + esc(fix) + '</div>' : '') + '</td>' +
+              '<td class="dim" style="white-space:pre-line;font-size:11.5px">' + (memo ? esc(memo) : '—') + '</td></tr>';
+          }), 640) + '</div>'
+      : '<p class="meta-line">등록된 사고 발생 내역이 없습니다.</p>') +
     '<div class="subttl" style="margin:14px 24px 9px">점검 · 평가 이력 (' + hist.length + '건)</div>' +
     (hist.length
       ? '<div style="padding:0 24px">' + tbl(
@@ -7964,7 +8171,11 @@ function renderAccident() {
         var duty = String(r.직무 || '').trim();
         return '<tr><td class="n">' + esc(String(r.발생일).slice(0, 10)) + '</td>' +
           '<td class="dim">' + esc(r._site) + '</td>' +
-          '<td class="dim">' + esc(dept && dept !== '-' ? dept : '—') + '</td>' +
+          '<td class="dim">' + (dept && dept !== '-'
+            ? (String(r.사고유형 || '').indexOf('물적') === 0
+              ? '<span class="acp-name" data-storeopen="' + esc(dept) + '" data-storesite="' + esc(r._site) + '" title="' + esc(dept) + ' 사고 · 점검 이력 보기">' + esc(dept) + '</span>'
+              : esc(dept))
+            : '—') + '</td>' +
           '<td class="k">' + (name && name !== '-'
             ? '<span class="acp-name" data-accperson="' + esc(name) + '" title="' + esc(name) + ' 사고 이력 보기">' + esc(name) + '</span>'
             : '—') + '</td>' +
@@ -14423,7 +14634,7 @@ function bind() {
     var fsc = e.target.closest('[data-storech]');
     if (fsc) { state.storeCh = fsc.dataset.storech; renderStoreInfo(); return; }
     var so = e.target.closest('[data-storeopen]');
-    if (so) { openStoreDetail(so.dataset.storeopen); return; }
+    if (so) { openStoreDetail(so.dataset.storeopen, so.dataset.storesite); return; }
     var ap = e.target.closest('[data-accperson]');
     if (ap) { openAccPerson(ap.dataset.accperson); return; }
     if (e.target.closest('[data-storechtoggle]')) { state.storeChHide = !state.storeChHide; renderStoreInfo(); return; }
