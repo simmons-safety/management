@@ -466,6 +466,24 @@ window.AI_CONFIG = {
   .b-gray{background:#fff;color:var(--ink3);border-color:var(--line)}
   .b-blue{background:#EAF1FB;color:#1F5FAE;border-color:#C9DBF3}
   .b-green{background:#EAF5EE;color:#2E7D46;border-color:#C6E3D0}
+  /* 안전사고 유형 (파스텔) : 인적=레드 · 물적=블루 · 산재=그린 · 출퇴근=회색 · 기타=블랙 */
+  /* 매장(부서) 이력 창 : 글씨 크기 13px 로 통일 · 굵게 없음 · 제목 칸만 작은 회색 */
+  .store-sh,.store-sh .dt td,.store-sh .form .k,.store-sh .meta-line{font-size:13px;font-weight:400;line-height:1.6;color:var(--ink);letter-spacing:-.01em}
+  .store-sh .dt td.dim,.store-sh .dt td .dim,.store-sh .meta-line{color:var(--ink3)}
+  .store-sh .dt th{font-size:12px;font-weight:400;color:var(--ink3)}
+  .store-sh .dt td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .store-sh .rg-meta b{font-size:15px;font-weight:500}
+  .store-sh .rg-meta small{display:block;margin-top:4px;font-size:12px;color:var(--ink3)}
+  .store-sh .rg-meta label,.store-sh .form label{font-size:12px;font-weight:400;color:var(--ink3);letter-spacing:0}
+  .store-sh .subttl{font-size:13px;font-weight:500;color:var(--ink)}
+  .store-sh b{font-weight:500}
+  .acc-how{font-weight:400;font-size:12.5px;line-height:1.6;color:var(--ink2);white-space:normal;word-break:keep-all;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-width:260px}
+  .b-human{background:#FDE8E8;border-color:#F6C9C9;color:#B42318}
+  .b-prop{background:#E6EFFC;border-color:#C6DAF5;color:#1F5FAE}
+  .b-sanjae{background:#E5F4EA;border-color:#C2E3CD;color:#2E7D46}
+  .b-commute{background:#F1F2F4;border-color:#DDE0E4;color:#5F6670}
+  .b-etc{background:#E4E5E7;border-color:#CFD1D4;color:#1A1A1A}
   button.b{-webkit-appearance:none;appearance:none;font:inherit;cursor:pointer;transition:filter .12s}
   button.b:hover{filter:brightness(.92)}
 
@@ -1193,7 +1211,7 @@ window.AI_CONFIG = {
   .bnav-sub .lbl{font-size:13px;margin-right:10px}
   .bnav-sub button,.bnav-sub a.ext{font-size:12.5px;padding:8px 15px;border:1px solid var(--line);border-radius:var(--pill);
     color:var(--ink2);text-decoration:none;background:#fff}
-  .bnav-sub button:hover,.bnav-sub a.ext:hover{border-color:#000;color:#000}
+  .bnav-sub button:hover,.bnav-sub a.ext:hover{background:#000;border-color:#000;color:#fff}
   .bnav-sub button[aria-pressed="true"]{background:#000;border-color:#000;color:#fff;font-weight:600}
 
   /* ── 카드 : 테두리 없는 라운드 그레이 패널 ── */
@@ -1415,22 +1433,23 @@ window.AI_CONFIG = {
   /* ── 안전 현황 : "안전" 첫 화면 대시보드 (sd-) ── */
   .sd-meta{display:flex;justify-content:space-between;align-items:baseline;gap:6px 16px;flex-wrap:wrap;margin:0 4px 14px;font-size:12.5px;color:var(--ink3)}
   .sd-meta b{color:var(--ink);font-weight:600}
-  .sd-band{display:grid;grid-template-columns:repeat(5,1fr);background:#000;color:#fff;border-radius:var(--r-xl);overflow:hidden;margin-bottom:16px}
+  /* 요약 띠 : 검정 대신 연회색 바탕 · 얇은 구분선 · 검정 글씨 (차분하고 단순하게) */
+  .sd-band{display:grid;grid-template-columns:repeat(5,1fr);background:var(--panel2);color:var(--ink);border-radius:var(--r-xl);overflow:hidden;margin-bottom:16px}
   .sd-cell{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:14px;min-width:0;
-    padding:26px 26px 24px;border-left:1px solid rgba(255,255,255,.14);transition:background .18s}
+    padding:26px 26px 24px;border-left:1px solid rgba(0,0,0,.07);transition:background .18s}
   .sd-cell:first-child{border-left:none}
-  .sd-cell:hover{background:rgba(255,255,255,.08)}
-  .sd-cell:focus-visible{outline:2px solid #fff;outline-offset:-4px}
-  .sd-cell .l{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:600;letter-spacing:-.02em;color:rgba(255,255,255,.72)}
-  .sd-cell .l span{transition:transform .18s,color .18s}
-  .sd-cell:hover .l span{transform:translateX(3px);color:#fff}
-  .sd-cell .v{font-family:var(--fd);font-size:52px;font-weight:500;letter-spacing:-.045em;line-height:.9}
-  .sd-cell .v em{font-style:normal;font-family:var(--f);font-size:14px;font-weight:500;margin-left:4px;color:rgba(255,255,255,.62);letter-spacing:-.02em}
-  .sd-cell .bar{display:block;height:4px;border-radius:var(--pill);background:rgba(255,255,255,.18);overflow:hidden}
+  .sd-cell:hover{background:rgba(0,0,0,.035)}
+  .sd-cell:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}
+  .sd-cell .l{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:500;letter-spacing:-.02em;color:var(--ink2)}
+  .sd-cell .l span{transition:transform .18s,color .18s;color:var(--ink3)}
+  .sd-cell:hover .l span{transform:translateX(3px);color:var(--ink)}
+  .sd-cell .v{font-family:var(--fd);font-size:48px;font-weight:500;letter-spacing:-.045em;line-height:.9}
+  .sd-cell .v em{font-style:normal;font-family:var(--f);font-size:13px;font-weight:400;margin-left:4px;color:var(--ink3);letter-spacing:-.02em}
+  .sd-cell .bar{display:block;height:3px;border-radius:var(--pill);background:rgba(0,0,0,.08);overflow:hidden}
   .sd-cell .bar.none{visibility:hidden}
-  .sd-cell .bar i{display:block;height:100%;background:#fff;border-radius:inherit}
-  .sd-cell .d{font-size:12px;color:rgba(255,255,255,.62)}
-  .sd-cell .d b{color:#fff;font-weight:600}
+  .sd-cell .bar i{display:block;height:100%;background:var(--ink);border-radius:inherit}
+  .sd-cell .d{font-size:12px;color:var(--ink3)}
+  .sd-cell .d b{color:var(--ink);font-weight:500}
 
   .sd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
   .sd-card{background:var(--panel2);border-radius:var(--r-xl);padding:26px 28px 28px;display:flex;flex-direction:column;gap:24px;min-width:0}
@@ -1509,19 +1528,19 @@ window.AI_CONFIG = {
   @media (max-width:1180px){
     .sd-band{grid-template-columns:repeat(3,1fr)}
     .sd-cell:nth-child(4){border-left:none}
-    .sd-cell:nth-child(n+4){border-top:1px solid rgba(255,255,255,.14)}
+    .sd-cell:nth-child(n+4){border-top:1px solid rgba(0,0,0,.07)}
     .sd-grid{grid-template-columns:repeat(2,1fr)}
     .sd-band.b4{grid-template-columns:repeat(2,1fr)}
-    .sd-band.b4 .sd-cell{border-left:1px solid rgba(255,255,255,.14);border-top:none}
+    .sd-band.b4 .sd-cell{border-left:1px solid rgba(0,0,0,.07);border-top:none}
     .sd-band.b4 .sd-cell:nth-child(2n+1){border-left:none}
-    .sd-band.b4 .sd-cell:nth-child(n+3){border-top:1px solid rgba(255,255,255,.14)}
+    .sd-band.b4 .sd-cell:nth-child(n+3){border-top:1px solid rgba(0,0,0,.07)}
     .sd-cols.dense .n{display:none}
   }
   @media (max-width:760px){
     .sd-band{grid-template-columns:1fr 1fr;border-radius:var(--r-l)}
-    .sd-cell{padding:20px 18px;border-left:1px solid rgba(255,255,255,.14);border-top:none}
+    .sd-cell{padding:20px 18px;border-left:1px solid rgba(0,0,0,.07);border-top:none}
     .sd-cell:nth-child(2n+1){border-left:none}
-    .sd-cell:nth-child(n+3){border-top:1px solid rgba(255,255,255,.14)}
+    .sd-cell:nth-child(n+3){border-top:1px solid rgba(0,0,0,.07)}
     .sd-cell:last-child{grid-column:1/-1}
     .sd-band.b4 .sd-cell:last-child,.sd-band.b6 .sd-cell:last-child{grid-column:auto}
     .sd-grid.c2{grid-template-columns:1fr}
@@ -1540,20 +1559,19 @@ window.AI_CONFIG = {
   .sd-band.mo-band{grid-template-columns:repeat(3,1fr)}
   @media (max-width:760px){
     .sd-band.mo-band{grid-template-columns:1fr}
-    .sd-band.mo-band .sd-cell{border-left:none;border-top:1px solid rgba(255,255,255,.14)}
+    .sd-band.mo-band .sd-cell{border-left:none;border-top:1px solid rgba(0,0,0,.07)}
     .sd-band.mo-band .sd-cell:first-child{border-top:none}
     .sd-band.mo-band .sd-cell:last-child{grid-column:auto}
   }
-  /* 보고 있는 기간 = 검은 띠 안의 흰 카드, 나머지는 흐리게 */
-  .mo-band .sd-cell{opacity:.5;transition:background .18s,opacity .18s}
-  .mo-band .sd-cell:hover{opacity:.85;background:rgba(255,255,255,.06)}
-  .mo-band .sd-cell.on{opacity:1;background:#fff;color:#000;margin:7px;padding:19px 19px 17px;border-radius:calc(var(--r-xl) - 7px);border-left:none}
+  /* 보고 있는 기간 = 연회색 띠 안의 흰 카드(살짝 그림자), 나머지는 회색 글씨 */
+  .mo-band .sd-cell{transition:background .18s,color .18s}
+  .mo-band .sd-cell:not(.on) .v{color:var(--ink3)}
+  .mo-band .sd-cell:not(.on) .bar i{background:var(--ink3)}
+  .mo-band .sd-cell:hover{background:rgba(0,0,0,.03)}
+  .mo-band .sd-cell.on{background:#fff;margin:7px;padding:19px 19px 17px;border-radius:calc(var(--r-xl) - 7px);border-left:none;
+    box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 18px -10px rgba(0,0,0,.18)}
   .mo-band .sd-cell.on + .sd-cell{border-left:none}
-  .mo-band .sd-cell.on .l,.mo-band .sd-cell.on .d,.mo-band .sd-cell.on .v em{color:rgba(0,0,0,.55)}
-  .mo-band .sd-cell.on .l span{color:#000}
-  .mo-band .sd-cell.on .d b{color:#000}
-  .mo-band .sd-cell.on .bar{background:rgba(0,0,0,.1)}
-  .mo-band .sd-cell.on .bar i{background:#000}
+  .mo-band .sd-cell.on .l span{color:var(--ink)}
   /* 스크롤해도 상단 메뉴 바로 아래에 기간 · 미완료/완료 · 게시판 선택이 따라옵니다 (--mo-top 은 JS 가 메뉴 높이로 채움) */
   .mo-tools{position:sticky;top:var(--mo-top,140px);z-index:5;background:var(--panel2);margin:-14px -16px 0;padding:14px 16px;border-radius:var(--r-l);transition:box-shadow .2s}
   .mo-tools.stuck{box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}
@@ -1818,8 +1836,9 @@ window.AI_CONFIG = {
   /* 안전사고 → 사람별 사고 이력 */
   .sheet.acp-sheet{width:min(980px,100%);max-height:92vh;overflow-y:auto;overscroll-behavior:contain}
   .acp-sheet .rg-meta{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .acp-name{cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line)}
-  .acp-name:hover{text-decoration-color:var(--ink)}
+  /* 이름 · 부서 (누르면 이력 창) : 밑줄 없이, 마우스를 올리면 검정 배경 · 흰 글씨 */
+  .acp-name{cursor:pointer;text-decoration:none;padding:2px 6px;margin:-2px -6px;border-radius:6px;transition:background .15s,color .15s}
+  .acp-name:hover{background:#111;color:#fff}
   .acp-list table.dt td{vertical-align:top;padding-top:14px;padding-bottom:14px}
   .acp-date b{display:block;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
   .acp-date i{display:block;font-style:normal;font-size:10.5px;color:var(--ink3);margin-top:3px}
@@ -2006,6 +2025,11 @@ window.AI_CONFIG = {
   /* ── 연간 업무 계획 (월간 스케줄 아이콘 → 창) (pl-) ── */
   .plan-btn{display:inline-flex;align-items:center;gap:7px}
   .plan-btn svg{width:15px;height:15px;flex:none}
+  /* 월간 일정 오른쪽 끝 연간업무 · 메모 : 작게 */
+  #btnPlan,#btnMemo{padding:6px 12px;font-size:12px;gap:5px;min-height:0}
+  #btnPlan svg{width:13px;height:13px}
+  #btnMemo span{font-size:12px}
+  #btnMemo b{min-width:16px;height:16px;line-height:16px;font-size:10px;padding:0 4px}
   /* 테마의 .sheet{overflow:hidden} 때문에 창 전체는 고정하고, 목록(#planBody)만 스크롤합니다 */
   .plan-sheet{width:min(1280px,100%);max-height:92vh;display:flex;flex-direction:column}
   .plan-sheet > *{flex:none}
@@ -2186,15 +2210,17 @@ window.AI_CONFIG = {
   <section class="bpanel" id="bd-month">
     <div class="g-top">
       <div class="card">
-        <header>
-          <h2 id="calTitle">—</h2>
-          <div class="calnav">
-            <button class="reset plan-btn" id="btnPlan" title="연간 업무 계획 보기">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="11.5" rx="2"/><path d="M1.75 6.25h12.5M5 1.25v3M11 1.25v3M4.5 9h3M4.5 11.5h5.5"/></svg>연간 업무 계획</button>
-            <button class="reset memo-btn" id="btnMemo" title="내 메모장 (이 PC에만 저장)"><span aria-hidden="true">🗒️</span>메모<b id="memoCnt" hidden></b></button>
-            <button class="reset" id="mToday">오늘</button>
+        <header style="align-items:center">
+          <!-- 왼쪽 : 제목 · 이전/다음 달,  오른쪽 끝 : 연간업무 · 메모 -->
+          <div class="calnav" style="justify-content:flex-start">
+            <h2 id="calTitle" style="margin-right:8px">—</h2>
             <button class="calmove" id="calPrev">‹ <b id="calPrevL"></b></button>
             <button class="calmove" id="calNext"><b id="calNextL"></b> ›</button>
+          </div>
+          <div class="calnav" style="margin-left:auto">
+            <button class="reset plan-btn" id="btnPlan" title="연간 업무 계획 보기">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="11.5" rx="2"/><path d="M1.75 6.25h12.5M5 1.25v3M11 1.25v3M4.5 9h3M4.5 11.5h5.5"/></svg>연간업무</button>
+            <button class="reset memo-btn" id="btnMemo" title="내 메모장 (이 PC에만 저장)"><span aria-hidden="true">🗒️</span>메모<b id="memoCnt" hidden></b></button>
           </div>
         </header>
         <div class="cal-h">
@@ -2509,52 +2535,9 @@ window.AI_CONFIG = {
 
   <!-- ══════════ 적격수급인평가 ══════════ -->
   <section class="bpanel" id="bd-qse" hidden>
-    <div class="kpis k3" id="qseSummary"></div>
+    <!-- 현장 플랫폼 [적격수급인 평가] 제출 · 평가 기록 (contractor_evals) 연동 대시보드 -->
+    <div id="ctDash"></div>
 
-    <div class="card">
-      <header><h2>피평가업체 정보</h2><span class="note">SMS 지침 S-SI-S14</span></header>
-      <p class="hint" style="margin:0 0 4px;font-size:11.5px;color:var(--ink3)">공사업체 및 사내협력업체의 안전보건 관리수준을 4개 영역·100점 만점으로 평가합니다. 중대재해처벌법 12개 항목 중 <b>09. 도급·용역·위탁 평가</b>의 이행 근거로 함께 씁니다.</p>
-      <div class="qform">
-        <div class="f"><label>업체명</label><input type="text" id="qName" placeholder="예) 시몬스산업(주)"></div>
-        <div class="f"><label>공사(용역)명</label><input type="text" id="qProject" placeholder="예) 팩토리움 부대토목 공사"></div>
-        <div class="f"><label>평가일자</label><input type="date" id="qDate"></div>
-        <div class="f"><label>평가담당자</label><input type="text" id="qEvaluator" placeholder="예) 안전보건경영부 홍길동"></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <header><h2>평가 결과</h2><span class="note">SCORE</span></header>
-      <div class="qscorebar">
-        <div class="qscore-big" id="qScoreBig">0<i>/ 100</i></div>
-        <span class="b b-gray" id="qGradeBadge">D</span>
-        <span class="b b-hi" id="qStatusBadge">부적격</span>
-        <div class="qthreshold">합격 기준
-          <input type="number" id="qThreshold" min="0" max="100" value="80"> 점 이상
-        </div>
-      </div>
-      <div class="qcatbars" id="qCatBars"></div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <header><h2>평가 체크리스트</h2><span class="note">4개 영역 · 100점</span></header>
-      <div id="qseChecklist"></div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <header><h2>증빙서류 첨부</h2><span class="note">선택</span></header>
-      <button class="reset" id="qFileBtn">📎 파일 선택</button>
-      <input type="file" id="qFiles" multiple hidden>
-      <div id="qFileList"></div>
-      <div class="secthead" style="margin-top:18px">
-        <button class="reset go" id="btnQseSubmit">제출 및 저장</button>
-        <button class="reset" id="btnQseReset">초기화</button>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <header><h2>평가 이력</h2><span class="note">최근 500건</span></header>
-      <div id="qseList"></div>
-    </div>
   </section>
 
   <!-- ══════════ 업무 수행 평가 (중대재해처벌법 05) — 현장 플랫폼 관리감독자 월간활동과 같은 DB를 읽고 씁니다 ══════════ -->
@@ -3025,7 +3008,7 @@ window.AI_CONFIG = {
       <p class="eyebrow">STORE</p>
       <h3 id="storeShTitle">매장 정보</h3>
     </div>
-    <div id="storeShBody"></div>
+    <div id="storeShBody" class="store-sh"></div>
     <div class="sheet-ft">
       <div class="spacer"></div>
       <button class="reset" id="storeShClose">닫기</button>
@@ -3183,7 +3166,7 @@ var SCH_INK = '#2E2A26';
 var SCH_STYLE = {
   '개인업무':    { bg: '#E6E7E9', fg: SCH_INK },  /* 뉴트럴 그레이(살구색과 구분되도록 노란기 없이) */
   '회의 및 행사': { bg: '#E1EBE4', fg: SCH_INK },  /* 세이지 그린 */
-  '휴무':        { bg: '#F4E4DC', fg: SCH_INK },  /* 소프트 클레이(살구) */
+  '휴무':        { bg: '#FAF1EC', fg: SCH_INK },  /* 소프트 클레이(살구) — 바탕만 더 연하게 */
   /* 이전 자료 호환 */
   '안전': { bg: '#F8E6E5', fg: SCH_INK },
   '보건': { bg: '#D6E6F0', fg: SCH_INK },
@@ -3538,7 +3521,7 @@ function closeLightbox() { $('imgbox').classList.remove('on'); $('imgboxImg').sr
  * ============================================================ */
 function renderAll() { renderHeader(); renderMonthPanel(); renderWeekPanel(); renderMonitorPage(); }
 
-function renderInitial() { renderAll(); renderDataTabs(); renderCsaDashboard(); renderCsaTable(); initQseForm(); renderLibSites(); renderLibList(); renderSdy(); actRenderAll(); crRender(); ptRender(); initApForm(); renderApLists(); renderVisitLog(); renderNews(); }
+function renderInitial() { renderAll(); renderDataTabs(); renderCsaDashboard(); renderCsaTable(); renderLibSites(); renderLibList(); renderSdy(); actRenderAll(); crRender(); ptRender(); initApForm(); renderApLists(); renderVisitLog(); renderNews(); }
 
 function renderHeader() {
   var t = new Date();
@@ -5273,6 +5256,7 @@ function loadStatusOverrides() {
     (res.data || []).forEach(function (r) { map[r.row_key] = r.status; });
     state.statusOverrides = map;
     rerenderStatusViews();
+    try { renderAccident(); } catch (e) {}   /* 저장된 TRIR 근로자 수 반영 */
   }).catch(function (err) {
     console.warn('[EHS] 완료 상태 조회 실패', err);
     state.statusOverrides = state.statusOverrides || {};
@@ -5814,7 +5798,7 @@ function sdIsInspTarget(v) {
   return !!v && !/^(x|n|no|-|무|아니오|비대상|미대상|해당\s*없음|대상\s*아님)$/i.test(v);
 }
 function sdMeta(group, n) {
-  return '<div class="sd-meta"><span>' + esc(group) + ' 게시판 <b>' + n + '종</b>을 한눈에 · 항목을 누르면 해당 게시판으로 이동합니다</span>' +
+  return '<div class="sd-meta"><span></span>' +   /* 안내 문장은 뺐습니다 (날짜만 표시) */
     '<span>' + ymd(new Date()).replace(/-/g, '.') + ' 기준</span></div>';
 }
 function sdBandCell(tab, label, val, unit, pct, desc) {
@@ -5974,8 +5958,12 @@ function sdOpenCard() {
 function renderSafDashPage() {
   var ins = ds('안전점검'), ra = ds('위험성평가'), mt = ds('회의체'), ed = ds('교육'), dv = ds('안전장치');
   var thisMonth = ymd(new Date()).slice(0, 7);
-  $('safDash').innerHTML = sdMeta('안전', 5) +
-    '<div class="sd-band">' +
+  // 안전사고 : 올해 발생 (출퇴근 · 집계 제외 뺌 — 안전사고 탭과 같은 기준)
+  var accY = new Date().getFullYear();
+  var acc = accStatRows().filter(function (r) { return yearOf(r.발생일) === accY; });
+  var accH = acc.filter(function (r) { return String(r.사고유형 || '').trim().indexOf('인적') === 0; }).length;
+  $('safDash').innerHTML = sdMeta('안전', 6) +
+    '<div class="sd-band b6">' +
       sdRateCell('safinspect', '안전점검', ins.filter(inspIsDone).length, ins.length) +
       sdRateCell('safrisk', '위험성평가', ra.filter(riskIsDone).length, ra.length) +
       sdRateCell('safmeet', '회의체', mt.filter(meetIsDone).length, mt.length) +
@@ -5983,6 +5971,8 @@ function renderSafDashPage() {
         '이번 달 <b>' + ed.filter(function (r) { return safMonthOf(r.일자) === thisMonth; }).length + '건</b>') +
       sdBandCell('safdevice', '안전장치', dv.length, '건', null,
         '안전검사 대상 <b>' + dv.filter(function (r) { return sdIsInspTarget(r['안전검사 대상']); }).length + '건</b>') +
+      sdBandCell('accident', accY + '년 안전사고', acc.length, '건', null,
+        '인적 <b>' + accH + '건</b> · 물적 <b>' + (acc.length - accH) + '건</b>') +
     '</div>' +
     '<div class="sd-grid">' +
       sdRateCard({ tab: 'safinspect', en: 'Inspection', name: '안전점검', rows: ins, doneFn: inspIsDone,
@@ -5992,7 +5982,8 @@ function renderSafDashPage() {
       sdRateCard({ tab: 'safmeet', en: 'Committee', name: '회의체', rows: mt, doneFn: meetIsDone,
         kindLabel: '회의체별', kinds: SAF_MT_KINDS, kindOf: function (r) { return r.회의체; } }) +
     '</div>' +
-    '<div class="sd-grid">' + sdEduCard() + sdDeviceCard() + sdOpenCard() + '</div>';
+    '<div class="sd-grid">' + sdEduCard() + sdDeviceCard() + monAccidentCard() + '</div>' +
+    '<div class="sd-grid c1">' + sdOpenCard() + '</div>';
 }
 
 /* ---------- 보건 ---------- */
@@ -7052,7 +7043,7 @@ function renderMonitorPage() {
     '연간계획(월간 스케줄 → 연간 업무 계획)은 월간에서만 그 달 해당 업무를 보여줍니다. ' +
     '항목을 누르면 해당 게시물로 이동하며, 완료 처리는 그 게시물에서 합니다.</div></div>';
 
-  el.innerHTML = '<div class="sd-meta"><span>주간업무 · 안전점검 · 위험성평가 · 회의체 · 보건활동 진행사항을 <b>주간 · 월간 · 연간</b>으로 모니터링</span>' +
+  el.innerHTML = '<div class="sd-meta"><span></span>' +
       '<span>' + ymd(new Date()).replace(/-/g, '.') + ' 기준</span></div>' +
     '<div class="sd-band mo-band">' + band + '</div>' +
     '<div class="mo-grid">' + left + right + '</div>';
@@ -7063,7 +7054,7 @@ function renderMonitorPage() {
 function renderMonActPage() {
   var el = $('monActDash');
   if (!el) return;
-  el.innerHTML = '<div class="sd-meta"><span>안전 · 보건 · 환경 업무를 한눈에 · 카드 제목을 누르면 각 분야 현황으로, 항목을 누르면 해당 게시판으로 이동합니다</span>' +
+  el.innerHTML = '<div class="sd-meta"><span></span>' +
       '<span>' + ymd(new Date()).replace(/-/g, '.') + ' 기준</span></div>' +
     '<div class="sd-grid mo-dom">' + monDomainCards() + '</div>';
 }
@@ -7129,7 +7120,7 @@ function accStatRows() {
   var out = [];
   [{ n: '팩토리움', sheet: '안전사고(팩)' }, { n: '서울사무소', sheet: '안전사고(서울)' }].forEach(function (s) {
     ds(s.sheet).forEach(function (r) {
-      var t = String(r.사고유형 || '');
+      var t = String(r.사고유형 || '').trim();
       if (t.indexOf('집계 제외') !== -1 || t.indexOf('출/퇴근') === 0) return;
       var o = {}; for (var k in r) o[k] = r[k]; o._site = s.n; out.push(o);
     });
@@ -7302,7 +7293,7 @@ function openStoreDetail(name, site) {
     .sort(function (a, b) { return String(b.일자).localeCompare(String(a.일자)); });
 
   function clean(v) { v = String(v == null ? '' : v).replace(/\n/g, ' ').trim(); return v && v !== '-' ? v : ''; }
-  var TYPEB = { '인적': 'b-hi', '인적(산재)': 'b-hi', '출/퇴근(교통)': 'b-mid', '물적': 'b-lo' };
+  var TYPEB = { '인적': 'b-human', '인적(산재)': 'b-sanjae', '출/퇴근(교통)': 'b-commute', '물적': 'b-prop' };
   var nProp = accs.filter(function (r) { return String(r.사고유형 || '').indexOf('물적') === 0; }).length;
   var riskN = hist.filter(function (r) { return r._sheet === '위험성평가'; }).length;
 
@@ -7310,10 +7301,10 @@ function openStoreDetail(name, site) {
   $('storeShBody').innerHTML =
     '<div class="rg-meta" style="margin:0 24px 12px">' +
       '<div><label>사고 발생</label><b style="color:' + (accs.length ? '#C5221F' : 'var(--ink)') + '">' + accs.length + '건</b>' +
-        '<div class="dim" style="font-size:11.5px;margin-top:3px">물적 ' + nProp + ' · 인적 등 ' + (accs.length - nProp) + '</div></div>' +
+        '<small>물적 ' + nProp + ' · 인적 등 ' + (accs.length - nProp) + '</small></div>' +
       '<div><label>최근 사고</label><b>' + esc(accs.length ? String(accs[0].발생일 || '').slice(0, 10) : '—') + '</b></div>' +
       '<div><label>점검 · 평가</label><b>' + hist.length + '건</b>' +
-        '<div class="dim" style="font-size:11.5px;margin-top:3px">점검 ' + (hist.length - riskN) + ' · 위험성평가 ' + riskN + '</div></div>' +
+        '<small>점검 ' + (hist.length - riskN) + ' · 위험성평가 ' + riskN + '</small></div>' +
       '<div><label>최근 점검</label><b>' + esc(hist.length ? String(hist[0].일자 || '').slice(0, 10) : '—') + '</b></div>' +
     '</div>' +
     (info
@@ -7335,11 +7326,11 @@ function openStoreDetail(name, site) {
             var how = clean(r['발생경위(육하원칙)']), fix = clean(r['위험성평가(개선후)']);
             var memo = accMemoText(accMemoKey(r)), who = clean(r.성함);
             return '<tr><td class="n">' + esc(String(r.발생일 || '').slice(0, 10)) + '</td>' +
-              '<td><span class="b ' + (TYPEB[r.사고유형] || 'b-gray') + '">' + esc(r.사고유형 || '—') + '</span>' +
+              '<td><span class="b ' + accTypeCls(r.사고유형) + '">' + esc(r.사고유형 || '—') + '</span>' +
                 (clean(r.사고형태) ? '<div class="dim" style="font-size:11px;margin-top:3px">' + esc(clean(r.사고형태)) + '</div>' : '') + '</td>' +
-              '<td class="k">' + (who ? '<b>' + esc(who) + '</b> · ' : '') + esc(how || '발생경위 기록 없음') +
-                (fix ? '<div class="dim" style="font-size:11.5px;margin-top:3px"><b>개선대책</b> ' + esc(fix) + '</div>' : '') + '</td>' +
-              '<td class="dim" style="white-space:pre-line;font-size:11.5px">' + (memo ? esc(memo) : '—') + '</td></tr>';
+              '<td>' + (who ? esc(who) + ' · ' : '') + esc(how || '발생경위 기록 없음') +
+                (fix ? '<div class="dim" style="margin-top:4px">개선대책 · ' + esc(fix) + '</div>' : '') + '</td>' +
+              '<td class="dim" style="white-space:pre-line">' + (memo ? esc(memo) : '—') + '</td></tr>';
           }), 640) + '</div>'
       : '<p class="meta-line">등록된 사고 발생 내역이 없습니다.</p>') +
     '<div class="subttl" style="margin:14px 24px 9px">점검 · 평가 이력 (' + hist.length + '건)</div>' +
@@ -7350,7 +7341,7 @@ function openStoreDetail(name, site) {
             var ph = photoCellsBeforeAfter(r._raw);
             return '<tr><td class="n">' + esc(r.일자) + '</td>' +
               '<td><span class="b b-gray">' + esc(r.구분) + '</span></td>' +
-              '<td class="k">' + esc(r.내용) + '</td>' +
+              '<td>' + esc(r.내용) + '</td>' +
               '<td>' + ph.before + '</td>' +
               '<td>' + ph.after + '</td>' +
               '<td>' + statusToggleCell(r._sheet, r._key, r.상태) + '</td></tr>';
@@ -8039,24 +8030,39 @@ function renderAccident() {
   state.accAll = all;   /* 사람별 사고 이력 창에서 씁니다 (출퇴근 포함) */
 
   // 통계는 출/퇴근(교통)을 제외합니다 (업무상 재해 중심으로 보기 위함)
-  function isCommute(r) { return String(r.사고유형 || '').indexOf('출/퇴근') === 0; }
+  function isCommute(r) { return String(r.사고유형 || '').trim().indexOf('출/퇴근') === 0; }
   var stat = all.filter(function (r) { return !isCommute(r); });
   var commuteN = all.length - stat.length;
 
   var years = uniq(all.map(function (r) { return yearOf(r.발생일); }).filter(Boolean)).sort();
   var lastY = years[years.length - 1];
   var curr = stat.filter(function (r) { return yearOf(r.발생일) === lastY; });
-  function cnt(rows, kw) { return rows.filter(function (r) { return String(r.사고유형 || '').indexOf(kw) === 0; }).length; }
+  function cnt(rows, kw) { return rows.filter(function (r) { return String(r.사고유형 || '').trim().indexOf(kw) === 0; }).length; }
 
   var sanjae = curr.filter(function (r) { return String(r.사고유형).indexOf('산재') !== -1; }).length;
   var injuries = cnt(curr, '인적');
-  var trir = injuries * 200000 / 1464000;
+  var trir = injuries * 200000 / trirHours();   /* 연간 총 근로시간 = 50주 × 40시간 × 근로자 수 (TRIR 창에서 수정) */
+  // 카드를 누르면 아래 사고 발생 내역이 그 조건(최근 연도 · 유형)으로 걸러지고 그 자리로 내려갑니다
+  function goKpi(type, html) {
+    return html.replace('<div class="kpi"', '<div class="kpi" data-acckpi="' + type + '" data-acckpiy="' + lastY +
+      '" style="cursor:pointer" title="' + lastY + '년 사고 내역 보기"');
+  }
   $('accKpi').innerHTML =
-    kpi(lastY + '년 발생', curr.length, '건', '', C.ink) +
-    kpi('인적사고', injuries, '건', '', C.safe) +
-    kpi('물적사고', cnt(curr, '물적'), '건', '', C.health) +
-    kpi('산재 승인', sanjae, '건', '', sanjae ? C.safe : C.env) +
-    kpi('TRIR', nf(trir, 2), '', '', C.plan);
+    goKpi('all', kpi(lastY + '년 발생', curr.length, '건', '', C.ink)) +
+    goKpi('human', kpi('인적사고', injuries, '건', '', C.safe)) +
+    goKpi('prop', kpi('물적사고', cnt(curr, '물적'), '건', '', C.health)) +
+    goKpi('sanjae', kpi('산재 승인', sanjae, '건', '', sanjae ? C.safe : C.env)) +
+    // 하단 : 목표 1.13 ('25년 1.26 대비 10% ↓) · 달성 여부 (목표 이하 = 달성)
+    kpi('TRIR', nf(trir, 2), '', '', C.plan,
+      '<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600;' +
+        (trir <= TRIR_GOAL ? 'background:#E5F4EA;color:#2E7D46' : 'background:#FDE8E8;color:#B42318') + '">' +
+        '목표 ' + nf(TRIR_GOAL, 2) + ' · ' + (trir <= TRIR_GOAL ? '달성' : '초과') + '</span>' +
+      '<span style="font-size:11.5px;color:#8A9099">\'25년 ' + nf(TRIR_PREV, 2) + ' 대비 10% ↓</span>').replace('<div class="kpi"',
+      '<div class="kpi" data-acctrir="1" style="cursor:pointer" title="TRIR 계산 내용 보기"');
+  // TRIR 카드를 누르면 보여 줄 계산 근거
+  state.accTrir = { y: lastY, n: injuries, v: trir,
+    rows: curr.filter(function (r) { return String(r.사고유형 || '').trim().indexOf('인적') === 0; })
+      .sort(function (a, b) { return String(a.발생일).localeCompare(String(b.발생일)); }) };
 
   // 연도별 추이 (사업장별 × 인적/물적 건수 — 색상(사업장)·명암(유형)으로 구분, 막대 위에 수치 표기)
   var TREND_SERIES = [
@@ -8070,10 +8076,10 @@ function renderAccident() {
       var v = [];
       sites.forEach(function (s) {
         v.push(stat.filter(function (r) {
-          return yearOf(r.발생일) === y && r._site === s.n && String(r.사고유형).indexOf('인적') === 0;
+          return yearOf(r.발생일) === y && r._site === s.n && String(r.사고유형).trim().indexOf('인적') === 0;
         }).length);
         v.push(stat.filter(function (r) {
-          return yearOf(r.발생일) === y && r._site === s.n && String(r.사고유형).indexOf('물적') === 0;
+          return yearOf(r.발생일) === y && r._site === s.n && String(r.사고유형).trim().indexOf('물적') === 0;
         }).length);
       });
       return { k: String(y).slice(2) + '년', v: v };
@@ -8105,7 +8111,7 @@ function renderAccident() {
       var v = String(r.소속 || '-').trim();
       if (!v || v === '-') return;
       if (!m[v]) m[v] = { 인적: 0, 물적: 0 };
-      var t = String(r.사고유형 || '');
+      var t = String(r.사고유형 || '').trim();
       if (t.indexOf('인적') === 0) m[v].인적++;
       else if (t.indexOf('물적') === 0) m[v].물적++;
     });
@@ -8135,26 +8141,51 @@ function renderAccident() {
   if (state.accY === undefined || state.accY === null) state.accY = String(lastY);
   state.accS = state.accS || 'all';
   state.accQ = state.accQ || '';
+  state.accT = state.accT || 'all';
+  if (state.accCM) { state.accT = 'allcm'; state.accCM = false; }   /* 예전 '출퇴근 포함' 버튼 상태 → 유형 목록으로 옮김 */
+  function accTypeMain(t) { return t.indexOf('인적') === 0 || t.indexOf('물적') === 0 || t.indexOf('출/퇴근') === 0; }
+  // 유형 목록 (펼쳐서 고름) : 'all' 은 출퇴근 제외, 'allcm' 은 출퇴근까지 전부
+  var ACC_TYPES = [
+    { k: 'all', n: '전체 유형', f: function () { return true; } },
+    { k: 'human', n: '인적', f: function (t) { return t.indexOf('인적') === 0; } },
+    { k: 'sanjae', n: '산재', f: function (t) { return t.indexOf('산재') !== -1; } },
+    { k: 'prop', n: '물적', f: function (t) { return t.indexOf('물적') === 0; } },
+    { k: 'commute', n: '출퇴근' + (commuteN ? ' (' + commuteN + ')' : ''), f: function (t) { return t.indexOf('출/퇴근') === 0; } },
+    { k: 'etc', n: '기타', f: function (t) { return !accTypeMain(t); } },
+    { k: 'allcm', n: '전체 (출퇴근 포함)', f: function () { return true; } }
+  ];
+  if (!ACC_TYPES.some(function (t) { return t.k === state.accT; })) state.accT = 'all';
   if (years.indexOf(+state.accY) === -1 && state.accY !== 'all') state.accY = String(lastY);
+  function opts(list, cur) {
+    return list.map(function (o) {
+      return '<option value="' + esc(o.k) + '"' + (String(cur) === String(o.k) ? ' selected' : '') + '>' + esc(o.n) + '</option>';
+    }).join('');
+  }
+  var SEL = 'style="padding:7px 10px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;background:#fff;color:var(--ink)"';
   $('accFilter').innerHTML =
-    ['all'].concat(years.slice().reverse()).map(function (y) {
-      return '<button class="fb" data-accy="' + y + '" aria-pressed="' + (String(state.accY) === String(y)) + '">' +
-        (y === 'all' ? '전체 연도' : y + '년') + '</button>'; }).join('') +
+    '<select id="accYSel" aria-label="연도" ' + SEL + '>' +
+      opts([{ k: 'all', n: '전체 연도' }].concat(years.slice().reverse().map(function (y) { return { k: String(y), n: y + '년' }; })), state.accY) +
+    '</select>' +
+    '<select id="accSSel" aria-label="사업장" ' + SEL + '>' +
+      opts([{ k: 'all', n: '전체 사업장' }].concat(sites.map(function (s) { return { k: s.n, n: s.n }; })), state.accS) +
+    '</select>' +
+    '<select id="accTSel" aria-label="사고유형" ' + SEL + '>' + opts(ACC_TYPES, state.accT) + '</select>' +
     '<input type="text" id="accSearch" placeholder="단어 검색 (성함·소속·경위 등)" value="' + esc(state.accQ) +
-      '" style="padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;min-width:170px">' +
-    ['all'].concat(sites.map(function (s) { return s.n; })).map(function (n) {
-      return '<button class="fb" data-accs="' + esc(n) + '" aria-pressed="' + (state.accS === n) + '">' +
-        (n === 'all' ? '전체 사업장' : esc(n)) + '</button>'; }).join('') +
-    '<button class="fb" data-acccm="1" aria-pressed="' + (!!state.accCM) + '">출퇴근 포함' +
-      (commuteN ? ' (' + commuteN + ')' : '') + '</button>';
+      '" style="padding:7px 10px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;min-width:170px">';
+  $('accYSel').onchange = function () { state.accY = this.value; renderAccList(); };
+  $('accSSel').onchange = function () { state.accS = this.value; renderAccList(); };
+  $('accTSel').onchange = function () { state.accT = this.value; renderAccList(); };
   $('accSearch').oninput = function () { state.accQ = this.value; renderAccList(); };
 
-  var TYPEB = { '인적': 'b-hi', '인적(산재)': 'b-hi', '출/퇴근(교통)': 'b-mid', '물적': 'b-lo' };
+  var TYPEB = { '인적': 'b-human', '인적(산재)': 'b-sanjae', '출/퇴근(교통)': 'b-commute', '물적': 'b-prop' };
   function renderAccList() {
     var q = state.accQ.trim();
-    var list = (state.accCM ? all : stat).filter(function (r) {
+    // '출퇴근' 유형을 고르면 출퇴근 포함을 켜지 않아도 출퇴근 사고를 보여 줍니다
+    var list = (state.accT === 'allcm' || state.accT === 'commute' ? all : stat).filter(function (r) {
       if (!((state.accY === 'all' || yearOf(r.발생일) === +state.accY) &&
             (state.accS === 'all' || r._site === state.accS))) return false;
+      var tf = ACC_TYPES.filter(function (t) { return t.k === state.accT; })[0];
+      if (tf && !tf.f(String(r.사고유형 || '').replace(/\s+/g, ''))) return false;
       if (!q) return true;
       var hay = [r._site, r.소속, r.성함, r.직무, r.사고유형, r.사고형태,
         r['발생경위(육하원칙)'], r['위험성평가(개선후)']].join(' ');
@@ -8180,16 +8211,109 @@ function renderAccident() {
             ? '<span class="acp-name" data-accperson="' + esc(name) + '" title="' + esc(name) + ' 사고 이력 보기">' + esc(name) + '</span>'
             : '—') + '</td>' +
           '<td class="dim">' + esc(duty && duty !== '-' ? duty : '—') + '</td>' +
-          '<td><span class="b ' + (TYPEB[r.사고유형] || 'b-gray') + '">' + esc(r.사고유형) + '</span></td>' +
+          '<td><span class="b ' + accTypeCls(r.사고유형) + '">' + esc(r.사고유형) + '</span></td>' +
           '<td class="dim">' + esc(r.사고형태) + '</td>' +
-          '<td class="k">' + esc(String(r['발생경위(육하원칙)'] || '').replace(/\n/g, ' ')) + '</td>' +
+          // 발생경위 : 굵게 하지 않고, 두 줄까지 줄바꿈해 읽기 쉽게 (전체 내용은 마우스를 올리면 보임)
+          '<td title="' + esc(String(r['발생경위(육하원칙)'] || '').replace(/\n/g, ' ')) + '"><div class="acc-how">' +
+            esc(String(r['발생경위(육하원칙)'] || '').replace(/\n/g, ' ')) + '</div></td>' +
           '<td class="dim">' + esc(String(r['위험성평가(개선후)'] || '').replace(/\n/g, ' ')) + '</td>' +
           '<td class="dim">' + esc(String(r.요양일수 || '-').replace(/\n/g, ' ')) + '</td></tr>';
       }), 1220) + '<div class="subttl">' + list.length + '건 표시' +
-      (state.accCM ? ' · 출퇴근(교통) 포함' : ' · 출퇴근(교통) 제외') +
+      (state.accT === 'allcm' ? ' · 출퇴근(교통) 포함' : state.accT === 'all' ? ' · 출퇴근(교통) 제외' : '') +
       (q ? ' · "' + esc(q) + '" 검색' : '') + '</div>';
   }
   renderAccList();
+}
+
+/** 안전사고 유형 → 배지 색. 엑셀 값에 공백·줄바꿈이 섞여 있어도 앞글자로 판단합니다 */
+function accTypeCls(t) {
+  t = String(t || '').replace(/\s+/g, '');
+  if (t.indexOf('산재') !== -1) return 'b-sanjae';
+  if (t.indexOf('인적') === 0) return 'b-human';
+  if (t.indexOf('물적') === 0) return 'b-prop';
+  if (t.indexOf('출/퇴근') === 0 || t.indexOf('출퇴근') === 0) return 'b-commute';
+  return 'b-etc';
+}
+
+/* ── 안전사고 → TRIR 계산 내용 창 ──
+ * TRIR = 인적사고 건수 × 200,000 ÷ 연간 총 근로시간
+ * 연간 총 근로시간 = 50주 × 주 40시간 × 근로자 수
+ * 근로자 수는 창에서 고칠 수 있고 status_overrides 표에 "TRIR::근로자수" 키로 저장됩니다 (status 칸 = 인원수) */
+var TRIR_GOAL = 1.13, TRIR_PREV = 1.26;   // 올해 목표 = '25년 실적 1.26 대비 10% 감소
+var TRIR_WEEKS = 50, TRIR_WEEK_HRS = 40, TRIR_HEAD_DEFAULT = 732, TRIR_KEY = 'TRIR::근로자수';
+function trirHeadcount() {
+  var v = parseInt(state.statusOverrides && state.statusOverrides[TRIR_KEY], 10);
+  return v > 0 ? v : TRIR_HEAD_DEFAULT;
+}
+function trirHours() { return TRIR_WEEKS * TRIR_WEEK_HRS * trirHeadcount(); }
+function saveTrirHeadcount(n, done) {
+  state.statusOverrides = state.statusOverrides || {};
+  var prev = state.statusOverrides[TRIR_KEY];
+  state.statusOverrides[TRIR_KEY] = String(n);
+  renderAccident();
+  if (!RPC.live) { toast('Supabase에 연결되어 있지 않아 이 화면에만 반영됩니다.', 'warn'); if (done) done(); return; }
+  RPC.db.from('status_overrides').upsert({ row_key: TRIR_KEY, sheet: 'TRIR', status: String(n),
+    updated_by: state.user || null, updated_at: new Date().toISOString() }, { onConflict: 'row_key' })
+    .then(function (res) {
+      if (res.error) throw res.error;
+      toast('근로자 수를 ' + n + '명으로 바꿨습니다.');
+      if (done) done();
+    }).catch(function (err) {
+      if (prev === undefined) delete state.statusOverrides[TRIR_KEY]; else state.statusOverrides[TRIR_KEY] = prev;
+      renderAccident();
+      console.warn('[EHS] TRIR 근로자 수 저장 실패', err);
+      toast('저장 실패: ' + ((err && err.message) || err), 'err');
+      if (done) done();
+    });
+}
+function openAccTrir() {
+  var t = state.accTrir; if (!t) return;
+  var HRS = trirHours(), BASE = 200000, HEAD = trirHeadcount();
+  function n0(v) { return Number(v).toLocaleString('ko-KR'); }
+  var row = 'display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px';
+  var old = document.getElementById('accTrirBg'); if (old) old.remove();
+  var bg = document.createElement('div');
+  bg.className = 'ap-sigbg'; bg.id = 'accTrirBg';
+  bg.innerHTML = '<div class="ap-sigbox" role="dialog" aria-label="TRIR 계산 내용" style="max-width:460px">' +
+    '<h3>' + t.y + '년 TRIR 계산 내용</h3>' +
+    '<p>총 기록 재해율 (Total Recordable Incident Rate) · 근로자 100명이 1년 일했을 때 생기는 재해 건수</p>' +
+    '<div style="background:var(--panel2);border-radius:10px;padding:12px 14px;margin:10px 0 12px;font-size:13px;line-height:1.7">' +
+      '<b>TRIR = 인적사고 건수 × 200,000 ÷ 연간 총 근로시간</b><br>' +
+      '= ' + t.n + ' × ' + n0(BASE) + ' ÷ ' + n0(HRS) + '<br>' +
+      '= <b style="font-size:16px">' + nf(t.v, 2) + '</b></div>' +
+    '<div style="' + row + '"><span>올해 목표</span><b>' + nf(TRIR_GOAL, 2) + ' <span style="font-weight:500;color:#8A9099;font-size:12px">(\'25년 ' + nf(TRIR_PREV, 2) + ' 대비 10% ↓)</span></b></div>' +
+    '<div style="' + row + '"><span>인적사고 건수</span><b>' + t.n + '건</b></div>' +
+    '<div style="' + row + '"><span>200,000</span><b>100명 × 연 2,000시간 (기준값)</b></div>' +
+    '<div style="' + row + ';align-items:flex-start"><span>연간 총 근로시간</span><span style="text-align:right"><b>' + n0(HRS) + '시간</b>' +
+      // 산출 근거 : 50주 × 주 40시간 × 근로자 수
+      '<span style="display:block;margin-top:5px;padding:3px 9px;border-radius:999px;background:#F1F2F4;color:#6B7280;font-size:11.5px;font-weight:500;letter-spacing:-.01em">' +
+      TRIR_WEEKS + '주 × ' + TRIR_WEEK_HRS + '시간 × ' + n0(HEAD) + '명</span></span></div>' +
+    // 근로자 수 고치기 → 저장하면 위 카드 · 이 창의 계산이 바로 바뀝니다
+    '<div style="' + row + ';align-items:center"><span>근로자 수</span><span style="display:flex;gap:6px;align-items:center">' +
+      '<input type="number" id="trirHead" min="1" step="1" value="' + HEAD + '" style="width:92px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13px;text-align:right">' +
+      '<span class="dim" style="font-size:12px">명</span>' +
+      '<button type="button" class="reset" data-trirsave style="padding:6px 12px;font-size:12px">저장</button></span></div>' +
+    '<p style="margin-top:10px">인적사고는 산재 승인 건을 포함하고 출/퇴근(교통) 사고는 뺍니다. 팩토리움 · 서울사무소를 합친 값입니다.</p>' +
+    (t.rows.length
+      ? '<div class="subttl" style="margin:12px 0 6px">포함된 인적사고 ' + t.rows.length + '건</div>' +
+        '<div style="max-height:220px;overflow:auto">' + t.rows.map(function (r) {
+          return '<div style="' + row + ';font-size:12.5px"><span>' + esc(String(r.발생일 || '').slice(0, 10)) + ' · ' + esc(r._site) +
+            '</span><span class="dim">' + esc(String(r.소속 || '').replace(/\n/g, ' ')) + ' ' + esc(r.성함 || '') + '</span></div>';
+        }).join('') + '</div>'
+      : '') +
+    '<div class="ap-sigbtns" style="margin-top:14px"><span style="flex:1"></span><button class="reset go" data-ap="ok">닫기</button></div></div>';
+  document.body.appendChild(bg);
+  function save() {
+    var n = parseInt(bg.querySelector('#trirHead').value, 10);
+    if (!(n > 0)) { toast('근로자 수를 1명 이상 숫자로 넣어 주세요.', 'warn'); return; }
+    if (n === HEAD) return;
+    saveTrirHeadcount(n, openAccTrir);   // 저장 후 바뀐 숫자로 창을 다시 그림
+  }
+  bg.addEventListener('click', function (e) {
+    if (e.target.closest('[data-trirsave]')) { save(); return; }
+    if (e.target === bg || e.target.closest('[data-ap]')) bg.remove();
+  });
+  bg.querySelector('#trirHead').addEventListener('keydown', function (e) { if (e.key === 'Enter') save(); });
 }
 
 /* ── 안전사고 → 사람별 사고 이력 · 비고 ──
@@ -8215,7 +8339,7 @@ function openAccPerson(name) {
   var nProp = rows.filter(function (r) { return String(r.사고유형 || '').indexOf('물적') === 0; }).length;
   var nCm = rows.filter(function (r) { return String(r.사고유형 || '').indexOf('출/퇴근') === 0; }).length;
   var nSj = rows.filter(accIsSanjae).length;
-  var TYPEB = { '인적': 'b-hi', '인적(산재)': 'b-hi', '출/퇴근(교통)': 'b-mid', '물적': 'b-lo' };
+  var TYPEB = { '인적': 'b-human', '인적(산재)': 'b-sanjae', '출/퇴근(교통)': 'b-commute', '물적': 'b-prop' };
 
   $('accPersonTitle').textContent = name + ' · 사고 이력 ' + rows.length + '건';
   $('accPersonBody').innerHTML =
@@ -8237,7 +8361,7 @@ function openAccPerson(name) {
         var how = clean(r['발생경위(육하원칙)']), fix = clean(r['위험성평가(개선후)']), care = clean(r.요양일수);
         return '<tr>' +
           '<td class="acp-date"><b>' + esc(d || '—') + '</b><i>' + (dObj ? DOW[dObj.getDay()] + '요일 · ' : '') + esc(r._site) + '</i></td>' +
-          '<td><div class="acp-tags"><span class="b ' + (TYPEB[r.사고유형] || 'b-gray') + '">' + esc(r.사고유형 || '—') + '</span>' +
+          '<td><div class="acp-tags"><span class="b ' + accTypeCls(r.사고유형) + '">' + esc(r.사고유형 || '—') + '</span>' +
             (clean(r.사고형태) ? '<span class="b b-gray">' + esc(clean(r.사고형태)) + '</span>' : '') +
             (care ? '<span class="dim">요양 ' + esc(care) + '</span>' : '') + '</div>' +
             '<div class="acp-txt">' + esc(how || '발생경위 기록 없음') + '</div>' +
@@ -8611,7 +8735,7 @@ function renderBudget() {
   var diff = tot.fy - tot.le9;
   var thru = B.actualThru;
 
-  $('budSrc').innerHTML = '기준 <b>' + esc(B.src) + '</b> · FY26 = 1~' + thru + '월 실적 + ' + B.forecastMonth +
+  $('budSrc').innerHTML = 'FY26 = 1~' + thru + '월 실적 + ' + B.forecastMonth +
     '월 예상 + ' + (B.forecastMonth + 1) + '~12월 계획 · le9 = 목표';
   $('budTeam').innerHTML = ['all'].concat(BUD_TEAMS).map(function (t) {
     return '<button class="fb" data-budteam="' + esc(t) + '" aria-pressed="' + (state.budT === t) + '">' +
@@ -9462,6 +9586,161 @@ function loadSm(quiet) {
     SM.err = (e && e.message) || String(e);
   }).then(function () { SM.loading = false; renderSm(); try { renderCsaDashboard(); } catch (e) {} });
 }
+/* ============================================================
+ *  적격수급인평가 — 현장 플랫폼 [적격수급인 평가] 연동 (읽기 전용)
+ *  플랫폼이 쓰는 contractor_evals 표를 그대로 읽어 상단 대시보드 · 목록으로 보여 줍니다.
+ *  배점 · 등급 기준은 플랫폼의 CT_GROUPS · CT_ITEMS · ctCalc 와 같게 맞춰 두었습니다.
+ *  평가 · 발송은 플랫폼에서 합니다 (목록을 누르면 플랫폼의 그 건 평가 창이 새 창으로 열림).
+ * ============================================================ */
+var CT_PF_URL = 'https://simmons-safety.github.io/field/';
+var CT_GROUPS_D = [
+  { k: 'g1', t: '안전보건 관리체제', max: 10 }, { k: 'g2', t: '실행수준', max: 50 },
+  { k: 'g3', t: '운영관리', max: 20 }, { k: 'g4', t: '재해발생 수준', max: 20 }
+];
+var CT_ITEMS_D = [
+  { k: 'r1', gk: 'g1', pts: [10, 5, 1] }, { k: 'r2', gk: 'g2', pts: [40, 20, 1] }, { k: 'r3', gk: 'g2', pts: [10, 5, 1] },
+  { k: 'r4', gk: 'g3', pts: [10, 5, 1] }, { k: 'r5', gk: 'g3', pts: [10, 5, 1] }, { k: 'r6', gk: 'g4', pts: [20, 10, 1] }
+];
+var CT_GRADES_D = ['우수', '보통', '미흡'], CT_PASS_D = 80;
+var CT = { all: [], loaded: false, loading: false, err: '', st: 'all', q: '' };
+function ctCalcD(scores) {
+  var sub = {}; CT_GROUPS_D.forEach(function (g) { sub[g.k] = 0; });
+  var total = 0, done = 0;
+  CT_ITEMS_D.forEach(function (it) {
+    var s = scores && scores[it.k], i = s ? CT_GRADES_D.indexOf(s.g) : -1;
+    if (i < 0) return;
+    sub[it.gk] += it.pts[i]; total += it.pts[i]; done++;
+  });
+  var grade = total >= 90 ? 'S' : total >= 80 ? 'A' : total >= 70 ? 'B' : total >= 60 ? 'C' : 'D';
+  return { sub: sub, total: total, done: done, all: done === CT_ITEMS_D.length, grade: grade, pass: total >= CT_PASS_D };
+}
+function ctStD(s) { return s === '발송완료' ? '발송완료' : s === '평가완료' ? '평가완료' : '평가 대기'; }
+function ctScored(r) { return r.status && r.status !== '접수'; }
+function ctTotal(r) { return r.total != null ? +r.total : ctCalcD(r.scores).total; }
+function ctGrade(r) { return r.grade || ctCalcD(r.scores).grade; }
+function loadCt(quiet) {
+  if (!smDb()) { CT.err = 'Supabase 라이브러리를 불러오지 못했습니다'; renderCt(); return Promise.resolve(); }
+  CT.loading = true; if (!quiet) renderCt();
+  return PF.db.from('contractor_evals').select('*').order('created_at', { ascending: false }).limit(500)
+    .then(function (res) {
+      if (res.error) throw res.error;
+      CT.all = res.data || []; CT.err = ''; CT.loaded = true;
+    }).catch(function (e) {
+      console.warn('[EHS] 적격수급인 평가(현장 플랫폼) 조회 실패', e);
+      CT.err = (e && e.message) || String(e);
+    }).then(function () { CT.loading = false; renderCt(); });
+}
+function renderCt() {
+  var box = $('ctDash'); if (!box) return;
+  var head = '<div class="card"><header><h2>현장 플랫폼 적격수급인 평가 <span style="font-size:12px;font-weight:500;color:var(--ink3)">현장 플랫폼 연동</span></h2>' +
+    '<span style="display:flex;gap:6px;flex-wrap:wrap"><button class="fb" data-ctreload="1" title="현장 플랫폼에서 다시 불러오기">↻ 새로고침</button>' +
+    '<a class="fb" href="' + CT_PF_URL + '?go=ctr" target="_blank" rel="noopener" style="text-decoration:none">↗ 플랫폼에서 평가하기</a></span></header>';
+  if (!CT.loaded) {
+    box.innerHTML = head + (CT.err ? '<div class="rg-issue">현장 플랫폼 기록을 불러오지 못했습니다 : ' + esc(CT.err) + '</div>'
+      : '<div class="sd-empty">현장 플랫폼에서 불러오는 중…</div>') + '</div>';
+    return;
+  }
+  var all = CT.all;
+  var wait = all.filter(function (r) { return !ctScored(r); });
+  var scored = all.filter(ctScored);
+  var sent = all.filter(function (r) { return r.status === '발송완료'; });
+  var unsent = all.filter(function (r) { return r.status === '평가완료'; });
+  var pass = scored.filter(function (r) { return ctTotal(r) >= CT_PASS_D; });
+  var avg = scored.length ? scored.reduce(function (a, r) { return a + ctTotal(r); }, 0) / scored.length : null;
+
+  // KPI 카드 (누르면 아래 목록이 그 상태로 걸러짐)
+  function go(st, html) {
+    return html.replace('<div class="kpi"', '<div class="kpi" data-ctst="' + st + '" style="cursor:pointer" title="목록 보기"');
+  }
+  var kpis = '<div class="kpis k5" style="margin-top:4px">' +
+    go('all', kpi('전체 제출', all.length, '건', '', C.ink)) +
+    go('wait', kpi('평가 대기', wait.length, '건', '', C.safe)) +
+    go('unsent', kpi('평가완료 (미발송)', unsent.length, '건', '', C.plan)) +
+    go('sent', kpi('발송완료', sent.length, '건', '', C.env)) +
+    kpi('평균 점수', avg == null ? '—' : nf(avg, 1), avg == null ? '' : '점', scored.length ? '적격 ' + pass.length + ' / 평가 ' + scored.length + '건' : '', C.health) +
+    '</div>';
+
+  // 등급 분포 · 영역별 평균 득점률 · 월별 제출
+  var GR = ['S', 'A', 'B', 'C', 'D'], GC = { S: C.env, A: C.health, B: C.plan, C: '#E0A100', D: C.safe };
+  var gm = {}; scored.forEach(function (r) { var g = ctGrade(r); gm[g] = (gm[g] || 0) + 1; });
+  var gmx = Math.max.apply(null, GR.map(function (g) { return gm[g] || 0; }).concat([1]));
+  function hrow(label, v, max, color, txt) {
+    return '<tr><td class="k" style="width:38%">' + label + '</td><td>' +
+      '<span class="gz"><span class="tr"><span class="fl" style="width:' + (max ? v / max * 100 : 0) + '%;background:' + color + '"></span></span>' +
+      '<span class="pc">' + txt + '</span></span></td></tr>';
+  }
+  var gradeTbl = tbl([{ t: '등급' }, { t: '업체 수' }], GR.map(function (g) {
+    return hrow(g + '등급' + (g === 'S' || g === 'A' ? ' · 적격' : ''), gm[g] || 0, gmx, GC[g], (gm[g] || 0) + '건');
+  }), 280);
+  var areaTbl = tbl([{ t: '평가 영역 (배점)' }, { t: '평균 득점률' }], CT_GROUPS_D.map(function (g) {
+    var s = scored.map(function (r) { return ctCalcD(r.scores).sub[g.k] / g.max; });
+    var p = s.length ? s.reduce(function (a, b) { return a + b; }, 0) / s.length : 0;
+    return hrow(esc(g.t) + ' <span class="dim">(' + g.max + ')</span>', p, 1, C.health, s.length ? Math.round(p * 100) + '%' : '—');
+  }), 280);
+  var ym = {}; all.forEach(function (r) { var m = String(r.created_at || r.eval_date || '').slice(0, 7); if (m) ym[m] = (ym[m] || 0) + 1; });
+  var months = Object.keys(ym).sort().slice(-12);
+  var mmx = Math.max.apply(null, months.map(function (m) { return ym[m]; }).concat([1]));
+  var monTbl = months.length ? tbl([{ t: '월' }, { t: '제출 건수' }], months.map(function (m) {
+    return hrow(m.replace('-', '.'), ym[m], mmx, C.ink, ym[m] + '건');
+  }), 280) : '<div class="sd-empty">제출 기록이 없습니다</div>';
+  var charts = '<div class="g-3" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px">' +
+    '<div><div class="subttl">등급 분포 <span class="dim">(평가 완료 ' + scored.length + '건)</span></div>' + gradeTbl + '</div>' +
+    '<div><div class="subttl">영역별 평균 득점률</div>' + areaTbl + '</div>' +
+    '<div><div class="subttl">월별 제출</div>' + monTbl + '</div></div>';
+
+  // 목록 (상태 · 검색) — 누르면 플랫폼 평가 창
+  var STS = [{ k: 'all', n: '전체 상태' }, { k: 'wait', n: '평가 대기' }, { k: 'unsent', n: '평가완료 (미발송)' }, { k: 'sent', n: '발송완료' }];
+  var q = CT.q.trim().toLowerCase();
+  var list = all.filter(function (r) {
+    var st = !ctScored(r) ? 'wait' : r.status === '발송완료' ? 'sent' : 'unsent';
+    if (CT.st !== 'all' && st !== CT.st) return false;
+    return !q || [r.company, r.project, r.writer, r.eval_no].join(' ').toLowerCase().indexOf(q) !== -1;
+  });
+  var SEL = 'style="padding:7px 10px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;background:#fff;color:var(--ink)"';
+  var bar = '<div class="filterbar" style="margin-top:22px">' +
+    '<select id="ctStSel" aria-label="상태" ' + SEL + '>' + STS.map(function (s) {
+      return '<option value="' + s.k + '"' + (CT.st === s.k ? ' selected' : '') + '>' + s.n + '</option>'; }).join('') + '</select>' +
+    '<input type="text" id="ctSearch" placeholder="업체명 · 공사명 · 작성자 검색" value="' + esc(CT.q) + '" ' +
+      'style="padding:7px 10px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;min-width:200px"></div>';
+  var STB = { '평가 대기': 'b-human', '평가완료': 'b-prop', '발송완료': 'b-sanjae' };
+  var rows = list.length ? tbl(
+    [{ t: '접수번호', w: '96px' }, { t: '업체명' }, { t: '공사명' }, { t: '공사 기간', w: '180px' }, { t: '작성자', w: '72px' },
+     { t: '첨부', w: '52px' }, { t: '상태', w: '96px' }, { t: '점수 · 등급', w: '96px' }],
+    list.map(function (r) {
+      var c = ctCalcD(r.scores), st = ctStD(r.status);
+      var sc = ctScored(r) ? ctTotal(r) + '점 · ' + esc(ctGrade(r)) : c.done ? '<span class="dim">' + c.total + '점 (임시)</span>' : '—';
+      return '<tr class="rg-row" data-ctopen="' + esc(r.id) + '" title="현장 플랫폼에서 이 건 평가 창 열기">' +
+        '<td class="n dim">' + esc(r.eval_no || '') + '<div style="font-size:10.5px">' + esc(String(r.created_at || '').slice(0, 10)) + '</div></td>' +
+        '<td class="k">' + esc(r.company || '') + '</td>' +
+        '<td class="dim">' + esc(r.project || '') + '</td>' +
+        '<td class="dim">' + esc(r.period || '—') + '</td>' +
+        '<td class="dim">' + esc(r.writer || '') + '</td>' +
+        '<td class="dim">📎 ' + (r.files || []).length + '</td>' +
+        '<td><span class="b ' + (STB[st] || 'b-etc') + '">' + st + '</span></td>' +
+        '<td class="k">' + sc + '</td></tr>';
+    }), 960) + '<div class="subttl">' + list.length + '건 표시 · 줄을 누르면 현장 플랫폼 평가 창이 새 창으로 열립니다 (비밀번호 필요)</div>'
+    : '<div class="empty"><b>해당하는 제출 건이 없습니다</b></div>';
+
+  box.innerHTML = head + kpis + charts + bar + rows + '</div>';
+  $('ctStSel').onchange = function () { CT.st = this.value; renderCt(); };
+  $('ctSearch').oninput = function () {
+    CT.q = this.value; var pos = this.selectionStart; renderCt();
+    var el = $('ctSearch'); el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) {}
+  };
+}
+document.addEventListener('click', function (e) {
+  if (!e.target.closest || !e.target.closest('#ctDash')) return;
+  if (e.target.closest('[data-ctreload]')) { loadCt(); return; }
+  var k = e.target.closest('[data-ctst]');
+  if (k) { CT.st = k.dataset.ctst; renderCt(); var s = $('ctStSel'); if (s) s.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  var o = e.target.closest('[data-ctopen]');
+  if (o) window.open(CT_PF_URL + '?go=ctr&ct=' + encodeURIComponent(o.dataset.ctopen), '_blank', 'noopener');
+});
+window.addEventListener('focus', function () {
+  var p = $('bd-qse');
+  if (p && !p.hidden && CT.loaded) loadCt(true);
+});
+
 /** 화면이 열려 있는 동안 60초마다 · 창으로 돌아올 때 다시 읽어 플랫폼 수정분을 반영합니다 */
 function smWatch(on) {
   clearInterval(SM.timer); SM.timer = null;
@@ -10940,7 +11219,6 @@ function submitQse() {
     if (res.error) throw res.error;
     toast('평가 결과를 저장했습니다 (' + qseFmtNum(result.totalScore) + '점 · ' + result.grade + '등급 · ' + (result.pass ? '적격' : '부적격') + ')');
     resetQseForm();
-    loadQse();
   }).catch(function (e) {
     toast('제출 실패: ' + ((e && e.message) || e), 'err');
   }).then(function () {
@@ -14289,7 +14567,6 @@ function refresh(silent) {
       }).catch(function (e) { console.warn('[EHS] 자료 없음', e); renderDataTabs(); });
     } else { renderDataTabs(); }
     loadCsa();
-    loadQse();
     loadPopup();
     loadLib();
     loadSdy();
@@ -14369,7 +14646,7 @@ var NAV_GROUPS = {
   common: { label: '공통', sub: [
     // '전자결재'(approval) 는 메뉴에서 뺐습니다 — 게시판 · 결재 기록은 남아 있어 다시 넣으면 그대로 보입니다
     { tab: 'kpi', label: 'KPI' },
-    { tab: 'accident', label: '안전사고' },
+    // '안전사고'(accident) 는 안전 메뉴 맨 끝으로 옮겼습니다
     { tab: 'budget', label: '예산' },
     { tab: 'library', label: '자료실' },
     { tab: 'rules', label: 'ISO14001&45001' },
@@ -14389,7 +14666,8 @@ var NAV_GROUPS = {
     { tab: 'safmeet', label: '회의체' },
     { tab: 'edu', label: '교육' },
     { tab: 'safdevice', label: '안전장치' },
-    { tab: 'safpatrol', label: '순회점검일지' }
+    { tab: 'safpatrol', label: '순회점검일지' },
+    { tab: 'accident', label: '안전사고' }
   ] },
   health: { label: '보건', sub: [
     { tab: 'headash', label: '현황' },
@@ -14496,6 +14774,7 @@ function activateTab(t) {
   if (t === 'news') newsTabOpened();
   if (t === 'rules' && !RG.ready) renderRules();
   if (t === 'svscore') { renderSm(); loadSm(SM.loaded); smWatch(true); } else smWatch(false);
+  if (t === 'qse') { renderCt(); loadCt(CT.loaded); }
   if (t === 'monitor') monSyncSticky();
   if (t === 'visit') openVisitFrame();
   if (t === 'visitlog' && VISIT_LOG_UNLOCKED) loadVisitLog();
@@ -14529,9 +14808,6 @@ function bind() {
 
   $('calPrev').onclick = function () { gotoMonth(-1); };
   $('calNext').onclick = function () { gotoMonth(1); };
-  $('mToday').onclick = function () {
-    state.month = startOfMonth(new Date()); state.selDate = ymd(new Date()); renderMonthPanel();
-  };
   $('wPrev').onclick = function () { state.monday = addDays(state.monday, -7); renderWeekPanel(); };
   $('wNext').onclick = function () { state.monday = addDays(state.monday, 7); renderWeekPanel(); };
   $('weekSel').onchange = function () {
@@ -14606,15 +14882,18 @@ function bind() {
     var itb = e.target.closest('[data-importtab]');
     if (itb) { $('xlsxFile').dataset.only = itb.dataset.importtab; $('xlsxFile').click(); return; }
 
-    var fy = e.target.closest('[data-accy]');
-    if (fy) { state.accY = fy.dataset.accy; renderAccident(); return; }
+    if (e.target.closest('[data-acctrir]')) { openAccTrir(); return; }
+    var fak = e.target.closest('[data-acckpi]');
+    if (fak) {
+      state.accY = fak.dataset.acckpiy; state.accS = 'all'; state.accQ = ''; state.accT = fak.dataset.acckpi;
+      renderAccident();
+      var al = $('accList'); if (al) (al.closest('.card') || al).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     var fms = e.target.closest('[data-accms]');
     if (fms) { state.accMS = fms.dataset.accms; renderAccident(); return; }
     var fmy = e.target.closest('[data-accmy]');
     if (fmy) { state.accMY = fmy.dataset.accmy; renderAccident(); return; }
-    var fs = e.target.closest('[data-accs]');
-    if (fs) { state.accS = fs.dataset.accs; renderAccident(); return; }
-    if (e.target.closest('[data-acccm]')) { state.accCM = !state.accCM; renderAccident(); return; }
     var fk = e.target.closest('[data-kpip]');
     if (fk) { state.kpiP = fk.dataset.kpip; renderKpi(); return; }
     var fyc = e.target.closest('[data-yrc]');
@@ -14828,20 +15107,7 @@ function bind() {
     this.value = ''; this.dataset.only = '';
   };
 
-  $('qThreshold').onchange = function () {
-    var v = parseInt(this.value, 10);
-    QSE_THRESHOLD = isNaN(v) ? 80 : Math.max(0, Math.min(100, v));
-    this.value = QSE_THRESHOLD;
-    renderQseScoreboard();
-  };
-  $('qseChecklist').addEventListener('input', function (e) {
-    var el = e.target.closest('[data-qcomment]'); if (!el) return;
-    QSE_ANS[el.closest('[data-qno]').dataset.qno].comment = el.value;
-  });
-  $('qFileBtn').onclick = function () { $('qFiles').click(); };
-  $('qFiles').onchange = function () { qsePickFiles(this.files); this.value = ''; };
-  $('btnQseSubmit').onclick = submitQse;
-  $('btnQseReset').onclick = function () { if (confirm('작성 중인 평가 내용을 초기화할까요?')) resetQseForm(); };
+
 
   $('btnLibUpload').onclick = submitLib;
   // 자료실 : 구분 타일 · 검색 · 정렬 · 자료 보기
