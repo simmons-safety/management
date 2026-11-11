@@ -1042,9 +1042,12 @@ window.AI_CONFIG = {
   .wk-row:focus-visible{outline:1px solid var(--ink);outline-offset:-2px}
   .wk-b{flex:1;font-size:13.5px;font-weight:400;color:var(--ink);line-height:1.6;letter-spacing:-.02em;min-width:0}
   .wk-b.ph{color:var(--ink3);font-style:italic}
-  .wk-m{flex:none;display:flex;align-items:center;gap:5px;padding-top:1px}
-  .wk-m em{font-style:normal;font-size:11.5px;font-weight:500;color:var(--ink2);
-    background:#fff;border:1px solid var(--line);border-radius:0;padding:2px 7px;white-space:nowrap}
+  .wk-m{flex:none;display:flex;align-items:center;justify-content:flex-end;gap:5px;width:78px}
+  /* 날짜 : 버튼과 같은 높이 · 같은 폭으로 세로줄을 맞춥니다 */
+  .wk-m em{font-style:normal;font-size:10.5px;font-weight:500;color:var(--ink2);box-sizing:border-box;
+    background:#fff;border:1px solid var(--line);border-radius:0;padding:0 6px;white-space:nowrap;
+    width:78px;height:22px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;text-overflow:ellipsis}
+  .wk-row .wk-b{padding-top:0}
   .wk-m i{font-style:normal;font-size:9.5px;font-weight:600;color:var(--ink2);
     border:1px solid var(--line);background:#fff;border-radius:0;padding:2px 7px;white-space:nowrap}
 
@@ -1056,7 +1059,12 @@ window.AI_CONFIG = {
     font-size:11px;font-weight:600;color:var(--ink3);padding:4px 11px;white-space:nowrap;transition:.12s}
   .st-b:hover{border-color:var(--ink);color:var(--ink)}
   .st-b:focus-visible{outline:1px solid var(--ink);outline-offset:1px}
-  .st-b[data-st="완료"][aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  /* 주간업무 완료처리 버튼 : 레드 계열 (미완료 = 연한 레드 테두리, 완료 = 채운 레드) */
+  .st-b[data-st="완료"]{border-color:var(--line);background:#fff;color:var(--ink2);font-size:11px;font-weight:500;padding:0;
+    box-sizing:border-box;width:66px;height:22px;display:inline-flex;align-items:center;justify-content:center}
+  .st-b[data-st="완료"]:hover{border-color:var(--ink);color:var(--ink)}
+  .st-b[data-st="완료"][aria-pressed="true"]{background:var(--human);border-color:var(--human);color:#fff;font-weight:700}
+  .st-b[data-st="완료"][aria-pressed="true"]:hover{background:#A93226;border-color:#A93226;color:#fff}
   .st-b[data-st="진행"][aria-pressed="true"]{background:#fff;border-color:var(--ink);color:var(--ink)}
   .wk-g .addbtn{margin-top:8px;padding:8px}
   .wk-none{font-size:11px;color:var(--ink3);padding:4px 0 2px 16px}
@@ -1223,7 +1231,6 @@ window.AI_CONFIG = {
   .g-top,.g-half,.g-third{margin-bottom:16px}
   .card[style*="margin-top:12px"]{margin-top:16px !important}
   .card.wk{padding:26px 28px 28px}
-  .card.wk.now{border:none;box-shadow:inset 0 0 0 2px #000}
   .subttl,.secttl{font-size:12.5px;font-weight:700;letter-spacing:-.02em;color:var(--ink);text-transform:none}
   .subttl{border-top-color:var(--line)}
 
@@ -1882,6 +1889,9 @@ window.AI_CONFIG = {
   .mo-seg button b{font-family:var(--fd);font-weight:600;margin-left:6px}
   .mo-seg button[aria-pressed="true"]{background:#000;color:#fff}
   .mo-seg button:focus-visible{outline:2px solid #000;outline-offset:2px}
+  #libScope{flex:none;box-shadow:inset 0 0 0 1px var(--line);padding:3px}
+  #libScope button{padding:7px 14px;white-space:nowrap}
+  @media (max-width:520px){ #libScope{width:100%} #libScope button{flex:1;text-align:center} }
   .sd-chip[aria-pressed="true"]{background:#000;color:#fff}
   .sd-chip[aria-pressed="true"] b{color:#fff}
   .mo-list{display:grid}
@@ -1912,6 +1922,12 @@ window.AI_CONFIG = {
   .mo-sec .sd-sec{display:flex;justify-content:space-between;gap:8px}
   .mo-sec .sd-sec b{color:var(--ink);font-family:var(--fd)}
   .mo-sec.late .sd-sec b{color:#C0392B}
+  .mo-sec .sd-sec{align-items:center}
+  .mo-sec-r{display:inline-flex;align-items:center;gap:10px}
+  .mo-bulk{all:unset;box-sizing:border-box;cursor:pointer;height:24px;padding:0 12px;border-radius:var(--pill);
+    background:var(--human);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;transition:background .12s}
+  .mo-bulk:hover{background:#A93226}
+  .mo-bulk:disabled{opacity:.6;cursor:default}
   .mo-more{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;margin-top:10px;padding:11px;border-radius:var(--pill);
     background:#fff;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink2)}
   .mo-more:hover{color:#000;box-shadow:inset 0 0 0 1px #000}
@@ -1961,13 +1977,25 @@ window.AI_CONFIG = {
   .lb-find{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
   .lb-find button{padding:3px 9px;font-size:12px}
   .lb-body{flex:1;overflow-y:auto;padding:18px 24px 28px;overscroll-behavior:contain}
-  .lb-text p{margin:0 0 4px;font-size:13px;line-height:1.75;white-space:pre-wrap;word-break:break-word}
+  .lb-text p{margin:0 0 4px;font-size:13.5px;line-height:1.75;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+  .lb-text p.ind{padding-left:16px}
+  .lb-text .lb-h{margin:22px 0 8px;font-size:16px;font-weight:700;letter-spacing:-.03em;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+  .lb-text h5{margin:14px 0 4px;font-size:14px;font-weight:700}
+  .lb-text .tw{margin:8px 0 14px;overflow-x:auto}
+  .lb-text table.dt td{white-space:pre-wrap;font-size:12px;vertical-align:top;line-height:1.6}
+  .lb-text table.dt tr:first-child td{font-weight:700;background:rgba(0,0,0,.035)}
+  .lb-dsearch{display:flex;gap:8px;align-items:center;padding:10px 24px;border-bottom:1px solid #eee}
+  .lb-dsearch[hidden]{display:none}
+  .lb-dsearch .rg-search{flex:1;padding:0 14px}
+  .lb-dsearch .rg-search input{padding:8px 0;font-size:13px}
+  .lb-dsearch .cnt{font-size:12px;color:var(--ink3);white-space:nowrap;min-width:64px;text-align:right}
+  .lb-dsearch button{all:unset;cursor:pointer;width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:#fff;font-size:12px}
   .lb-text h4{margin:18px 0 8px;font-size:12px;font-weight:800;color:var(--ink3);letter-spacing:.02em;padding-bottom:4px;border-bottom:1px solid #eee}
   .lb-text h4:first-child{margin-top:0}
   .lb-frame{width:100%;height:100%;min-height:70vh;border:0;border-radius:8px;background:#f4f4f4}
   .lb-pic{max-width:100%;display:block;margin:0 auto;border-radius:8px}
   @media (max-width:900px){ .lb-cats{grid-template-columns:repeat(4,minmax(0,1fr))} }
-  @media (max-width:520px){ .lb-cats{grid-template-columns:repeat(2,minmax(0,1fr))} .lb-hd,.lb-bar,.lb-body{padding-left:16px;padding-right:16px} }
+  @media (max-width:520px){ .lb-cats{grid-template-columns:repeat(2,minmax(0,1fr))} .lb-hd,.lb-bar,.lb-body,.lb-dsearch{padding-left:16px;padding-right:16px} }
   /* ── 내 메모장 (월간 스케줄 "메모" → 오른쪽 서랍) (memo-) ── */
   .memo-btn{display:inline-flex;align-items:center;gap:6px}
   .memo-btn span{font-size:14px;line-height:1}
@@ -2136,13 +2164,6 @@ window.AI_CONFIG = {
         <path d="M14 3v5h5"/>
         <path d="M12 12v6"/>
         <path d="M9.5 14.5 12 12l2.5 2.5"/>
-      </svg>
-    </button>
-    <button class="popup-btn" id="btnExportAll" title="자료 다운로드 (전체 시트 엑셀)" aria-label="자료 다운로드">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 4v11"/>
-        <path d="M7.5 10.5 12 15l4.5-4.5"/>
-        <path d="M5 19h14"/>
       </svg>
     </button>
     <button class="popup-btn" id="btnPopupNew" title="공지 팝업 작성" aria-label="공지 팝업 작성">
@@ -2509,18 +2530,7 @@ window.AI_CONFIG = {
       <header><h2>항목별 현황</h2><span class="note">안전 · 보건 · 환경 · 기타 · 눌러서 상세 항목 펼쳐보기</span></header>
       <div id="budGroup"></div>
     </div>
-    <div class="card" style="margin-top:12px">
-      <header><h2>팀별 · 항목별 현황</h2><span class="note">FY26 실적 / le9 목표 · 백만원 · 팀을 누르면 그 팀만 보기</span></header>
-      <div id="budMatrix"></div>
-    </div>
-    <div class="card" style="margin-top:12px">
-      <header><h2>월별 집행 추이</h2><span class="note" id="budMonNote"></span></header>
-      <div id="budMonth"></div>
-    </div>
-    <div class="card" style="margin-top:12px">
-      <header><h2>상세 항목</h2><div class="filterbar" id="budFilter"></div></header>
-      <div id="budList"></div>
-    </div>
+    <!-- 팀별 · 항목별 현황 / 월별 집행 추이 / 상세 항목 카드는 삭제했습니다 (요청) -->
   </section>
 
   <!-- ══════════ 중대재해처벌법 ══════════ -->
@@ -2612,6 +2622,9 @@ window.AI_CONFIG = {
     <div class="card" style="margin-top:12px">
       <header><h2>자료 목록</h2><span class="note" id="libCount"></span></header>
       <div class="rg-tools">
+        <div class="mo-seg" id="libScope" role="group" aria-label="검색 범위">
+          <button type="button" data-libscope="all" aria-pressed="true">전체</button><button type="button" data-libscope="title" aria-pressed="false">제목</button><button type="button" data-libscope="body" aria-pressed="false">본문 내용</button>
+        </div>
         <label class="rg-search" for="libQ">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4.2-4.2"></path></svg>
           <input type="search" id="libQ" placeholder="제목 · 파일명 · 본문 내용 검색 (예: 지게차, 협력업체, 공문)" autocomplete="off">
@@ -2632,11 +2645,20 @@ window.AI_CONFIG = {
       </div>
       <div class="lb-bar">
         <div class="mo-seg" id="lbTabs"><button type="button" data-lbtab="text" aria-pressed="true">본문</button><button type="button" data-lbtab="orig" aria-pressed="false">원본 미리보기</button></div>
-        <span class="lb-find" id="lbFind"></span>
         <span style="flex:1"></span>
+        <button class="reset" id="lbReread" title="파일을 다시 읽어 본문(표 · 제목 포함)을 새로 만듭니다">본문 다시 읽기</button>
         <select id="lbCatSel" aria-label="구분 바꾸기" title="구분 바꾸기"></select>
         <a class="reset" id="lbOpen" target="_blank" rel="noopener">원본 열기 ↗</a>
         <button class="reset" id="lbDel">삭제</button>
+      </div>
+      <!-- 이 문서 안에서 찾기 (사규 보기와 같은 방식 : 노란 표시 · ▲▼ 이동 · Enter 다음) -->
+      <div class="lb-dsearch" id="lbSearch">
+        <label class="rg-search" for="lbQ">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4.2-4.2"></path></svg>
+          <input type="search" id="lbQ" placeholder="이 문서 안에서 찾기" autocomplete="off">
+        </label>
+        <span class="cnt" id="lbCnt"></span>
+        <button type="button" data-lbhit="-1" title="이전 (Shift+Enter)">▲</button><button type="button" data-lbhit="1" title="다음 (Enter)">▼</button>
       </div>
       <div class="lb-body" id="lbBody"></div>
     </div>
@@ -3854,8 +3876,9 @@ function renderWeekPanel() {
                   (meta ? '<span class="wk-m">' + meta + '</span>' : '') +
                 '</button>' +
                 '<span class="wk-st">' +
-                  '<button class="st-b" data-st="완료" data-sid2="' + r.ID + '" aria-pressed="' + (st === 'done') + '" title="완료로 표시">완료</button>' +
-                  '<button class="st-b" data-st="진행" data-sid2="' + r.ID + '" aria-pressed="' + (st === 'prog') + '" title="진행중으로 표시">진행중</button>' +
+                  // 버튼 하나 : "완료 처리" 를 누르면 "완료" 로 바뀝니다 (다시 누르면 되돌림)
+                  '<button class="st-b" data-st="완료" data-sid2="' + r.ID + '" aria-pressed="' + (st === 'done') + '" title="' +
+                    (st === 'done' ? '완료 취소' : '완료로 처리') + '">' + (st === 'done' ? '완료' : '완료 처리') + '</button>' +
                 '</span></li>';
             }).join('') + '</ul>'
           : '<div class="wk-none">등록된 업무 없음</div>') +
@@ -3904,13 +3927,14 @@ function saveRows(key, rows) {
 var DEL_PIN = '1004';
 var DEL_HINT = '천사';
 var CR_CEO_PIN = '8587';   // 대표님 라운딩 "대표이사 결재 · 반려" 비밀번호 (힌트 없음)
+var BULK_DONE_PIN = '8587'; // 모니터링 "일괄 완료 처리" 비밀번호 (힌트 없음)
 /** 삭제 · 수정 비밀번호 확인 창. 맞으면 true, 취소하면 false 로 끝나는 Promise
  *  mode : 'edit' 이면 "수정 비밀번호" 로 묻습니다 (비밀번호 · 힌트는 같음)
  *         'ceo'  이면 "대표이사 결재 비밀번호"(CR_CEO_PIN) 로 묻습니다 (힌트 없음) */
 function delPin(what, mode) {
-  var ceo = mode === 'ceo';
-  var verb = ceo ? '대표이사 결재' : mode === 'edit' ? '수정' : '삭제';
-  var PIN = ceo ? CR_CEO_PIN : DEL_PIN;
+  var ceo = mode === 'ceo' || mode === 'bulk';   // 힌트 없이 묻는 비밀번호
+  var verb = mode === 'bulk' ? '일괄 완료 처리' : ceo ? '대표이사 결재' : mode === 'edit' ? '수정' : '삭제';
+  var PIN = mode === 'bulk' ? BULK_DONE_PIN : ceo ? CR_CEO_PIN : DEL_PIN;
   return new Promise(function (resolve) {
     var bg = document.createElement('div');
     bg.className = 'ap-sigbg';
@@ -3970,7 +3994,9 @@ function toggleWeeklyStatus(id, want) {
     if (next === '완료') li.classList.add('s-done');
     if (next === '진행') li.classList.add('s-prog');
     li.querySelectorAll('.st-b').forEach(function (b) {
-      b.setAttribute('aria-pressed', String(b.dataset.st === next));
+      var on = b.dataset.st === next;
+      b.setAttribute('aria-pressed', String(on));
+      if (b.dataset.st === '완료') { b.textContent = on ? '완료' : '완료 처리'; b.title = on ? '완료 취소' : '완료로 처리'; }
     });
   }
 
@@ -4889,7 +4915,7 @@ function bindDsEditor() {
   });
   $('deClose').onclick = deClose;
   bindOverlayClose($('deScrim'), deClose);
-  $('btnExportAll').onclick = dsExportAll;
+  if ($('btnExportAll')) $('btnExportAll').onclick = dsExportAll;
 }
 
 /** onlySheets : 이 시트들만 반영 (게시판별 "엑셀 업데이트" 버튼). 없으면 파일에 있는 시트 전부 */
@@ -6903,28 +6929,28 @@ function monItems() {
     if (!m) return;
     var done = r.상태 === '완료';
     out.push({ src: 'week', s: m, e: addDays(m, 6), date: rangeText(m), tag: r.분류 || '주간업무', meta: r.담당 || '',
-      text: r.내용, sub: r.일정, note: r.상태 === '진행' ? '진행중' : '', done: done,
+      text: r.내용, sub: r.일정, note: '', done: done, wid: r.ID, wbase: r.수정일자,
       go: sdGo('week', { date: ymd(m), flash: 'w:' + r.ID }) });
   });
   ds('안전점검').forEach(function (r) {
     var d = parseYmd(r.점검일), k = inspRowKey(r);
     if (!d) return;
     out.push({ src: 'safinspect', s: d, e: d, date: monDateTxt(d), tag: r.점검구분 || '안전점검',
-      meta: sdSiteName(r.사업장) + (r.부서 ? ' · ' + r.부서 : ''), text: inspContentText(r), done: inspIsDone(r),
+      meta: sdSiteName(r.사업장) + (r.부서 ? ' · ' + r.부서 : ''), text: inspContentText(r), done: inspIsDone(r), okey: k, osheet: '안전점검',
       go: sdGo('safinspect', { site: r.사업장, dept: r.부서, month: safMonthOf(r.점검일), flash: k }) });
   });
   ds('위험성평가').forEach(function (r) {
     var d = parseYmd(r.점검일), k = riskRowKey(r);
     if (!d) return;
     out.push({ src: 'safrisk', s: d, e: d, date: monDateTxt(d), tag: r.구분 || '정기',
-      meta: sdSiteName(r.사업장) + (r['매장/부서'] ? ' · ' + r['매장/부서'] : ''), text: riskContentText(r), done: riskIsDone(r),
+      meta: sdSiteName(r.사업장) + (r['매장/부서'] ? ' · ' + r['매장/부서'] : ''), text: riskContentText(r), done: riskIsDone(r), okey: k, osheet: '위험성평가',
       go: sdGo('safrisk', { site: r.사업장, dept: r['매장/부서'], month: safMonthOf(r.점검일), flash: k }) });
   });
   ds('회의체').forEach(function (r) {
     var d = parseYmd(r.개최일), k = meetRowKey(r);
     if (!d) return;
     out.push({ src: 'safmeet', s: d, e: d, date: monDateTxt(d), tag: r.회의체 || '회의체',
-      meta: sdSiteName(r.사업장 || ''), text: r.안건 || r.주요안건, done: meetIsDone(r),
+      meta: sdSiteName(r.사업장 || ''), text: r.안건 || r.주요안건, done: meetIsDone(r), okey: k, osheet: '회의체',
       go: sdGo('safmeet', { site: r.사업장, kind: r.회의체, month: safMonthOf(r.개최일), flash: k }) });
   });
   ds('보건활동').forEach(function (r) {
@@ -6935,7 +6961,7 @@ function monItems() {
     out.push({ src: 'heaact', s: new Date(y, m - 1, 1), e: new Date(y, m, 0), date: String(y).slice(2) + '.' + pad(m) + '월',
       tag: r.구분 || '보건활동', meta: sdSiteName(r.사업장 || ''),
       text: [r.대상자, r.목표].filter(function (v) { return !isBlank(v); }).join(' · '), sub: r['진행 사항'],
-      done: heaActDone(r),
+      done: heaActDone(r), okey: heaActRowKey(r), osheet: '보건활동',
       go: sdGo('heaact', { kind: r.구분, site: r.사업장, year: r.연도 ? String(r.연도) : '', month: r.월 ? String(r.월) : '', flash: heaActRowKey(r) }) });
   });
   return out;
@@ -6946,7 +6972,7 @@ function monPlanItems(w) {
   return PLAN_ROWS.filter(function (r) { return planIn(r, m); }).map(function (r) {
     var seg = planSeg(r, m), rg = planRange(y, m, seg), k = planKey(y, m, r);
     return { src: 'plan', s: rg.s, e: rg.e, date: (m + 1) + '월 ' + planWeekTxt(seg), tag: r[0], meta: r[2], text: r[1],
-      sub: r[3] + (r[5] ? ' · ' + r[5] : ''), done: isOverrideComplete(k), go: sdGo('plan', { month: ym, flash: k }) };
+      sub: r[3] + (r[5] ? ' · ' + r[5] : ''), done: isOverrideComplete(k), okey: k, osheet: '연간계획', go: sdGo('plan', { month: ym, flash: k }) };
   });
 }
 /** 기간 w 안의 업무(inW) · 완료 수 · 이월(기간 전에 끝났는데 미완료) */
@@ -6968,9 +6994,52 @@ function monRow(it) {
 }
 function monSection(title, list, late) {
   var shown = state.monMore ? list : list.slice(0, MON_PAGE);
-  return '<div class="mo-sec' + (late ? ' late' : '') + '"><div class="sd-sec"><span>' + esc(title) + '</span><b>' + list.length + '건</b></div>' +
+  return '<div class="mo-sec' + (late ? ' late' : '') + '"><div class="sd-sec"><span>' + esc(title) + '</span>' +
+    '<span class="mo-sec-r"><b>' + list.length + '건</b>' +
+      (late && list.length ? '<button type="button" class="mo-bulk" data-mobulk title="아래 이월 업무 ' + list.length + '건을 모두 완료로 바꿉니다">일괄 완료 처리</button>' : '') +
+    '</span></div>' +
     '<div class="mo-list">' + shown.map(monRow).join('') + '</div>' +
     (list.length > shown.length ? '<button type="button" class="mo-more" data-momore>' + (list.length - shown.length) + '건 더 보기</button>' : '') + '</div>';
+}
+
+/** 이월 업무 일괄 완료 : 주간업무는 상태를 "완료"로 저장, 나머지 게시판은 완료 표시(status_overrides)를 한 번에 저장 */
+function monBulkComplete(list) {
+  list = list.filter(function (it) { return !it.done; });
+  if (!list.length) { toast('완료할 이월 업무가 없습니다.', 'warn'); return; }
+  if (!RPC.live) { toast('Supabase에 연결되어야 저장할 수 있습니다.', 'err'); return; }
+  delPin('이월 업무 ' + list.length + '건을 모두 완료 처리합니다.', 'bulk').then(function (ok) { if (ok) monBulkRun(list); });
+}
+function monBulkRun(list) {
+  var weeks = list.filter(function (it) { return it.wid; });
+  var ovs = list.filter(function (it) { return !it.wid && it.okey; });
+  var btn = document.querySelector('[data-mobulk]');
+  if (btn) { btn.disabled = true; btn.textContent = '처리 중…'; }
+  var now = new Date().toISOString(), jobs = [];
+  if (ovs.length) {
+    state.statusOverrides = state.statusOverrides || {};
+    var seen = {}, rows = [];
+    ovs.forEach(function (it) {
+      if (seen[it.okey]) return; seen[it.okey] = 1;
+      rows.push({ row_key: it.okey, sheet: it.osheet, status: '완료', updated_by: state.user || null, updated_at: now });
+    });
+    jobs.push(RPC.db.from('status_overrides').upsert(rows, { onConflict: 'row_key' }).then(function (res) {
+      if (res.error) throw res.error;
+      rows.forEach(function (r) { state.statusOverrides[r.row_key] = '완료'; });
+    }));
+  }
+  if (weeks.length) {
+    jobs.push(saveRows('weekly', weeks.map(function (it) { return { ID: it.wid, _base: it.wbase, 상태: '완료' }; })));
+  }
+  Promise.all(jobs).then(function () {
+    toast('이월 업무 ' + list.length + '건을 완료 처리했습니다.');
+  }).catch(function (err) {
+    console.warn('[EHS] 일괄 완료 실패', err);
+    toast('일부 저장 실패: ' + ((err && err.message) || err), 'err');
+  }).then(function () {
+    try { rerenderStatusViews(); } catch (e) {}
+    try { renderWeekPanel(); } catch (e) {}
+    renderMonitorPage();
+  });
 }
 
 function renderMonitorPage() {
@@ -7003,6 +7072,7 @@ function renderMonitorPage() {
   var openList = bySrc(cur.inW.filter(function (it) { return !it.done; })).sort(asc);
   var doneList = bySrc(cur.inW.filter(function (it) { return it.done; })).sort(function (a, b) { return b.s - a.s; });
   var overList = bySrc(cur.over).sort(asc);
+  state.monOverList = overList;   // "일괄 완료 처리" 대상 (지금 보고 있는 게시판의 이월 업무)
   var isOpen = state.monView === 'open';
   var pool = isOpen ? cur.inW.filter(function (it) { return !it.done; }).concat(cur.over) : cur.inW.filter(function (it) { return it.done; });
 
@@ -8799,14 +8869,22 @@ function renderBudget() {
       { t: 'le9 목표', r: 1 }, { t: '차이', r: 1 }, { t: '목표 대비', w: '150px' }]);
   }
 
+  /* 상세 항목은 모두 "목표 대비 %" 높은 순 (같으면 항목 · 팀 순, 목표 없는 항목은 맨 아래) */
+  function byPct(a, b) {
+    var pa = a.le9 ? a.fy / a.le9 : -Infinity, pb = b.le9 ? b.fy / b.le9 : -Infinity;
+    if (pa !== pb) return pb > pa ? 1 : -1;
+    return BUD_CATS.indexOf(a.cat) - BUD_CATS.indexOf(b.cat) || BUD_TEAMS.indexOf(a.team) - BUD_TEAMS.indexOf(b.team);
+  }
+
   var detailBlocks = '';
   if (state.budOpen) {
-    var openList = items.filter(function (it) { return it.cat === state.budOpen; });
+    var openList = items.filter(function (it) { return it.cat === state.budOpen; }).sort(byPct);
     detailBlocks = '<div class="bud-detail"><div class="bud-detail-head">' + esc(state.budOpen) + ' 상세 항목' +
       '<span class="dim">' + openList.length + '건 · 백만원</span></div>' +
       tbl(cols(true), rowsHtml(openList, true).concat([sumRow(openList, true)]), 920) + '</div>';
   }
   $('budGroup').innerHTML = '<div class="budgrid">' + tiles.join('') + '</div>' + detailBlocks;
+  if (!$('budMatrix')) return;   // 아래 카드(팀별 · 월별 · 상세 항목)는 화면에서 뺐습니다
 
   // 팀별 × 항목별 (팀 필터와 상관없이 두 팀을 나란히 보여 줍니다)
   function cell(list) {
@@ -8848,9 +8926,7 @@ function renderBudget() {
   $('budFilter').innerHTML = ['all'].concat(BUD_CATS).map(function (g) {
     return '<button class="fb" data-budg="' + esc(g) + '" aria-pressed="' + (state.budG === g) + '">' +
       (g === 'all' ? '전체' : esc(g)) + '</button>'; }).join('');
-  var list = mList.slice().sort(function (a, b) {
-    return BUD_CATS.indexOf(a.cat) - BUD_CATS.indexOf(b.cat) || BUD_TEAMS.indexOf(a.team) - BUD_TEAMS.indexOf(b.team);
-  });
+  var list = mList.slice().sort(byPct);
   $('budList').innerHTML = tbl(cols(true), rowsHtml(list, true).concat([sumRow(list, true)]), 920);
 }
 
@@ -10763,7 +10839,7 @@ var CSA_DEFAULT = [
 var CSA_STATUS = ['진행중', '완료', '보류'];
 var CSA_LINKED_ITEM = 9;   // 09. 도급·용역·위탁 평가 → 적격수급인평가 탭으로 연결
 // 카드를 누르면 열리는 탭 : 05 업무 수행 평가 → 관리감독자 평가(현장 플랫폼 연동), 09 → 적격수급인평가
-var CSA_LINKS = { 5: { tab: 'svscore', label: '관리감독자 평가 열기' }, 9: { tab: 'qse', label: '적격수급인평가 열기' } };
+var CSA_LINKS = { 4: { tab: 'budget', label: '예산 실적 및 목표 열기' }, 5: { tab: 'svscore', label: '관리감독자 평가 열기' }, 9: { tab: 'qse', label: '적격수급인평가 열기' } };
 var CSA_ITEMS = CSA_DEFAULT.map(function (d) {
   return { item_no: d.item_no, title: d.title, subtitle: d.subtitle, article: d.article,
     progress: 0, status: '진행중', note: '', updated_by: null, updated_at: null };
@@ -10784,6 +10860,14 @@ function renderCsaDashboard() {
   // 05 업무 수행 평가 → 관리감독자 평가 점수 입력 비율을 진행율로 (현장 플랫폼 연동)
   var smP = (typeof smCsaProgress === 'function') ? smCsaProgress() : null;
   if (smP === null && typeof loadSm === 'function' && !SM.loading && !SM.loaded && !SM.err) loadSm(true);
+  // 04 예산 편성 및 집행 → 예산 탭과 같은 자료(budData)로 FY26 실적 / le9 목표 집행률
+  var budTxt = '';
+  try {
+    if (typeof budData === 'function' && typeof budAgg === 'function') {
+      var bt = budAgg(budData().items);
+      if (bt.le9) budTxt = ' · 예산 집행 ' + Math.round(bt.fy / bt.le9 * 100) + '% (' + budMan(bt.fy) + '/' + budMan(bt.le9) + '백만원)';
+    }
+  } catch (e) { budTxt = ''; }
   // 카드를 누르면 항목별 기입 창(csaOpen), "↗ …열기" 를 누르면 연결된 게시판으로
   $('csaGrid').innerHTML = CSA_ITEMS.map(function (r) {
     var link = CSA_LINKS[r.item_no], f = CSA_FORMS[r.item_no];
@@ -10796,7 +10880,8 @@ function renderCsaDashboard() {
       '<div class="csa-title">' + esc(r.title) + '</div>' +
       pctBar(prog / 100, 1, st === '보류' ? C.safe : C.env) +
       '<div class="csa-meta">' + (f ? '체크 ' + nCk + '/' + f.checks.length + ' · 기입 ' + filled + '/' + f.fields.length : '') + (nF ? ' · 증빙 ' + nF : '') +
-        (r.item_no === 5 && smP !== null ? ' · 평가 입력 ' + smP + '%' : '') + '</div>' +
+        (r.item_no === 5 && smP !== null ? ' · 평가 입력 ' + smP + '%' : '') +
+        (r.item_no === 4 ? budTxt : '') + '</div>' +
       (link ? '<button type="button" class="csa-link-hint" data-csalink="' + link.tab + '">↗ ' + link.label + '</button>' : '') + '</div>';
   }).join('');
 }
@@ -10889,6 +10974,7 @@ var CSA_FORMS = {
       { k: 'found', t: '발굴 건수', type: 'number', half: true }, { k: 'fixed', t: '개선 완료 건수', type: 'number', half: true },
       { k: 'open', t: '미조치 · 진행 중 사항', type: 'textarea', ph: '내용 / 담당 / 완료 예정일' }] },
   4: { guide: '재해 예방에 필요한 인력 · 시설 · 장비 예산을 편성하고 용도대로 집행했는지 기록합니다. (예산 탭 자료와 함께 확인)',
+    link: { tab: 'budget', label: '예산 실적 및 목표 열기' },
     checks: ['연간 안전보건 예산 편성', '인력 · 시설 · 장비 구입 항목 반영', '유해위험요인 개선 예산 반영', '편성 용도대로 집행', '집행 실적 점검 (반기)'],
     fields: [{ k: 'plan', t: '연간 편성액 (원)', type: 'number', half: true }, { k: 'spent', t: '집행액 (원)', type: 'number', half: true },
       { k: 'major', t: '주요 집행 내역', type: 'textarea', ph: '항목 / 금액 / 집행일' },
@@ -11359,12 +11445,16 @@ function renderLibSites() {
  *  본문이 없는 예전 자료는 목록을 열 때 차례로 읽어 채웁니다(색인). */
 var LIB_CATS = ['안전', '보건', '환경', '기획', '공통', '기타'];
 var LIB_CAT_LABEL = { '기타': '기타 (대외 공문 등)' };
-var LIB = { cat: 'all', q: '', sort: 'recent', open: null, tab: 'text', hit: 0, hasCols: true, indexing: false };
+var LIB = { cat: 'all', q: '', scope: 'all', sort: 'recent', open: null, tab: 'text', hit: 0, hasCols: true, indexing: false };
 function libCat(r) { return LIB_CATS.indexOf(r.category) !== -1 ? r.category : '공통'; }
 function libExt(n) { var m = /\.([a-z0-9]+)$/i.exec(n || ''); return m ? m[1].toLowerCase() : ''; }
 function libSize(b) { b = +b || 0; return b >= 1048576 ? (b / 1048576).toFixed(1) + 'MB' : b >= 1024 ? Math.round(b / 1024) + 'KB' : b ? b + 'B' : ''; }
 function libTerms(q) { return String(q || '').toLowerCase().split(/\s+/).filter(Boolean); }
-function libHay(r) { return [r.title, r.file_name, r.note, r.content].join('\n').toLowerCase(); }
+/** 검색 범위 : 전체(제목 · 파일명 · 메모 · 본문) / 제목(제목 · 파일명) / 본문 내용 */
+function libHay(r) {
+  var s = LIB.scope === 'title' ? [r.title, r.file_name] : LIB.scope === 'body' ? [r.content] : [r.title, r.file_name, r.note, r.content];
+  return s.join('\n').toLowerCase();
+}
 function libMatch(r, terms) { if (!terms.length) return true; var h = libHay(r); return terms.every(function (t) { return h.indexOf(t) !== -1; }); }
 function libHl(s, terms) {
   s = esc(s);
@@ -11373,7 +11463,7 @@ function libHl(s, terms) {
   return s.replace(re, '<mark>$1</mark>');
 }
 function libSnippet(r, terms) {
-  var c = String(r.content || ''); if (!terms.length || !c) return '';
+  var c = String(r.content || ''); if (!terms.length || !c || LIB.scope === 'title') return '';
   var lc = c.toLowerCase(), at = -1, n = 0;
   terms.forEach(function (t) { var i = lc.indexOf(t); if (i !== -1 && (at === -1 || i < at)) at = i; var j = -1; while ((j = lc.indexOf(t, j + 1)) !== -1) n++; });
   if (at === -1) return '';
@@ -11401,6 +11491,9 @@ function renderLibList() {
     $('libCat').innerHTML = opts; $('lbCatSel').innerHTML = opts;
   }
   var rows = LIB_FILES.filter(function (r) { return (LIB.cat === 'all' || libCat(r) === LIB.cat) && libMatch(r, terms); });
+  var tTerms = LIB.scope === 'body' ? [] : terms;   // 본문 내용 검색일 때는 제목에 노란 표시를 하지 않습니다
+  document.querySelectorAll('#libScope [data-libscope]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.libscope === LIB.scope)); });
+  $('libQ').placeholder = LIB.scope === 'title' ? '제목 · 파일명으로 찾기' : LIB.scope === 'body' ? '본문 내용으로 찾기 (예: 지게차, 보호구, 협력업체)' : '제목 · 파일명 · 본문 내용 검색 (예: 지게차, 협력업체, 공문)';
   rows.sort(function (a, b) {
     if (LIB.sort === 'title') return String(a.title).localeCompare(String(b.title), 'ko');
     if (LIB.sort === 'date') return String(b.doc_date || b.created_at).localeCompare(String(a.doc_date || a.created_at));
@@ -11413,10 +11506,10 @@ function renderLibList() {
   $('libList').innerHTML = !LIB.hasCols ? '<div class="rg-issue" style="margin-bottom:10px">구분 · 본문 검색을 쓰려면 Supabase SQL Editor 에서 <b>schema_library.sql</b> 을 다시 실행해 주세요. (기존 자료는 그대로)</div>' : '';
   $('libList').innerHTML += rows.length ? rows.map(function (r) {
     return '<button type="button" class="lb-row" data-libopen="' + esc(r.id) + '">' + libFileIcon(r) +
-      '<span class="lb-main"><span class="lb-t"><span class="b b-gray">' + esc(libCat(r)) + '</span>' + libHl(r.title, terms) + '</span>' +
+      '<span class="lb-main"><span class="lb-t"><span class="b b-gray">' + esc(libCat(r)) + '</span>' + libHl(r.title, tTerms) + '</span>' +
         '<span class="lb-m">' + esc([r.file_name, libSize(r.file_size), r.doc_date ? '문서일 ' + String(r.doc_date).replace(/-/g, '.') : '',
           '등록 ' + String(r.created_at).slice(0, 10).replace(/-/g, '.'), r.created_by].filter(Boolean).join(' · ')) + '</span>' +
-        (r.note ? '<span class="lb-n">' + libHl(r.note, terms) + '</span>' : '') + libSnippet(r, terms) + '</span>' +
+        (r.note ? '<span class="lb-n">' + libHl(r.note, LIB.scope === 'all' ? terms : []) + '</span>' : '') + libSnippet(r, terms) + '</span>' +
       '<span class="lb-go" aria-hidden="true">→</span></button>';
   }).join('') : '<div class="empty"><b>' + (terms.length ? '"' + esc(LIB.q) + '" 검색 결과가 없습니다' : '등록된 자료가 없습니다') + '</b>' +
     (terms.length ? '다른 단어로 찾아보세요. 본문은 워드 · 엑셀 · 파워포인트 · PDF · 한글(hwpx) · 텍스트 파일에서 검색됩니다.' : '아래 "자료 등록"으로 문서를 올려 주세요.') + '</div>';
@@ -11471,34 +11564,69 @@ function libXmlText(xml, paraTag, textTag) {
   });
   return out.join('\n');
 }
+/** 워드 · 한글(hwpx) · 파워포인트 XML → 문단은 한 줄, 표는 칸을 탭(\t)으로 나눈 줄 (보기 화면에서 표로 그립니다)
+ *  한 칸짜리 표 행은 끝에 탭을 붙여 표로 알아보게 합니다 */
+function libDocText(xml) {
+  var doc = new DOMParser().parseFromString(xml, 'application/xml'), out = [];
+  function free(x, root) { for (var n = x.parentNode; n && n !== root; n = n.parentNode) if (n.localName === 'tbl') return false; return true; }
+  function own(root, tag) { return [].filter.call(root.getElementsByTagNameNS('*', tag), function (x) { return free(x, root); }); }
+  function text(p) { return own(p, 't').map(function (x) { return x.textContent; }).join('').replace(/\t/g, ' '); }
+  function table(tb) {
+    own(tb, 'tr').forEach(function (tr) {
+      var cells = own(tr, 'tc').map(function (tc) {
+        return [].map.call(tc.getElementsByTagNameNS('*', 'p'), text).filter(function (s) { return s.trim(); }).join(' ').replace(/\s+/g, ' ').trim();
+      });
+      if (!cells.some(Boolean)) return;
+      out.push(cells.join('\t') + (cells.length === 1 ? '\t' : ''));
+    });
+    out.push('');
+  }
+  function walk(n) {
+    [].forEach.call(n.children || [], function (c) {
+      if (c.localName === 'tbl') table(c);
+      else if (c.localName === 'p') {
+        var t = text(c);
+        if (t.trim()) out.push(t);
+        own(c, 'tbl').forEach(table);   // 한글(hwpx)은 표가 문단 안에 들어 있습니다
+      } else walk(c);
+    });
+  }
+  if (doc.documentElement) walk(doc.documentElement);
+  return out.join('\n');
+}
 /** 파일(Blob/File)에서 본문 글자를 뽑습니다. 못 읽는 형식이면 '' */
 function libExtract(blob, name) {
   var x = libExt(name);
   var buf = function () { return blob.arrayBuffer ? blob.arrayBuffer() : new Response(blob).arrayBuffer(); };
-  var cut = function (s) { s = String(s || '').replace(/\u0000/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim(); return s.length > 400000 ? s.slice(0, 400000) : s; };
+  var cut = function (s) { s = String(s || '').replace(/\u0000/g, '').replace(/ +\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim(); return s.length > 400000 ? s.slice(0, 400000) : s; };
   try {
     if (/^(txt|md|json|log)$/.test(x)) return (blob.text ? blob.text() : new Response(blob).text()).then(cut);
     if (/^(xlsx|xls|xlsm|csv)$/.test(x)) return buf().then(function (ab) {
       var wb = XLSX.read(ab, { type: 'array' });
+      // 시트마다 표로 : 칸은 탭으로 나눠 저장 (보기 화면에서 표로 그립니다)
       return cut(wb.SheetNames.map(function (sn) {
-        var csv = XLSX.utils.sheet_to_csv(wb.Sheets[sn], { blankrows: false });
-        return '[' + sn + ']\n' + csv.split('\n').map(function (l) { return l.replace(/,+$/, '').replace(/,{2,}/g, ', '); }).filter(Boolean).join('\n');
+        var rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, blankrows: false, defval: '', raw: false });
+        return '[' + sn + ']\n' + rows.map(function (r) {
+          var cells = r.map(function (v) { return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); });
+          while (cells.length && !cells[cells.length - 1]) cells.pop();
+          return cells.join('\t');
+        }).filter(function (l) { return l.replace(/\t/g, '').trim(); }).join('\n');
       }).join('\n\n'));
     });
     if (x === 'docx') return buf().then(JSZip.loadAsync).then(function (z) {
       var f = z.file('word/document.xml'); return f ? f.async('string') : '';
-    }).then(function (xml) { return cut(xml ? libXmlText(xml, 'p', 't') : ''); });
+    }).then(function (xml) { return cut(xml ? libDocText(xml) : ''); });
     if (x === 'pptx') return buf().then(JSZip.loadAsync).then(function (z) {
       var names = Object.keys(z.files).filter(function (n) { return /^ppt\/slides\/slide\d+\.xml$/.test(n); })
         .sort(function (a, b) { return (+a.match(/(\d+)\.xml$/)[1]) - (+b.match(/(\d+)\.xml$/)[1]); });
       return Promise.all(names.map(function (n) { return z.file(n).async('string'); })).then(function (xs) {
-        return cut(xs.map(function (xml, i) { return '[슬라이드 ' + (i + 1) + ']\n' + libXmlText(xml, 'p', 't'); }).join('\n\n'));
+        return cut(xs.map(function (xml, i) { return '[슬라이드 ' + (i + 1) + ']\n' + libDocText(xml); }).join('\n\n'));
       });
     });
     if (x === 'hwpx') return buf().then(JSZip.loadAsync).then(function (z) {
       var names = Object.keys(z.files).filter(function (n) { return /^Contents\/section\d+\.xml$/i.test(n); }).sort();
       return Promise.all(names.map(function (n) { return z.file(n).async('string'); })).then(function (xs) {
-        return cut(xs.map(function (xml) { return libXmlText(xml, 'p', 't'); }).join('\n\n'));
+        return cut(xs.map(function (xml) { return libDocText(xml); }).join('\n\n'));
       });
     });
     if (x === 'pdf') return Promise.all([libLoadPdfJs(), buf()]).then(function (a) {
@@ -11522,10 +11650,21 @@ function libExtract(blob, name) {
   return Promise.resolve('');
 }
 /** 본문이 없는 예전 자료를 하나씩 읽어 content 를 채웁니다 */
+/* 예전 방식(표를 풀어 쓴 본문)으로 저장된 워드 · 한글 · 파워포인트 · 엑셀은 한 번씩 다시 읽어 표 모양을 살립니다 */
+var LIB_V2_KEY = 'ehs_lib_text_v2';
+function libV2Done() { try { return JSON.parse(localStorage.getItem(LIB_V2_KEY) || '{}') || {}; } catch (e) { return {}; } }
+function libV2Mark(id) { try { var d = libV2Done(); d[id] = 1; localStorage.setItem(LIB_V2_KEY, JSON.stringify(d)); } catch (e) {} }
+function libNeedsV2(x, done) {
+  return x.file_url && x.content != null && !x._idxFail && /^(docx|pptx|hwpx|xlsx|xls|xlsm)$/.test(libExt(x.file_name)) &&
+    String(x.content).indexOf('\t') === -1 && !done[x.id];
+}
 function libIndexMissing() {
   if (LIB.indexing || !LIB.hasCols || !RPC.live) return;
-  var r = LIB_FILES.filter(function (x) { return x.file_url && x.content == null && libCanRead(x.file_name) && !x._idxFail; })[0];
+  var done = libV2Done();
+  var r = LIB_FILES.filter(function (x) { return x.file_url && x.content == null && libCanRead(x.file_name) && !x._idxFail; })[0] ||
+          LIB_FILES.filter(function (x) { return libNeedsV2(x, done); })[0];
   if (!r) { LIB.indexing = false; renderLibList(); return; }
+  libV2Mark(r.id);
   LIB.indexing = true; renderLibList();
   fetch(r.file_url).then(function (res) { if (!res.ok) throw new Error(res.status); return res.blob(); })
     .then(function (b) { if (!r.file_size) r.file_size = b.size; return libExtract(b, r.file_name); })
@@ -11539,14 +11678,47 @@ function libIndexMissing() {
 /* ── 자료 보기 ── */
 function libOpen(id) {
   LIB.open = id; LIB.tab = 'text'; LIB.hit = 0;
-  libRenderView();
+  LIB.dq = LIB.q;                 // 목록에서 찾던 낱말을 문서 안 찾기에 그대로 넣어 둡니다
+  $('lbQ').value = LIB.q || '';
+  libRenderView(true);
   $('libScrim').classList.add('on');
+  $('lbBody').scrollTop = 0;
+  if (libTerms(LIB.dq).length) setTimeout(function () { libJump(0); }, 30);
+}
+/** 본문 → 사규 보기처럼 : [시트·쪽] 머리, "1. 목적" 큰 제목, "1.1" 작은 제목, 들여쓰기, 표 */
+function libBodyHtml(c, terms) {
+  var html = [], tb = null;
+  var flush = function () { if (tb) { html.push('<div class="tw"><table class="dt"><tbody>' + tb.join('') + '</tbody></table></div>'); tb = null; } };
+  String(c).split('\n').forEach(function (l) {
+    if (l.indexOf('\t') !== -1) {
+      var cells = l.split('\t');
+      if (cells.length === 2 && cells[1] === '') cells.pop();
+      (tb = tb || []).push('<tr>' + cells.map(function (x) { return '<td>' + libHl(x, terms) + '</td>'; }).join('') + '</tr>');
+      return;
+    }
+    flush();
+    var s = l.trim();
+    if (!s) return;
+    if (/^\[(슬라이드 \d+|\d+쪽|.{1,31})\]$/.test(s)) { html.push('<h4>' + libHl(s.slice(1, -1), terms) + '</h4>'); return; }
+    var m = /^(\d+)((?:\.\d+)*)\.?\s/.exec(s);
+    if (s.length <= 40 && ((m && !m[2]) || /^제\s*\d+\s*[장절조]/.test(s))) { html.push('<div class="lb-h">' + libHl(s, terms) + '</div>'); return; }
+    if (s.length <= 40 && m && m[2] && m[2].split('.').length === 2) { html.push('<h5>' + libHl(s, terms) + '</h5>'); return; }
+    html.push('<p' + (/^(\d+\)|\(\d+\)|[가-하]\.|[①-⑳]|[-·•※○□■▶])/.test(s) ? ' class="ind"' : '') + '>' + libHl(s, terms) + '</p>');
+  });
+  flush();
+  return '<div class="lb-text">' + html.join('') + '</div>';
+}
+function libFindCnt() {
+  var n = $('lbBody').querySelectorAll('mark').length;
+  $('lbCnt').textContent = libTerms(LIB.dq).length ? (n ? (LIB.hit + 1) + ' / ' + n : '없음') : '';
 }
 function libClose() { $('libScrim').classList.remove('on'); LIB.open = null; $('lbBody').innerHTML = ''; }
-function libRenderView() {
+function libRenderView(jump) {
   var r = LIB_FILES.filter(function (x) { return String(x.id) === String(LIB.open); })[0];
   if (!r) { libClose(); return; }
-  var terms = libTerms(LIB.q), x = libExt(r.file_name);
+  var terms = libTerms(LIB.dq), x = libExt(r.file_name);
+  $('lbReread').style.display = r.file_url && libCanRead(r.file_name) && LIB.tab === 'text' ? '' : 'none';
+  $('lbSearch').hidden = true;
   $('lbCat').textContent = LIB_CAT_LABEL[libCat(r)] || libCat(r);
   $('lbTitle').textContent = r.title;
   $('lbMeta').textContent = [r.file_name, libSize(r.file_size), r.doc_date ? '문서일 ' + String(r.doc_date).replace(/-/g, '.') : '',
@@ -11557,7 +11729,6 @@ function libRenderView() {
   document.querySelectorAll('#lbTabs [data-lbtab]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lbtab === LIB.tab)); });
   var body = $('lbBody');
   if (LIB.tab === 'orig') {
-    $('lbFind').innerHTML = '';
     if (!r.file_url) { body.innerHTML = '<div class="empty"><b>첨부 파일이 없습니다</b></div>'; return; }
     body.innerHTML = x === 'pdf' ? '<iframe class="lb-frame" src="' + esc(r.file_url) + '" title="원본"></iframe>'
       : /^(png|jpe?g|gif|webp|bmp)$/.test(x) ? '<img class="lb-pic" src="' + esc(r.file_url) + '" alt="">'
@@ -11566,30 +11737,30 @@ function libRenderView() {
   }
   var c = r.content;
   if (c == null && r.file_url && libCanRead(r.file_name)) {
-    body.innerHTML = '<div class="empty"><b>본문을 읽는 중…</b></div>'; $('lbFind').innerHTML = '';
+    body.innerHTML = '<div class="empty"><b>본문을 읽는 중…</b></div>';
     libIndexOne(r); return;
   }
   if (!c) {
-    $('lbFind').innerHTML = '';
     body.innerHTML = '<div class="empty"><b>뽑아 둔 본문이 없습니다</b>' +
       (libCanRead(r.file_name) ? '파일에 글자가 없거나(스캔 이미지 등) 읽지 못했습니다.' : '이 형식(' + esc(x || '파일') + ')은 본문을 읽지 못해 제목 · 파일명으로만 검색됩니다.') +
       ' "원본 미리보기"나 "원본 열기"로 확인하세요.</div>';
     return;
   }
-  body.innerHTML = '<div class="lb-text">' + String(c).split(/\n/).map(function (l) {
-    return /^\[(슬라이드 \d+|\d+쪽|.{1,31})\]$/.test(l) ? '<h4>' + esc(l.slice(1, -1)) + '</h4>' : '<p>' + (libHl(l, terms) || '&nbsp;') + '</p>';
-  }).join('') + '</div>';
+  $('lbSearch').hidden = false;
+  var top = body.scrollTop;
+  body.innerHTML = libBodyHtml(c, terms);
   var marks = body.querySelectorAll('mark');
-  $('lbFind').innerHTML = terms.length ? (marks.length
-    ? '<b>' + marks.length + '곳</b><button type="button" class="reset" data-lbhit="-1">↑</button><button type="button" class="reset" data-lbhit="1">↓</button>'
-    : '본문에 "' + esc(LIB.q) + '" 없음') : '';
-  if (marks.length) libJump(0);
+  if (!marks.length) LIB.hit = 0;
+  else if (jump) libJump(0);
+  else { body.scrollTop = top; LIB.hit = Math.min(LIB.hit, marks.length - 1); marks[LIB.hit].classList.add('cur'); }
+  libFindCnt();
 }
 function libJump(step) {
   var marks = $('lbBody').querySelectorAll('mark'); if (!marks.length) return;
   LIB.hit = step === 0 ? 0 : (LIB.hit + step + marks.length) % marks.length;
   [].forEach.call(marks, function (m, i) { m.classList.toggle('cur', i === LIB.hit); });
   marks[LIB.hit].scrollIntoView({ block: 'center', behavior: step === 0 ? 'auto' : 'smooth' });
+  libFindCnt();
 }
 function libIndexOne(r) {
   fetch(r.file_url).then(function (res) { if (!res.ok) throw new Error(res.status); return res.blob(); })
@@ -11598,7 +11769,7 @@ function libIndexOne(r) {
       r.content = txt || '';
       if (LIB.hasCols && RPC.live) RPC.db.from('dashboard_files').update({ content: r.content, file_size: r.file_size || null }).eq('id', r.id);
     }).catch(function (e) { console.warn('[EHS] 본문 읽기 실패', e); r.content = ''; })
-    .then(function () { if (String(LIB.open) === String(r.id)) libRenderView(); renderLibList(); });
+    .then(function () { renderLibList(); if (String(LIB.open) === String(r.id)) libRenderView(true); });
 }
 function libSetCat(cat) {
   var r = LIB_FILES.filter(function (x) { return String(x.id) === String(LIB.open); })[0]; if (!r) return;
@@ -14973,6 +15144,7 @@ function bind() {
     var mov = e.target.closest('[data-moview]');
     if (mov) { state.monView = mov.dataset.moview; state.monMore = false; renderMonitorPage(); return; }
     if (e.target.closest('[data-momore]')) { state.monMore = true; renderMonitorPage(); return; }
+    if (e.target.closest('[data-mobulk]')) { monBulkComplete(state.monOverList || []); return; }
 
     var sdg = e.target.closest('[data-sdgo]');
     if (sdg) { goBoard(sdg.dataset.sdgo, sdg.dataset); return; }
@@ -15116,6 +15288,7 @@ function bind() {
   $('libSort').onchange = function () { LIB.sort = this.value; renderLibList(); };
   $('bd-library').addEventListener('click', function (e) {
     var b;
+    if ((b = e.target.closest('[data-libscope]'))) { LIB.scope = b.dataset.libscope; renderLibList(); $('libQ').focus(); return; }
     if ((b = e.target.closest('[data-libcat]'))) {
       LIB.cat = b.dataset.libcat; renderLibList();
       // 위 구분 타일을 누르면 "자료 등록"의 구분도 같이 맞춥니다 (기획을 보고 올리면 기획으로 등록)
@@ -15127,9 +15300,17 @@ function bind() {
   $('libScrim').addEventListener('click', function (e) {
     var b;
     if (e.target === $('libScrim') || e.target.closest('#lbClose')) { libClose(); return; }
-    if ((b = e.target.closest('[data-lbtab]'))) { LIB.tab = b.dataset.lbtab; libRenderView(); return; }
-    if ((b = e.target.closest('[data-lbhit]'))) { libJump(+b.dataset.lbhit); }
+    if ((b = e.target.closest('[data-lbtab]'))) { LIB.tab = b.dataset.lbtab; libRenderView(true); return; }
+    if ((b = e.target.closest('[data-lbhit]'))) { libJump(+b.dataset.lbhit); return; }
+    if (e.target.closest('#lbReread')) {
+      var r = LIB_FILES.filter(function (x) { return String(x.id) === String(LIB.open); })[0];
+      if (r) { r.content = null; r._idxFail = false; libRenderView(true); }
+    }
   });
+  // 이 문서 안에서 찾기
+  var lbT = null;
+  $('lbQ').oninput = function () { var v = this.value; clearTimeout(lbT); lbT = setTimeout(function () { LIB.dq = v; libRenderView(true); }, 150); };
+  $('lbQ').onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); libJump(e.shiftKey ? -1 : 1); } };
   $('lbCatSel').onchange = function () { libSetCat(this.value); };
   document.addEventListener('keydown', function (e) {
     if (!$('libScrim').classList.contains('on')) return;
