@@ -2294,6 +2294,11 @@ window.AI_CONFIG = {
   .lib-site:hover{background:#fff;box-shadow:inset 0 0 0 1px #000}
   .ds-upd{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:12px;color:var(--ink3)}
   .ds-upd b{color:var(--ink);font-weight:700}
+  /* 모든 게시판의 '탭 줄 ↔ 첫 내용' 간격을 주간업무와 같게 : 맨 위 '자료 업데이트' 줄 · '기준일' 줄은 탭 아래 여백 안으로 올림 */
+  @media (min-width:901px){
+    .bpanel > .ds-upd:first-child{margin:-30px 0 8px;min-height:24px}
+    .bpanel > .sd-meta:first-child,.bpanel > :first-child > .sd-meta:first-child{margin-top:-26px}
+  }
   .ds-upd .ds-upd-sh{font-size:11px}
   .ds-upd .reset{font-size:11.5px;padding:5px 12px}
   .ds-upd .reset.de-go{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -3147,6 +3152,60 @@ window.AI_CONFIG = {
     .mo-meta{max-width:50%}
     .mo-tx{flex-basis:100%;white-space:normal}
     .mo-seg button{padding:8px 14px}
+  }
+
+  /* ══════════ 모바일 전용 보정 (폰에서 화면이 옆으로 넓어져 확대 · 축소되거나 잘리지 않게) ══════════ */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  html,body{overflow-x:clip;max-width:100%}
+  @media (max-width:1180px){
+    .sd-band.b6{grid-template-columns:repeat(3,minmax(0,1fr))}
+  }
+  @media (max-width:760px){
+    /* 상단 바 : 날씨는 아이콘 · 기온만, 아이콘 버튼은 조금 작게, 넘치면 바 안에서만 옆으로 밀림 */
+    .tb-in{gap:2px;padding:0 10px;overflow-x:auto;scrollbar-width:none}
+    .tb-in::-webkit-scrollbar{display:none}
+    .wordmark-logo{height:22px}
+    .wx{gap:5px;margin:0 2px} .wx-loc,.wx-desc,.wx-sub{display:none}
+    .hdr-sep{display:none}
+    .popup-btn{width:34px;height:34px}
+    .popup-btn svg{width:18px;height:18px}
+    /* 큰 제목 · 날짜 */
+    .hero-in{padding-left:16px;padding-right:16px}
+    /* 메인 탭 : 옆으로 밀어서 보기 (스크롤바 숨김) */
+    .bnav{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .bnav::-webkit-scrollbar{display:none}
+    .bnav-sub{flex-wrap:wrap;padding-left:16px;padding-right:16px}
+    /* 본문 좌우 여백 */
+    .wrap,.wrap-body{padding-left:14px;padding-right:14px}
+    /* 카드 숫자 칸 : 2칸 같은 폭 */
+    .kpis.k3,.kpis.k4,.kpis.k5{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .kpi{min-width:0}
+    .kpi-foot{flex-wrap:wrap !important;white-space:normal !important}
+    /* 안전 · 보건 · 환경 현황 첫 줄 : 6칸 → 2칸 */
+    .sd-band.b6{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .sd-band.b6 .sd-cell .v{font-size:34px}
+    .sd-cell .l{flex-wrap:wrap}
+    /* 안전사고 월별 · 연간 차트 */
+    .acm-grid{grid-template-columns:minmax(0,1fr) !important;gap:18px}
+    .acm-chart .bc-set{gap:1px}
+    .acm-chart .bc-b{width:7px;border-radius:4px 4px 1px 1px}
+    .acm-chart.acm-year .bc-b{width:22px}
+    .acm-chart:not(.acm-year) .bc-b span{display:none}
+    .acm-chart .bc-k{font-size:9.5px}
+    .acm-chart .bc-tot{font-size:11px}
+    #accKpi .kpi .v{font-size:34px}
+    /* 표는 카드 안에서만 옆으로 밀어 보기 */
+    .tw{-webkit-overflow-scrolling:touch}
+    /* 인원현황 등 긴 글자 줄바꿈 */
+    .kpi2-s,.card header .note{white-space:normal;min-width:0}
+    .card header{flex-wrap:wrap}
+    /* iOS : 글자 칸을 누를 때 화면이 저절로 확대되지 않도록 16px */
+    input,select,textarea{font-size:16px !important}
+  }
+  /* 터치 화면 : 누른 뒤 회색 '마우스 올림' 표시가 남지 않게 */
+  @media (hover:none){
+    .bnav button:hover:not([aria-pressed="true"]),.bnav button.hov:not([aria-pressed="true"]){background:none;color:var(--ink)}
+    .bnav-sub button:hover:not([aria-pressed="true"]){background:#fff;border-color:var(--line);color:var(--ink2)}
   }
 </style>
 
@@ -6880,8 +6939,7 @@ function sdIsInspTarget(v) {
   return !!v && !/^(x|n|no|-|무|아니오|비대상|미대상|해당\s*없음|대상\s*아님)$/i.test(v);
 }
 function sdMeta(group, n) {
-  return '<div class="sd-meta"><span></span>' +   /* 안내 문장은 뺐습니다 (날짜만 표시) */
-    '<span>' + ymd(new Date()).replace(/-/g, '.') + ' 기준</span></div>';
+  return '';   /* 'OOOO.OO.OO 기준' 줄은 뺐습니다 */
 }
 function sdBandCell(tab, label, val, unit, pct, desc) {
   return '<button type="button" class="sd-cell"' + sdGo(tab) + '><span class="l">' + esc(label) + '<span aria-hidden="true">→</span></span>' +
@@ -8174,9 +8232,7 @@ function renderMonitorPage() {
     '연간계획(월간 스케줄 → 연간 업무 계획)은 월간에서만 그 달 해당 업무를 보여줍니다. ' +
     '항목을 누르면 해당 게시물로 이동하며, 완료 처리는 그 게시물에서 합니다.</div></div>';
 
-  el.innerHTML = '<div class="sd-meta"><span></span>' +
-      '<span>' + ymd(new Date()).replace(/-/g, '.') + ' 기준</span></div>' +
-    '<div class="sd-band mo-band">' + band + '</div>' +
+  el.innerHTML = '<div class="sd-band mo-band">' + band + '</div>' +
     '<div class="mo-grid">' + left + right + '</div>';
   monSyncSticky();
   renderMonActPage();
@@ -8185,9 +8241,7 @@ function renderMonitorPage() {
 function renderMonActPage() {
   var el = $('monActDash');
   if (!el) return;
-  el.innerHTML = '<div class="sd-meta"><span></span>' +
-      '<span>' + ymd(new Date()).replace(/-/g, '.') + ' 기준</span></div>' +
-    '<div class="sd-grid mo-dom">' + monDomainCards() + '</div>';
+  el.innerHTML = '<div class="sd-grid mo-dom">' + monDomainCards() + '</div>';
 }
 /** 안전 · 보건 · 환경 업무 현황 카드 3개. 제목을 누르면 각 분야 "현황" 대시보드로, 막대 · 칩을 누르면 해당 게시판으로 */
 function monDomainCards() {
