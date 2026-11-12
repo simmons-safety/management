@@ -16554,11 +16554,17 @@ function stBase(org, site) {
 }
 /** 요약 카드 · 사업장별 표에 쓰는 인원 = 직접 수정한 값(ST.ov)이 있으면 그 값, 없으면 명단 기준.
  *  총인원 · 합계는 사업장 인원을 더해서 만듭니다 */
+/** 시몬스 서울사무소 = 파르나스타워 + 전국 매장 (따로 입력해서 합계) — 기본값은 처음 알려 준 인원 */
+var ST_SPLIT = { org: 'S', site: '서울사무소', parts: [['파르나스타워', 196], ['전국 매장', 308]] };
+function stSplitKey(name) { return ST_SPLIT.org + '|' + ST_SPLIT.site + '#' + name; }
+function stSplitVal(name, def) { var k = stSplitKey(name); return ST.ov && ST.ov[k] !== undefined && ST.ov[k] !== null ? +ST.ov[k] : def; }
+function stIsSplit(o, s) { return o === ST_SPLIT.org && s === ST_SPLIT.site; }
 function stSum(org, site) {
   var orgs = org === 'all' ? ['S', 'P'] : [org], sites = site === 'all' ? stSites() : [site], t = 0;
   orgs.forEach(function (o) {
     sites.forEach(function (s) {
       var k = o + '|' + s;
+      if (stIsSplit(o, s)) { ST_SPLIT.parts.forEach(function (p) { t += stSplitVal(p[0], p[1]); }); return; }
       t += (ST.ov && ST.ov[k] !== undefined && ST.ov[k] !== null) ? +ST.ov[k] : stBase(o, s);
     });
   });
@@ -16595,6 +16601,12 @@ function stSaveOv(v) {
 function stOpenEditor() {
   var sites = stSites().slice(0, 2), el = $('stEditor');
   function inp(o, s) {
+    // 시몬스 서울사무소 : 파르나스타워 · 전국 매장 두 칸 → 합계 자동
+    if (stIsSplit(o, s)) {
+      return '<div>' + ST_SPLIT.parts.map(function (p) {
+        return '<small style="margin:0 0 2px">' + esc(p[0]) + '</small><input type="number" min="0" step="1" inputmode="numeric" data-stk="' + esc(stSplitKey(p[0])) + '" value="' + stSplitVal(p[0], p[1]) + '" style="margin-bottom:4px">';
+      }).join('') + '<small data-stsplit>합계 —</small></div>';
+    }
     var k = o + '|' + s, base = stBase(o, s);
     var has = ST.ov && ST.ov[k] !== undefined && ST.ov[k] !== null;
     return '<div><input type="number" min="0" step="1" inputmode="numeric" data-stk="' + esc(k) + '" value="' + (has ? +ST.ov[k] : base) + '">' +
@@ -16615,6 +16627,12 @@ function stOpenEditor() {
       el.querySelectorAll('input[data-stk^="' + o + '|"]').forEach(function (i) { t += Math.max(0, parseInt(i.value, 10) || 0); });
       el.querySelector('[data-stsum="' + o + '"]').textContent = stN(t) + '명';
     });
+    var sp = el.querySelector('[data-stsplit]');
+    if (sp) {
+      var st = 0;
+      el.querySelectorAll('input[data-stk*="#"]').forEach(function (i) { st += Math.max(0, parseInt(i.value, 10) || 0); });
+      sp.textContent = '합계 ' + stN(st) + '명';
+    }
   }
   sums();
   el.oninput = sums;
@@ -16630,6 +16648,7 @@ function stOpenEditor() {
     el.querySelectorAll('input[data-stk]').forEach(function (i) {
       var n = parseInt(i.value, 10);
       if (isNaN(n) || n < 0) { bad = true; return; }
+      if (i.dataset.stk.indexOf('#') !== -1) { v[i.dataset.stk] = n; return; }   // 서울사무소 파르나스타워 · 매장은 항상 저장
       var p = i.dataset.stk.split('|');
       if (n !== stBase(p[0], p[1])) v[i.dataset.stk] = n;   // 명단과 같으면 저장하지 않음 → 명단이 바뀌면 그대로 따라감
     });
@@ -16683,6 +16702,9 @@ function renderStaff() {
       '<div class="st-split"><span class="a" style="width:' + a.toFixed(1) + '%"></span><span class="b" style="width:' + (100 - a).toFixed(1) + '%"></span></div>' +
       '<div class="kpi2-row">' + two.map(function (s, k) {
         var sub = '';
+        if (stIsSplit(org, s)) {   // 시몬스 서울사무소 : (파르나스타워 N명 / 전국 매장 N명)
+          sub = ' <span class="kpi2-s">(' + ST_SPLIT.parts.map(function (p) { return esc(p[0]) + ' ' + stN(stSplitVal(p[0], p[1])) + '명'; }).join(' / ') + ')</span>';
+        }
         if (org === 'P') {   // 협력사 : 사업장 이름 뒤에 (업체 수, 근무 형태)
           var nCo = stRows().filter(function (r) { return r.org === 'P' && r.site === s; }).length;
           sub = ' <span class="kpi2-s">(' + nCo + '개사' + (ST_SITE_NOTE[s] ? ', ' + esc(ST_SITE_NOTE[s]) : '') + ')</span>';
