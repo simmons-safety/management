@@ -2691,9 +2691,7 @@ window.AI_CONFIG = {
   .pt-cal5 .cal-d .ec.pt-hol{background:none;color:var(--ink3);padding-left:2px}
   /* 사업장 탭으로 고른 쪽만 강조 */
   .pt-cal5 .cal-d .ec.pt-dim{opacity:.28}
-  .pt-cal5 .cal-d .ec.pt-on{font-weight:700;box-shadow:inset 3px 0 0 #000}
-  .pt-cal5 .cal-d .ec.pt-on.pt-seoul{box-shadow:inset 3px 0 0 #2E9BD6}
-  .pt-cal5 .cal-d .ec.pt-on.pt-miss{box-shadow:inset 3px 0 0 #C5221F}
+  .pt-cal5 .cal-d .ec.pt-on:not(.pt-miss){background:#E4F3E8}
   .pt-cal5 .cal-d.holiday{cursor:default;background:#FCFCFC}
   .pt-alert{margin:0 0 14px;padding:12px 16px;border-radius:12px;font-size:12.5px;line-height:1.7;background:#FDECEA;color:#B3261E}
   .pt-alert b{font-weight:700}
@@ -13649,7 +13647,7 @@ var PT_CHECK = [
   ['기타', '기타 이상 여부']
 ];
 var PT_ROWS = [];
-var PT = { site: '팩토리움', place: '', ym: ymd(new Date()).slice(0, 7), day: '', err: '', built: false };
+var PT = { site: '팩토리움', place: '', ym: ymd(new Date()).slice(0, 7), day: '', err: '', built: false, hl: '' };   // hl = 달력에서 강조할 사업장 ('' = 둘 다 보통)
 try { var _pts = localStorage.getItem('ptSite'); if (PT_SITES[_pts]) PT.site = _pts; } catch (e) {}
 
 /** 근무일 = 월~금 이면서 공휴일이 아닌 날 */
@@ -13741,6 +13739,11 @@ function ptBuild() {
   $('ptSave').onclick = ptSubmit;
   sec.addEventListener('click', function (e) {
     var t;
+    if ((t = e.target.closest('[data-pthl]'))) {
+      var hs = t.dataset.pthl;
+      if (PT.hl === hs) { PT.hl = ''; ptRender(); } else { PT.hl = hs; ptSetSite(hs); }
+      return;
+    }
     if ((t = e.target.closest('[data-ptsite]'))) { ptSetSite(t.dataset.ptsite); return; }
     if ((t = e.target.closest('[data-ptplace]'))) { PT.place = t.dataset.ptplace; $('ptStore').value = ''; ptPlacesRender(); return; }
     if ((t = e.target.closest('[data-ptall]'))) {
@@ -13868,8 +13871,9 @@ function ptRender() {
   ptBuild();
   if (!$('ptCal')) return;
   var site = PT.site, cfg = PT_SITES[site];
+  // 달력 위 사업장 버튼 : 처음엔 둘 다 보통 표시 · 누르면 그 사업장만 연한 초록으로 강조 (한 번 더 누르면 해제)
   $('ptSiteTabs').innerHTML = Object.keys(PT_SITES).map(function (s) {
-    return '<button class="fb" data-ptsite="' + esc(s) + '" aria-pressed="' + (s === site) + '">' + esc(s) + '</button>';
+    return '<button class="fb" data-pthl="' + esc(s) + '" aria-pressed="' + (s === PT.hl) + '">' + esc(s) + '</button>';
   }).join('');
   $('ptSiteSel').innerHTML = Object.keys(PT_SITES).map(function (s) {
     return '<button type="button" class="pt-chip" data-ptsite="' + esc(s) + '" aria-pressed="' + (s === site) + '">' + esc(s) + '</button>';
@@ -13906,7 +13910,7 @@ function ptRender() {
         // 작성 필요 · 오늘 필수 · 누락 칩 → 누르면 그 사업장 · 날짜로 아래 작성칸으로 이동
         var go = c.k === 'need' || c.k === 'plan' || c.k === 'miss';
         // 위에서 고른 사업장만 강조 — 다른 사업장 칩은 흐리게
-        return '<i class="ec pt-' + c.k + (s === '서울사무소' ? ' pt-seoul' : '') + (s === PT.site ? ' pt-on' : ' pt-dim') + '"' + (go ? ' data-ptwrite="' + esc(s) + '" data-ptwday="' + key + '" style="cursor:pointer"' : '') +
+        return '<i class="ec pt-' + c.k + (s === '서울사무소' ? ' pt-seoul' : '') + (!PT.hl ? '' : s === PT.hl ? ' pt-on' : ' pt-dim') + '"' + (go ? ' data-ptwrite="' + esc(s) + '" data-ptwday="' + key + '" style="cursor:pointer"' : '') +
           (c.k === 'done' ? ' data-ptdsite="' + esc(s) + '"' : '') +
           ' title="' + esc(s + ' ' + c.t + (go ? ' — 누르면 작성칸으로 이동' : '')) + '">' + esc(nm) + ' · ' + esc(c.t) + '</i>';
       }).join('');
