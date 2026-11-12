@@ -13619,6 +13619,8 @@ var PT_SITES = {
   '서울사무소': { places: ['파르나스타워'], stores: true, writer: '한승배 대리' }
 };
 var PT_BOSS = { title: '안전보건환경팀장', name: '최은성 차장' };
+/** 팀장 승인 · 반려 · 일괄 승인 비밀번호 — 전자결재 비밀번호를 꺼 둬도 순회점검일지는 항상 묻습니다 */
+var PT_APPROVE_PIN = '1004';
 var PT_CK = ['양호', '불량', '해당없음'];
 var PT_CHECK = [
   ['개인보호구', '안전보호구 관리 및 착용상태'],
@@ -13893,7 +13895,8 @@ function ptRender() {
       // 해당 없는 날(작성 의무 없음 · 앞으로의 빈 날)은 칩을 그리지 않습니다
       chips = sites.map(function (s) {
         var c = info[s].cell[key] || { k: 'fut', t: '' };
-        if (c.k === 'fut' || c.k === 'skip') return '';
+        // 오늘 이후 "작성 필요"(plan) 칩은 표시하지 않습니다 — 오늘은 "오늘 필수", 지난 날은 "누락"만
+        if (c.k === 'fut' || c.k === 'skip' || c.k === 'plan') return '';
         var nm = s === '서울사무소' ? '서울' : '팩토리움';
         // 작성 필요 · 오늘 필수 · 누락 칩 → 누르면 그 사업장 · 날짜로 아래 작성칸으로 이동
         var go = c.k === 'need' || c.k === 'plan' || c.k === 'miss';
@@ -13998,7 +14001,7 @@ function ptSubmit() {
 function ptBulkApprove() {
   var ids = ptListRows().filter(function (r) { return ptStatus(r) === '결재 대기'; }).map(function (r) { return r.id; });
   if (!ids.length) return;
-  apAskPin('일괄 승인').then(function (ok) {
+  apAskPin(PT_BOSS.name + ' 일괄 승인', PT_APPROVE_PIN).then(function (ok) {
     if (!ok || !confirm(PT_BOSS.title + ' ' + PT_BOSS.name + ' 이름으로 ' + ids.length + '건을 승인합니다.')) return;
     RPC.db.from('patrol_log').update({ sign_boss: 'stamp', boss_signed_at: new Date().toISOString() }).in('id', ids).then(function (res) {
       if (res.error) throw res.error;
@@ -14123,11 +14126,11 @@ function ptOpen(id) {
         ptDocHtml(r) + '<script>window.onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>');
       w.document.close();
     } else if (a === 'ok') {
-      apAskPin('승인').then(function (ok) {
+      apAskPin(PT_BOSS.name + ' 승인', PT_APPROVE_PIN).then(function (ok) {
         if (ok) save({ sign_boss: 'stamp', boss_signed_at: new Date().toISOString() }, '승인했습니다.');
       });
     } else if (a === 'reject') {
-      apAskPin('반려').then(function (ok) {
+      apAskPin(PT_BOSS.name + ' 반려', PT_APPROVE_PIN).then(function (ok) {
         if (!ok) return;
         var rs = prompt('반려 사유를 적어 주세요.');
         if (rs == null) return;
@@ -14365,7 +14368,7 @@ function alBuild() {
           AL_GAS.map(function (g, i) {
             return '<tr><td class="l"><b style="color:var(--ink)">' + esc(g.lb) + '</b>\n' + esc(g.name.replace(/\n/g, ' ')) + '</td>' +
               '<td><input type="number" step="0.01" inputmode="decimal" id="alG' + i + '" placeholder="금일 지침값"></td>' +
-              '<td><input type="number" step="0.01" inputmode="decimal" id="alP' + i + '"><span class="src" id="alPS' + i + '"></span></td>' +
+              '<td><input type="number" step="0.01" inputmode="decimal" id="alP' + i + '"></td>' +
               '<td class="calc" id="alU' + i + '">-</td></tr>';
           }).join('') +
         '</tbody></table></div>' +
@@ -14474,7 +14477,6 @@ function alPrevFill() {
   AL_GAS.forEach(function (g, i) {
     var p = alPrev(i, d);
     $('alP' + i).value = p ? p.v : '';
-    $('alPS' + i).textContent = p ? (p.seed ? '기존 지침값' : (+p.d.slice(5, 7)) + '/' + (+p.d.slice(8)) + ' 지침') : '이전 기록 없음 — 직접 입력';
   });
   alCalc();
 }
