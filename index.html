@@ -2689,6 +2689,11 @@ window.AI_CONFIG = {
   .pt-cal5 .cal-d .ec.pt-need.pt-seoul{background:#D9ECF8}
   .pt-cal5 .cal-d .ec.pt-miss{background:#FDECEA;color:#C5221F}
   .pt-cal5 .cal-d .ec.pt-hol{background:none;color:var(--ink3);padding-left:2px}
+  /* 사업장 탭으로 고른 쪽만 강조 */
+  .pt-cal5 .cal-d .ec.pt-dim{opacity:.28}
+  .pt-cal5 .cal-d .ec.pt-on{font-weight:700;box-shadow:inset 3px 0 0 #000}
+  .pt-cal5 .cal-d .ec.pt-on.pt-seoul{box-shadow:inset 3px 0 0 #2E9BD6}
+  .pt-cal5 .cal-d .ec.pt-on.pt-miss{box-shadow:inset 3px 0 0 #C5221F}
   .pt-cal5 .cal-d.holiday{cursor:default;background:#FCFCFC}
   .pt-alert{margin:0 0 14px;padding:12px 16px;border-radius:12px;font-size:12.5px;line-height:1.7;background:#FDECEA;color:#B3261E}
   .pt-alert b{font-weight:700}
@@ -13900,7 +13905,8 @@ function ptRender() {
         var nm = s === '서울사무소' ? '서울' : '팩토리움';
         // 작성 필요 · 오늘 필수 · 누락 칩 → 누르면 그 사업장 · 날짜로 아래 작성칸으로 이동
         var go = c.k === 'need' || c.k === 'plan' || c.k === 'miss';
-        return '<i class="ec pt-' + c.k + (s === '서울사무소' ? ' pt-seoul' : '') + '"' + (go ? ' data-ptwrite="' + esc(s) + '" data-ptwday="' + key + '" style="cursor:pointer"' : '') +
+        // 위에서 고른 사업장만 강조 — 다른 사업장 칩은 흐리게
+        return '<i class="ec pt-' + c.k + (s === '서울사무소' ? ' pt-seoul' : '') + (s === PT.site ? ' pt-on' : ' pt-dim') + '"' + (go ? ' data-ptwrite="' + esc(s) + '" data-ptwday="' + key + '" style="cursor:pointer"' : '') +
           (c.k === 'done' ? ' data-ptdsite="' + esc(s) + '"' : '') +
           ' title="' + esc(s + ' ' + c.t + (go ? ' — 누르면 작성칸으로 이동' : '')) + '">' + esc(nm) + ' · ' + esc(c.t) + '</i>';
       }).join('');
@@ -14337,7 +14343,7 @@ function alBuild() {
       '<b>' + esc(AL_SIGN[i].name) + '</b><span class="cr-flow">' + note + '</span></div></div>';
   };
   sec.innerHTML =
-    '<div class="card"><header><h2>대기일지 작성 현황</h2><span class="note">평일 매일 작성</span>' +
+    '<div class="card"><header><h2>대기일지 작성 현황</h2><span class="note">주말 · 공휴일 포함 매일 작성</span>' +
       '<div class="filterbar" style="margin-left:auto"><span id="alNav" style="display:flex;gap:6px"><button class="fb" id="alPrevM">◀</button><span id="alYm" style="font-weight:700;align-self:center;min-width:84px;text-align:center"></span><button class="fb" id="alNextM">▶</button></span>' +
         '<button class="fb" id="alCalTog" aria-pressed="false">달력 펼치기 ▾</button></div></header>' +
       '<div id="alAlert"></div><div id="alCal"></div></div>' +
@@ -14465,11 +14471,11 @@ function alOpSync(n) {
   var run = alOpRun(n), g = $('alG' + (n - 1));
   $('alOpN' + n).value = run ? '정상가동' : '미가동';
   if (g) {
-    if (!run) g.value = '';
+    if (run && g.disabled) g.value = '';    // 미가동 → 가동으로 바뀌면 금일 지침값을 새로 입력
     g.disabled = !run;
     g.placeholder = run ? '금일 지침값' : '미가동';
   }
-  alCalc();
+  alCalc();   // 미가동이면 금일 지침값 = 마지막 지침값 고정 · 사용량 0 (alCalc 에서)
 }
 function alPrevFill() {
   if (!$('alP0')) return;
@@ -14484,7 +14490,10 @@ function alCalc() {
   if (!$('alFT')) return;
   $('alFT').textContent = alDur($('alFS').value, $('alFE').value) || '-';
   AL_GAS.forEach(function (g, i) {
-    var t = alNum($('alG' + i).value), p = alNum($('alP' + i).value), el = $('alU' + i);
+    var el = $('alU' + i);
+    // 미가동 보일러 : 가스 지침량 = 최근 마지막 지침값 그대로(고정) · 사용량 0
+    if (!alOpRun(i + 1)) { $('alG' + i).value = $('alP' + i).value; el.textContent = '0'; el.style.color = ''; return; }
+    var t = alNum($('alG' + i).value), p = alNum($('alP' + i).value);
     if (t == null || p == null) { el.textContent = '-'; el.style.color = ''; return; }
     var u = alNum(t - p);
     el.textContent = String(u); el.style.color = u < 0 ? '#C0392B' : '';
@@ -14521,9 +14530,9 @@ function alRender() {
       if (st !== '결재 완료' && key >= monthStart && key <= today) {
         chip = '<i class="ec al-need">결재 필요</i>'; cls += ' al-needday';
       } else chip = '<i class="ec ' + (st === '반려' ? 'pt-miss' : 'pt-done') + '">' + st + '</i>';
-    } else if (biz && key >= AL_START && key < today) {
+    } else if (key >= AL_START && key < today) {          // 대기일지는 주말 · 공휴일 포함 매일 작성
       chip = '<i class="ec pt-miss" data-alwrite="' + key + '" style="cursor:pointer" title="누르면 이 날짜로 작성">누락</i>'; missN.push(key);
-    } else if (biz && key === today) {
+    } else if (key === today) {
       chip = '<i class="ec pt-need" data-alwrite="' + key + '" style="cursor:pointer" title="누르면 작성칸으로 이동">오늘 작성</i>';
     }
     if (hol) chip = '<i class="ec pt-hol">' + esc(hol) + '</i>' + chip;
@@ -14539,13 +14548,13 @@ function alRender() {
   $('alCal').innerHTML = '<div class="pt-cal5 al-cal7"><div class="cal-h"><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span><span>일</span></div>' +
     '<div class="cal-g">' + cells.join('') + '</div></div>';
 
-  // 누락 : 시작일(AL_START) ~ 어제 중 근무일(주말 · 공휴일 제외)인데 기록이 없는 날 — 보고 있는 달과 관계없이 전부
+  // 누락 : 시작일(AL_START) ~ 어제 중 기록이 없는 날 (주말 · 공휴일 포함 매일) — 보고 있는 달과 관계없이 전부
   var warn = [], allMiss = [];
   for (var x = parseYmd(AL_START); x && ymd(x) < today; x = addDays(x, 1)) {
     var xk = ymd(x);
-    if (ptBiz(x) && !AL_ROWS.some(function (r) { return alCovers(r, xk); })) allMiss.push(xk);
+    if (!AL_ROWS.some(function (r) { return alCovers(r, xk); })) allMiss.push(xk);
   }
-  if (allMiss.length) warn.push('<b>작성 누락 ' + allMiss.length + '일</b> (주말 · 공휴일 제외) : ' + allMiss.map(function (k) {
+  if (allMiss.length) warn.push('<b>작성 누락 ' + allMiss.length + '일</b> : ' + allMiss.map(function (k) {
     return '<a href="#" data-alwrite="' + k + '" style="color:inherit;text-decoration:underline" title="누르면 이 날짜로 작성">' + (+k.slice(5, 7)) + '.' + (+k.slice(8)) + '(' + crDow(k) + ')</a>';
   }).join(', '));
   var nRv = AL_ROWS.filter(function (r) { return alStatus(r) === '검토 대기'; }).length;
@@ -14580,8 +14589,7 @@ function alRender() {
   var pr = lst.filter(function (r) { return alStatus(r) === '검토 대기'; }).length;
   var pb = lst.filter(function (r) { return alStatus(r) === '승인 대기'; }).length;
   $('alBulk').innerHTML = (pr ? '<button class="reset go" data-albulk="review" style="padding:5px 12px;font-size:11px;margin-left:8px">검토 대기 ' + pr + '건 일괄 검토</button>' : '') +
-    (pb ? '<button class="reset go" data-albulk="boss" style="padding:5px 12px;font-size:11px;margin-left:8px">승인 대기 ' + pb + '건 일괄 승인</button>' : '') +
-    (lst.length ? '<button class="reset" id="alPdfBtn" style="padding:5px 12px;font-size:11px;margin-left:8px">PDF 일괄 다운로드</button>' : '');
+    (pb ? '<button class="reset go" data-albulk="boss" style="padding:5px 12px;font-size:11px;margin-left:8px">승인 대기 ' + pb + '건 일괄 승인</button>' : '');   // PDF 일괄 다운로드 버튼은 뺐습니다
   $('alList').innerHTML = mgBar + (lst.length ? lst.map(function (r, k) {
     var ops = crJson(r.ops), gas = crJson(r.gas), fur = ops.filter(function (o) { return o.n === 4; })[0];
     var ym = alStart(r).slice(0, 7), head = '';
@@ -14623,10 +14631,10 @@ function alSubmit() {
     return { n: o.n, name: o.name, t: $('alOpT' + o.n).value.trim() || '-', note: $('alOpN' + o.n).value.trim() };
   });
   var gas = AL_GAS.map(function (g, i) {
-    var run = alOpRun(i + 1);                                   // 미가동 보일러 → 금일 지침값 · 사용량 공란
-    var t = run ? alNum($('alG' + i).value) : null, p = alNum($('alP' + i).value);
+    var run = alOpRun(i + 1);                                   // 미가동 보일러 → 지침량 = 마지막 지침값 고정 · 사용량 0
+    var p = alNum($('alP' + i).value), t = run ? alNum($('alG' + i).value) : p;
     return { name: g.name, place: g.place, cap: g.cap, pol: g.pol, conc: g.conc, eff: g.eff, chem: g.chem, qty: g.qty,
-      run: run, today: t, prev: p, use: t != null && p != null ? alNum(t - p) : null };
+      run: run, today: t, prev: p, use: !run ? 0 : t != null && p != null ? alNum(t - p) : null };
   });
   var blank = gas.filter(function (g) { return g.run && g.today == null; }).length;
   if (biz && blank && !confirm('금일 지침값이 비어 있는 칸이 ' + blank + '개 있습니다. 그대로 올릴까요?')) return;
@@ -14688,14 +14696,19 @@ function alBulk(kind) {
     }).catch(function (e) { toast(act + ' 실패: ' + ((e && e.message) || e), 'err'); });
   });
 }
+/* A4 한 장에 들어가도록 촘촘하게 (글자 · 여백 · 칸 높이를 줄임) */
 var AL_DOC_CSS =
-  '.al-doc .form7{font-size:10.5px;color:#333;margin-bottom:6px}' +
-  '.al-doc .sec{font-weight:700;font-size:12.5px;margin:14px 0 6px}' +
-  '.al-doc .sub{font-weight:600;font-size:12px;margin:8px 0 6px}' +
-  '.al-doc .ck th,.al-doc .ck td{font-size:10.5px;padding:4px 5px;text-align:center;white-space:pre-line;line-height:1.4}' +
-  '.al-doc .note{font-size:10.5px;color:#444;margin-top:4px}' +
-  '.al-doc .tech{text-align:right;margin-top:12px;font-size:12.5px}' +
-  '.al-doc .guide{margin-top:12px;font-size:9.5px;color:#555;line-height:1.55}' +
+  '.apdoc.al-doc{padding:22px 26px;font-size:11px;line-height:1.35}' +
+  '.al-doc .h{margin-bottom:8px}' +
+  '.al-doc .line td{height:58px!important}' +
+  '.al-doc .body th,.al-doc .body td{padding:4px 8px;font-size:11px}' +
+  '.al-doc .form7{font-size:9.5px;color:#333;margin-bottom:4px}' +
+  '.al-doc .sec{font-weight:700;font-size:11.5px;margin:9px 0 4px}' +
+  '.al-doc .sub{font-weight:600;font-size:11px;margin:4px 0 4px}' +
+  '.al-doc .ck th,.al-doc .ck td{font-size:9.5px;padding:2px 4px;text-align:center;white-space:pre-line;line-height:1.25}' +
+  '.al-doc .note{font-size:9.5px;color:#444;margin-top:2px}' +
+  '.al-doc .tech{text-align:right;margin-top:8px;font-size:11.5px}' +
+  '.al-doc .guide{margin-top:8px;font-size:8.5px;color:#555;line-height:1.4}' +
   '.al-doc .al-wmbox{position:relative}' +
   '.al-doc .al-wm{position:absolute;left:0;right:0;top:50%;margin-top:-24px;height:48px;line-height:48px;text-align:center;pointer-events:none;' +
     'font-size:42px;font-weight:800;color:rgba(0,0,0,.22);transform:rotate(-8deg);white-space:nowrap}';
@@ -14712,14 +14725,14 @@ function alDocHtml(r) {
     return wait ? '<span style="color:#aaa">대기</span>' : '';
   };
   var names = [r.writer || AL_SIGN[0].name, r.reviewer || AL_SIGN[1].name, r.approver || AL_SIGN[2].name];
-  var blank8 = new Array(9).join('<td style="height:30px"></td>');
+  var blank8 = new Array(9).join('<td style="height:20px"></td>');
   var tmp = r.temp_max != null && r.temp_max !== '' ? esc(r.temp_max) + ' / ' + esc(r.temp_min) + ' ℃' : '';
   return '<style>' + AL_DOC_CSS + '</style><div class="apdoc al-doc">' +
     '<div class="form7">■ 대기환경보전법 시행규칙 [별지 제7호서식] &lt;개정 2022. 5. 3.&gt;</div>' +
     '<div class="h"><h1 style="font-size:19px;letter-spacing:.02em">대기배출시설 및 방지시설 운영기록부</h1>' +
       '<table class="line"><tr><th class="g" rowspan="2">결<br>재</th>' +
         AL_SIGN.map(function (s, i) { return '<th style="width:auto;min-width:84px;white-space:nowrap">' + s.t + '<br><span style="font-weight:400">' + esc(names[i]) + '</span></th>'; }).join('') + '</tr>' +
-      '<tr><td style="height:72px;min-width:78px">' + crStamp(ld, '') + '</td>' +
+      '<tr><td style="height:58px;min-width:78px">' + crStamp(ld, '') + '</td>' +
         '<td style="min-width:78px">' + cell(rv, true) + '</td>' +
         '<td style="min-width:78px">' + cell(bs, rv === 'stamp') + '</td></tr></table></div>' +
     (rej ? '<div style="margin:0 0 12px;border:1px solid #C0392B;color:#C0392B;padding:8px 12px;font-size:12px">' + rej.who + ' 반려 사유 : ' + esc(rej.why) + '</div>' : '') +
@@ -14729,8 +14742,8 @@ function alDocHtml(r) {
     '<div class="sec">1. 배출구별 주요 배출시설 및 방지시설 가동(조업)시간</div>' +
     '<table class="ck"><tr><th style="width:56px">배출구</th><th>배출시설</th><th style="width:190px">가동시간</th><th style="width:170px">비고</th></tr>' +
       ops.map(function (o) {
-        return '<tr><td>' + esc(o.n) + '</td><td>' + esc(o.name) + '</td><td>' + esc(o.t || '-') +
-          (o.s && o.e ? '\n(' + esc(o.s) + ' ~ ' + esc(o.e) + ')' : '') + '</td><td>' + esc(o.note || '') + '</td></tr>';
+        return '<tr><td>' + esc(o.n) + '</td><td>' + esc(String(o.name || '').replace(/\n/g, ' ')) + '</td><td>' + esc(o.t || '-') +
+          (o.s && o.e ? ' (' + esc(o.s) + ' ~ ' + esc(o.e) + ')' : '') + '</td><td>' + esc(o.note || '') + '</td></tr>';
       }).join('') + '</table>' +
     '<div class="note">* 비고란은 정상 여부를 기재합니다.</div>' +
     '<div class="sec">2. 방지시설 운영사항</div><div class="sub">가. 방지시설 운전사항</div>' +
@@ -14738,27 +14751,27 @@ function alDocHtml(r) {
       '<th rowspan="2">처리<br>용량<br>(㎥/min)</th><th rowspan="2">처리<br>오염<br>물질</th><th rowspan="2">처리<br>농도<br>(ppm또는<br>㎎/S㎥)</th><th rowspan="2">처리<br>효율(%)</th>' +
       '<th colspan="2">사용약품</th></tr><tr><th>약품명</th><th>약품량</th></tr>' +
       gas.map(function (g) {
-        return '<tr><td>' + esc(g.name || '') + '</td><td>' + esc(g.place || '') + '</td><td>' + esc(alFmt(g.today)) + '</td><td>' + esc(alFmt(g.use)) + '</td>' +
-          '<td>' + esc(g.cap || '') + '</td><td>' + esc(g.pol || '') + '</td><td>' + esc(g.conc || '') + '</td><td>' + esc(g.eff || '') + '</td>' +
+        return '<tr><td>' + esc(String(g.name || '').replace(/\/\n/g, '/')) + '</td><td>' + esc(g.place || '') + '</td><td>' + esc(alFmt(g.today)) + '</td><td>' + esc(alFmt(g.use)) + '</td>' +
+          '<td>' + esc(g.cap || '') + '</td><td>' + esc(String(g.pol || '').replace(/\n/g, ' · ')) + '</td><td>' + esc(g.conc || '') + '</td><td>' + esc(g.eff || '') + '</td>' +
           '<td>' + esc(g.chem || '') + '</td><td>' + esc(g.qty || '') + '</td></tr>';
       }).join('') + '</table>' +
-    '<div class="sub" style="margin-top:12px">나. 방지시설 보수사항</div>' +
+    '<div class="sub" style="margin-top:8px">나. 방지시설 보수사항</div>' +
     // 해당없음 : 표는 빈 양식 그대로 두고, 위에 연한 사선 워터마크
     '<div class="al-wmbox"><table class="ck"><tr><th>방지시설명</th><th>배출구별</th><th>보수기간</th><th>보수자</th><th>보수명세</th></tr>' +
-      '<tr><td style="height:34px">' + (rp.na ? '' : esc(rp.name || '')) + '</td><td>' + (rp.na ? '' : esc(rp.outlet || '')) + '</td><td>' + (rp.na ? '' : esc(rp.period || '')) + '</td>' +
+      '<tr><td style="height:24px">' + (rp.na ? '' : esc(rp.name || '')) + '</td><td>' + (rp.na ? '' : esc(rp.outlet || '')) + '</td><td>' + (rp.na ? '' : esc(rp.period || '')) + '</td>' +
       '<td>' + (rp.na ? '' : esc(rp.by || '')) + '</td><td>' + (rp.na ? '' : esc(rp.detail || '')) + '</td></tr></table>' +
       (rp.na ? '<div class="al-wm" style="font-size:30px">해 당 없 음</div>' : '') + '</div>' +
     '<div class="sec">3. 자가측정사항</div>' +
-    '<div class="al-wmbox"><div style="font-size:11.5px;margin-bottom:4px">측정일 :</div>' +
+    '<div class="al-wmbox"><div style="font-size:10.5px;margin-bottom:3px">측정일 :</div>' +
     '<table class="ck"><tr><th>①기상</th><th>②기온</th><th>③습도</th><th>④기압</th><th>⑤풍향</th><th>⑥풍속</th></tr>' +
-      '<tr><td>□맑음, □흐림, □구름,\n□눈, □비</td><td style="text-align:right">℃</td><td style="text-align:right">%</td>' +
+      '<tr><td>□맑음, □흐림, □구름, □눈, □비</td><td style="text-align:right">℃</td><td style="text-align:right">%</td>' +
       '<td style="text-align:right">mb</td><td style="text-align:right">풍</td><td style="text-align:right">m/sec</td></tr></table>' +
-    '<table class="ck" style="margin-top:6px"><tr><th>⑦배출구<br>번호</th><th>⑧주요배출<br>시설명</th><th>⑨측정</th><th>⑩측정농도<br>(ppm, ㎎/S㎥)</th>' +
+    '<table class="ck" style="margin-top:4px"><tr><th>⑦배출구<br>번호</th><th>⑧주요배출<br>시설명</th><th>⑨측정</th><th>⑩측정농도<br>(ppm, ㎎/S㎥)</th>' +
       '<th>⑪일일<br>유량<br>(S㎥/일)</th><th>⑫일일<br>배출량<br>(㎏/일)</th><th>⑬검사<br>기기명</th><th>⑭검사<br>방법</th></tr>' +
       '<tr>' + blank8 + '</tr></table>' +
       (rp.self_na ? '<div class="al-wm">해 당 없 음</div>' : '') + '</div>' +
-    '<table class="body" style="margin-top:8px"><tr><th style="width:190px">⑮ 연료명 및 사용량</th><td></td></tr>' +
-      '<tr><th>⑯ 원료명 및 사용량<br><span style="font-weight:400;font-size:10.5px">(특정대기유해물질 배출원 포함)</span></th><td></td></tr>' +
+    '<table class="body" style="margin-top:6px"><tr><th style="width:190px">⑮ 연료명 및 사용량</th><td></td></tr>' +
+      '<tr><th>⑯ 원료명 및 사용량 <span style="font-weight:400;font-size:9.5px">(특정대기유해물질 배출원 포함)</span></th><td></td></tr>' +
       '<tr><th>⑰ 환경기술인의 의견</th><td><div class="pre">' + esc(r.opinion || '') + '</div></td></tr>' +
       '<tr><th>⑱ 기타</th><td><div class="pre">' + esc(r.etc || '') + '</div></td></tr></table>' +
     '<div class="tech">환경기술인 직급 : 과 장 &nbsp;&nbsp;&nbsp; 성명 : 이 재 훈</div>' +
@@ -14772,8 +14785,11 @@ function alDocHtml(r) {
 function alPrintHtml(rows) {
   return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>대기일지 ' + esc(rows.length === 1 ? alStart(rows[0]) : rows.length + '건') + '</title>' +
     '<style>body{margin:0;background:#eee;padding:20px 0}' + AP_DOC_CSS + '.apdoc{margin-bottom:20px}' +
-    '@media print{body{background:#fff;padding:0}.apdoc{width:auto;padding:0;margin:0;page-break-after:always}}@page{size:A4;margin:10mm}</style></head><body>' +
-    rows.map(alDocHtml).join('') + '<script>window.onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>';
+    '@media print{body{background:#fff;padding:0}.apdoc{margin:0!important;page-break-after:always;break-after:page}}@page{size:A4;margin:8mm}</style></head><body>' +
+    rows.map(alDocHtml).join('') +
+    // 인쇄 전에 일지마다 A4 한 장(가로 194mm · 세로 281mm, 96dpi 기준 약 733 × 1062px) 안에 들어가도록 넘치면 비율대로 줄입니다
+    '<script>window.onload=function(){var W=733,H=1050;[].forEach.call(document.querySelectorAll(".apdoc"),function(d){' +
+      'var z=Math.min(1,W/d.offsetWidth,H/d.offsetHeight);if(z<1)d.style.zoom=z;});setTimeout(function(){print()},300)}<\/script></body></html>';
 }
 function alOpen(id) {
   var r = AL_ROWS.filter(function (x) { return String(x.id) === String(id); })[0];
@@ -14851,15 +14867,12 @@ function alPdfAll(btn) {
         btn.textContent = 'PDF 만드는 중… ' + (n + 1) + '/' + rows.length;
         box.innerHTML = '<style>' + AP_DOC_CSS + '</style>' + alDocHtml(r);
         return window.html2canvas(box.querySelector('.apdoc'), { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false }).then(function (cv) {
-          var pxPerMm = cv.width / iw, sliceH = Math.floor(ih * pxPerMm);
-          for (var y = 0; y < cv.height; y += sliceH) {
-            var h = Math.min(sliceH, cv.height - y), part = document.createElement('canvas');
-            part.width = cv.width; part.height = h;
-            part.getContext('2d').drawImage(cv, 0, y, cv.width, h, 0, 0, cv.width, h);
-            if (!first) pdf.addPage();
-            first = false;
-            pdf.addImage(part.toDataURL('image/jpeg', 0.9), 'JPEG', m, m, iw, h / pxPerMm);
-          }
+          // 일지 1건 = A4 1쪽 : 길면 비율대로 줄여서 한 쪽에 맞춥니다
+          var w = iw, h = cv.height * iw / cv.width;
+          if (h > ih) { w = w * ih / h; h = ih; }
+          if (!first) pdf.addPage();
+          first = false;
+          pdf.addImage(cv.toDataURL('image/jpeg', 0.9), 'JPEG', m + (iw - w) / 2, m, w, h);
         });
       });
     });
