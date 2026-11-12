@@ -14163,9 +14163,9 @@ var AL_SIGN = [
 ];
 /** 1. 배출구별 가동시간 — 엑셀 운영기록부(평일) / (주말 · 공휴일) 시트의 기본값 */
 var AL_OPS = [
-  { n: 1, name: '보일러\n(600,000kcal/hr)', biz: ['-', '미가동'], off: ['-', '미가동'] },
-  { n: 2, name: '보일러\n(600,000kcal/hr)', biz: ['-', '미가동'], off: ['-', '미가동'] },
-  { n: 3, name: '보일러\n(200,000kcal/hr)', biz: ['8시간', '정상가동'], off: ['-', '미가동'] },
+  { n: 1, name: '보일러\n(600,000kcal/hr)', biz: ['', '미가동'], off: ['', '미가동'] },
+  { n: 2, name: '보일러\n(600,000kcal/hr)', biz: ['', '미가동'], off: ['', '미가동'] },
+  { n: 3, name: '보일러\n(200,000kcal/hr)', biz: ['8시간', '정상가동'], off: ['', '미가동'] },
   { n: 4, name: '가열로(3.5㎥)', furnace: true, biz: ['', '방지시설설치의무면제'], off: ['', '방지시설설치의무면제'] }
 ];
 /** 2. 방지시설 운전사항 — 지침값 외 칸은 운영기록부 그대로 */
@@ -14179,7 +14179,7 @@ var AL_SEED_PREV = [{ d: '2026-11-10', v: 12280.8 }, { d: '2026-11-10', v: 4188.
 /** 이 날짜부터 평일 미작성을 "누락"으로 표시 (대시보드 대기일지 시작일) */
 var AL_START = '2026-11-12';
 var AL_ROWS = [];
-var AL = { ym: ymd(new Date()).slice(0, 7), day: '', err: '', built: false, wx: {}, wxReq: 0, wxWait: false };
+var AL = { ym: ymd(new Date()).slice(0, 7), day: '', err: '', built: false, wx: {}, wxReq: 0, wxWait: false, calOpen: false };   // 달력은 처음에 접어 둡니다
 
 function alNum(v) { if (v === '' || v == null || isNaN(Number(v))) return null; return Math.round(Number(v) * 100) / 100; }
 function alFmt(v) { var n = alNum(v); return n == null ? '' : String(n); }
@@ -14210,8 +14210,24 @@ function alStatusText(r) {
   return st === '결재 완료' ? '✔ 결재 완료' : st === '반려' ? '<b style="color:#C0392B">반려</b>'
     : st === '검토 대기' ? '검토 대기 (' + AL_SIGN[1].name + ')' : '승인 대기 (' + AL_SIGN[2].name + ')';
 }
+/** 숫자만 입력한 시각 → 'HH:MM' : "08 15" · "8 15" · "0815" · "815" · "08:15" · "8" (못 읽으면 '') */
+function alTime(v) {
+  v = String(v || '').trim();
+  if (!v) return '';
+  var p = v.split(/\D+/).filter(Boolean), h, m;
+  if (p.length >= 2) { h = +p[0]; m = +p[1]; }
+  else if (p.length === 1) {
+    var d = p[0];
+    if (d.length <= 2) { h = +d; m = 0; }
+    else if (d.length <= 4) { h = +d.slice(0, d.length - 2); m = +d.slice(-2); }
+    else return '';
+  } else return '';
+  if (isNaN(h) || isNaN(m) || h > 24 || m > 59) return '';
+  return pad(h) + ':' + pad(m);
+}
 /** 가열로 가동시간 'HH:MM' ~ 'HH:MM' → '1시간 40분' */
 function alDur(s, e) {
+  s = alTime(s); e = alTime(e);
   if (!s || !e) return '';
   var a = s.split(':'), b = e.split(':'), m = (+b[0] * 60 + +b[1]) - (+a[0] * 60 + +a[1]);
   if (isNaN(m)) return '';
@@ -14278,7 +14294,7 @@ function alLoadWx() {
   AL.wxWait = false;
   var d = $('alDate').value;
   if (!d) return;
-  var wd = $('alEnd').value || d, req = ++AL.wxReq, md = (+wd.slice(5, 7)) + '/' + (+wd.slice(8));
+  var wd = d, req = ++AL.wxReq, md = (+wd.slice(5, 7)) + '/' + (+wd.slice(8));
   $('alWxNote').textContent = AL_WX.name + ' ' + md + ' 날씨 불러오는 중…';
   alFetchWx(wd).then(function (o) {
     if (req !== AL.wxReq) return;
@@ -14312,14 +14328,14 @@ function alBuild() {
       '<b>' + esc(AL_SIGN[i].name) + '</b><span class="cr-flow">' + note + '</span></div></div>';
   };
   sec.innerHTML =
-    '<div class="card"><header><h2>대기일지 작성 현황</h2><span class="note">평일 매일 · 주말 · 공휴일은 한 장으로 묶어 작성</span>' +
-      '<div class="filterbar" style="margin-left:auto"><button class="fb" id="alPrevM">◀</button><span id="alYm" style="font-weight:700;align-self:center;min-width:84px;text-align:center"></span><button class="fb" id="alNextM">▶</button></div></header>' +
+    '<div class="card"><header><h2>대기일지 작성 현황</h2><span class="note">평일 매일 작성</span>' +
+      '<div class="filterbar" style="margin-left:auto"><span id="alNav" style="display:flex;gap:6px"><button class="fb" id="alPrevM">◀</button><span id="alYm" style="font-weight:700;align-self:center;min-width:84px;text-align:center"></span><button class="fb" id="alNextM">▶</button></span>' +
+        '<button class="fb" id="alCalTog" aria-pressed="false">달력 펼치기 ▾</button></div></header>' +
       '<div id="alAlert"></div><div id="alCal"></div></div>' +
     '<div class="g-half" style="margin-top:12px;align-items:start">' +
       '<div class="card" id="alForm" style="scroll-margin-top:80px"><header><h2>대기일지 작성</h2><span class="note">대기배출시설 및 방지시설 운영기록부 [별지 제7호서식]</span></header>' +
         '<div class="form" style="grid-template-columns:1fr 1fr">' +
           '<div class="f"><label>기록 일자</label><input type="date" id="alDate"><span id="alDateNote" style="font-size:11px;color:var(--ink3)"></span></div>' +
-          '<div class="f"><label>~ 끝 날짜 (주말 · 연휴 묶음일 때)</label><input type="date" id="alEnd"></div>' +
           '<div class="f wide"><label>날씨 · 온도 (최고 / 최저)</label><div class="al-wx">' +
             '<select id="alWx">' + ['', '맑음', '구름', '흐림', '비', '눈'].map(function (w) { return '<option value="' + w + '">' + (w || '날씨') + '</option>'; }).join('') + '</select>' +
             '<input type="number" id="alTmax" step="0.1" placeholder="최고"><span>/</span><input type="number" id="alTmin" step="0.1" placeholder="최저"><span>℃</span>' +
@@ -14331,13 +14347,13 @@ function alBuild() {
           AL_OPS.map(function (o) {
             return '<tr><td>' + o.n + '</td><td class="l">' + esc(o.name) + '</td><td>' +
               (o.furnace
-                ? '<div style="display:flex;gap:4px;align-items:center"><input type="time" id="alFS" title="가동 시각"><span>~</span><input type="time" id="alFE" title="종료 시각"></div>' +
+                ? '<div style="display:flex;gap:4px;align-items:center"><input type="text" inputmode="numeric" id="alFS" placeholder="08 15" title="가동 시각 — 숫자만 (예: 08 15 · 0815)">' +
+                  '<span>~</span><input type="text" inputmode="numeric" id="alFE" placeholder="13 20" title="종료 시각 — 숫자만 (예: 13 20 · 1320)"></div>' +
                   '<span class="calc" id="alFT">-</span>'
                 : '<input type="text" id="alOpT' + o.n + '">') +
               '</td><td><input type="text" id="alOpN' + o.n + '"></td></tr>';
           }).join('') +
         '</tbody></table></div>' +
-        '<p class="al-formula">* 비고란은 정상 여부를 기재합니다. · 가열로는 가동 · 종료 시각만 적으면 가동시간이 자동 계산됩니다 (가동하지 않은 날은 비워 두세요).</p>' +
         '<div class="subttl">2. 방지시설 운전사항 — 가스 지침</div>' +
         '<div class="tw"><table class="al-tb"><thead><tr><th>방지시설</th><th>금일 지침값(㎥)</th><th>전일 지침값(㎥)</th><th>가스사용량(㎥)</th></tr></thead><tbody>' +
           AL_GAS.map(function (g, i) {
@@ -14347,16 +14363,21 @@ function alBuild() {
               '<td class="calc" id="alU' + i + '">-</td></tr>';
           }).join('') +
         '</tbody></table></div>' +
-        '<p class="al-formula">가스사용량 = 금일 지침값 − 전일 지침값 · 금일 지침값만 넣으면 자동 계산됩니다. 전일 지침값은 바로 전 기록에서 자동으로 채워집니다 (고칠 수 있습니다). 처리용량 · 처리효율 등 나머지 칸은 운영기록부 그대로 들어갑니다.</p>' +
-        '<div class="subttl">방지시설 보수사항 (있을 때만)</div>' +
-        '<div class="form" style="grid-template-columns:1fr 1fr">' +
+        '<p class="al-formula">가스사용량 = 금일 지침값 − 전일 지침값</p>' +
+        '<div class="subttl" style="display:flex;align-items:center;gap:12px">나. 방지시설 보수사항' +
+          '<label style="font-weight:600;font-size:12px;display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" id="alRpNa" checked> 해당없음</label></div>' +
+        '<div class="form" id="alRpBox" style="grid-template-columns:1fr 1fr" hidden>' +
           '<div class="f"><label>방지시설명</label><input type="text" id="alRpName"></div>' +
           '<div class="f"><label>배출구별</label><input type="text" id="alRpOutlet"></div>' +
           '<div class="f"><label>보수기간</label><input type="text" id="alRpPeriod" placeholder="예) 11.12 ~ 11.13"></div>' +
           '<div class="f"><label>보수자</label><input type="text" id="alRpBy"></div>' +
           '<div class="f wide"><label>보수명세</label><input type="text" id="alRpDetail"></div>' +
+        '</div>' +
+        '<div class="subttl" style="display:flex;align-items:center;gap:12px">3. 자가측정사항' +
+          '<label style="font-weight:600;font-size:12px;display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" id="alSelfNa" checked> 해당없음</label></div>' +
+        '<p class="al-formula" style="margin-top:0">해당없음을 풀면 기록지에 빈 자가측정 칸이 그대로 나옵니다 (측정대행 위탁 시 작성 생략 가능).</p>' +
+        '<div class="form" style="grid-template-columns:1fr 1fr;margin-top:8px">' +
           '<div class="f wide"><label>환경기술인의 의견 (선택)</label><textarea id="alOpinion" rows="2"></textarea></div>' +
-          '<div class="f wide"><label>기타 (선택)</label><textarea id="alEtc" rows="2"></textarea></div>' +
         '</div>' +
         '<div class="subttl">결재</div>' +
         '<div class="cr-sigs al-sigs3">' +
@@ -14372,12 +14393,25 @@ function alBuild() {
   $('alDate').value = ymd(new Date());
   sec.addEventListener('change', function (e) {
     if (e.target.id === 'alDate') alOnDate();
-    else if (e.target.id === 'alEnd') alLoadWx();
+    else if (e.target.id === 'alRpNa') $('alRpBox').hidden = e.target.checked;
   });
-  sec.addEventListener('input', function (e) { if (/^al(G|P)\d$|^alF(S|E)$/.test(e.target.id)) alCalc(); });
+  sec.addEventListener('input', function (e) {
+    var m = /^alOpT(\d)$/.exec(e.target.id);
+    if (m) alOpSync(+m[1]);
+    if (/^al(G|P)\d$|^alF(S|E)$/.test(e.target.id)) alCalc();
+  });
+  $('alCalTog').onclick = function () { AL.calOpen = !AL.calOpen; alRender(); };
+  // 가열로 시각 : 칸을 벗어나면 "08 15" · "0815" → "08:15" 로 정리
+  sec.addEventListener('focusout', function (e) {
+    if (!/^alF(S|E)$/.test(e.target.id)) return;
+    var v = e.target.value.trim(), t = alTime(v);
+    if (t) e.target.value = t;
+    e.target.style.borderColor = v && !t ? '#C0392B' : '';
+    alCalc();
+  });
   $('alPrevM').onclick = function () { alMoveMonth(-1); };
   $('alNextM').onclick = function () { alMoveMonth(1); };
-  $('alWxBtn').onclick = function () { delete AL.wx[$('alEnd').value || $('alDate').value]; alLoadWx(); };
+  $('alWxBtn').onclick = function () { delete AL.wx[$('alDate').value]; alLoadWx(); };
   $('alSave').onclick = alSubmit;
   sec.addEventListener('click', function (e) {
     var t;
@@ -14396,7 +14430,6 @@ function alBuild() {
 }
 function alOnDate() {
   var d = $('alDate').value;
-  $('alEnd').value = d ? alDefaultEnd(d) : '';
   alDateNote(); alApplyDefaults(); alPrevFill(); alLoadWx();
 }
 function alDateNote() {
@@ -14410,9 +14443,22 @@ function alApplyDefaults() {
   var x = parseYmd($('alDate').value), biz = x ? ptBiz(x) : true;
   AL_OPS.forEach(function (o) {
     var dv = biz ? o.biz : o.off;
-    if (!o.furnace) $('alOpT' + o.n).value = dv[0];
-    $('alOpN' + o.n).value = dv[1];
+    if (o.furnace) { $('alOpN' + o.n).value = dv[1]; return; }
+    $('alOpT' + o.n).value = dv[0];
+    alOpSync(o.n);
   });
+  alCalc();
+}
+/** 보일러 가동시간 유무 → 비고(정상가동 / 미가동) · 2번 금일 지침값 칸(공란 · 잠금) */
+function alOpRun(n) { var v = ($('alOpT' + n).value || '').trim(); return !!v && v !== '-'; }
+function alOpSync(n) {
+  var run = alOpRun(n), g = $('alG' + (n - 1));
+  $('alOpN' + n).value = run ? '정상가동' : '미가동';
+  if (g) {
+    if (!run) g.value = '';
+    g.disabled = !run;
+    g.placeholder = run ? '금일 지침값' : '미가동';
+  }
   alCalc();
 }
 function alPrevFill() {
@@ -14473,6 +14519,10 @@ function alRender() {
     if (AL.day === key) cls += ' sel';
     cells.push('<div class="' + cls + '" data-alday="' + key + '" title="누르면 이 날짜 기록 보기 · 작성"><div class="cal-top"><b>' + dd + '</b></div><div class="evs">' + chip + '</div></div>');
   }
+  $('alCal').hidden = !AL.calOpen;
+  $('alNav').style.display = AL.calOpen ? 'flex' : 'none';
+  $('alCalTog').textContent = AL.calOpen ? '달력 접기 ▴' : '달력 펼치기 ▾';
+  $('alCalTog').setAttribute('aria-pressed', String(AL.calOpen));
   $('alCal').innerHTML = '<div class="pt-cal5 al-cal7"><div class="cal-h"><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span><span>일</span></div>' +
     '<div class="cal-g">' + cells.join('') + '</div></div>';
 
@@ -14516,23 +14566,25 @@ function alListRows() {
     .sort(function (a, b) { return alStart(b).localeCompare(alStart(a)); });
 }
 function alSubmit() {
-  var date = $('alDate').value, end = $('alEnd').value;
+  var date = $('alDate').value, end = '';                 // 끝 날짜 칸은 뺐습니다 (하루 한 장)
   if (!date) { toast('기록 일자를 입력해 주세요.', 'warn'); return; }
   if (end && end < date) { toast('끝 날짜가 기록 일자보다 앞입니다.', 'warn'); return; }
   if (end === date) end = '';
   var biz = ptBiz(parseYmd(date));
-  var fs = $('alFS').value, fe = $('alFE').value;
+  var fsRaw = $('alFS').value.trim(), feRaw = $('alFE').value.trim(), fs = alTime(fsRaw), fe = alTime(feRaw);
+  if ((fsRaw && !fs) || (feRaw && !fe)) { toast('가열로 시각을 읽지 못했습니다. 숫자만 넣어 주세요 (예: 08 15).', 'warn'); return; }
   if (!!fs !== !!fe) { toast('가열로 가동 시각과 종료 시각을 둘 다 적어 주세요.', 'warn'); return; }
   var ops = AL_OPS.map(function (o) {
     if (o.furnace) return { n: o.n, name: o.name, t: alDur(fs, fe) || '-', s: fs || '', e: fe || '', note: $('alOpN' + o.n).value.trim() };
     return { n: o.n, name: o.name, t: $('alOpT' + o.n).value.trim() || '-', note: $('alOpN' + o.n).value.trim() };
   });
   var gas = AL_GAS.map(function (g, i) {
-    var t = alNum($('alG' + i).value), p = alNum($('alP' + i).value);
+    var run = alOpRun(i + 1);                                   // 미가동 보일러 → 금일 지침값 · 사용량 공란
+    var t = run ? alNum($('alG' + i).value) : null, p = alNum($('alP' + i).value);
     return { name: g.name, place: g.place, cap: g.cap, pol: g.pol, conc: g.conc, eff: g.eff, chem: g.chem, qty: g.qty,
-      today: t, prev: p, use: t != null && p != null ? alNum(t - p) : null };
+      run: run, today: t, prev: p, use: t != null && p != null ? alNum(t - p) : null };
   });
-  var blank = gas.filter(function (g) { return g.today == null; }).length;
+  var blank = gas.filter(function (g) { return g.run && g.today == null; }).length;
   if (biz && blank && !confirm('금일 지침값이 비어 있는 칸이 ' + blank + '개 있습니다. 그대로 올릴까요?')) return;
   var noPrev = gas.filter(function (g) { return g.today != null && g.prev == null; }).length;
   if (noPrev && !confirm('전일 지침값이 없어 가스사용량을 계산하지 못한 칸이 ' + noPrev + '개 있습니다. 그대로 올릴까요?')) return;
@@ -14546,9 +14598,10 @@ function alSubmit() {
     log_date: date, end_date: end || null,
     weather: $('alWx').value || null, temp_max: alNum($('alTmax').value), temp_min: alNum($('alTmin').value),
     ops: ops, gas: gas,
-    repair: { name: $('alRpName').value.trim(), outlet: $('alRpOutlet').value.trim(), period: $('alRpPeriod').value.trim(),
-      by: $('alRpBy').value.trim(), detail: $('alRpDetail').value.trim() },
-    opinion: $('alOpinion').value.trim() || null, etc: $('alEtc').value.trim() || null,
+    repair: $('alRpNa').checked ? { na: true, self_na: $('alSelfNa').checked }
+      : { na: false, self_na: $('alSelfNa').checked, name: $('alRpName').value.trim(), outlet: $('alRpOutlet').value.trim(),
+          period: $('alRpPeriod').value.trim(), by: $('alRpBy').value.trim(), detail: $('alRpDetail').value.trim() },
+    opinion: $('alOpinion').value.trim() || null, etc: null,
     writer: AL_SIGN[0].name, sign_writer: 'stamp|' + date,                         // ① 담당 자동 도장 (날짜 = 기록 일자)
     reviewer: AL_SIGN[1].name, sign_review: null, review_signed_at: null,          // ② 검토 대기
     approver: AL_SIGN[2].name, sign_boss: null, boss_signed_at: null,              // ③ 승인 대기
@@ -14556,8 +14609,9 @@ function alSubmit() {
   }).then(function (res) {
     if (res.error) throw res.error;
     toast('결재를 올렸습니다. ' + AL_SIGN[1].name + ' 검토 대기 중입니다.');
-    ['alG0', 'alG1', 'alG2', 'alFS', 'alFE', 'alRpName', 'alRpOutlet', 'alRpPeriod', 'alRpBy', 'alRpDetail', 'alOpinion', 'alEtc']
+    ['alG0', 'alG1', 'alG2', 'alFS', 'alFE', 'alRpName', 'alRpOutlet', 'alRpPeriod', 'alRpBy', 'alRpDetail', 'alOpinion']
       .forEach(function (id) { $(id).value = ''; });
+    $('alRpNa').checked = true; $('alSelfNa').checked = true; $('alRpBox').hidden = true;
     AL.ym = date.slice(0, 7); AL.day = '';
     $('alDate').value = ymd(new Date());
     return loadAl().then(function () { alOnDate(); });
@@ -14590,6 +14644,9 @@ var AL_DOC_CSS =
 /** 기록 보기 : 운영기록부 [별지 제7호서식] 모양 · 결재 칸 = 담당 · 검토 · 승인 (도장 날짜 = 기록 일자) */
 function alDocHtml(r) {
   var ops = crJson(r.ops), gas = crJson(r.gas), rp = alObj(r.repair), ld = alStart(r);
+  // 보수사항 · 자가측정사항은 매번 해당없음 — 체크를 일부러 푼 기록(false)만 빈 양식으로 (예전 기록도 해당없음으로 표시)
+  var rpText = !!(rp.name || rp.outlet || rp.period || rp.by || rp.detail);
+  rp.na = rp.na === undefined ? !rpText : rp.na !== false; rp.self_na = rp.self_na !== false;
   var rv = String(r.sign_review || ''), bs = String(r.sign_boss || ''), rej = alReject(r);
   var cell = function (s, wait) {
     if (s === 'stamp') return crStamp(ld, '');
@@ -14629,14 +14686,18 @@ function alDocHtml(r) {
       }).join('') + '</table>' +
     '<div class="sub" style="margin-top:12px">나. 방지시설 보수사항</div>' +
     '<table class="ck"><tr><th>방지시설명</th><th>배출구별</th><th>보수기간</th><th>보수자</th><th>보수명세</th></tr>' +
-      '<tr><td style="height:34px">' + esc(rp.name || '') + '</td><td>' + esc(rp.outlet || '') + '</td><td>' + esc(rp.period || '') + '</td>' +
-      '<td>' + esc(rp.by || '') + '</td><td>' + esc(rp.detail || '') + '</td></tr></table>' +
-    '<div class="sec">3. 자가측정사항</div><div style="font-size:11.5px;margin-bottom:4px">측정일 :</div>' +
+      (rp.na ? '<tr><td colspan="5" style="height:34px;font-weight:700">해당없음</td></tr>'
+        : '<tr><td style="height:34px">' + esc(rp.name || '') + '</td><td>' + esc(rp.outlet || '') + '</td><td>' + esc(rp.period || '') + '</td>' +
+          '<td>' + esc(rp.by || '') + '</td><td>' + esc(rp.detail || '') + '</td></tr>') + '</table>' +
+    '<div class="sec">3. 자가측정사항' + (rp.self_na ? ' &nbsp;<span style="font-weight:700">☑ 해당없음</span>' : '') + '</div>' +
+    '<div style="font-size:11.5px;margin-bottom:4px">측정일 :' + (rp.self_na ? ' 해당없음' : '') + '</div>' +
     '<table class="ck"><tr><th>①기상</th><th>②기온</th><th>③습도</th><th>④기압</th><th>⑤풍향</th><th>⑥풍속</th></tr>' +
-      '<tr><td>□맑음, □흐림, □구름,\n□눈, □비</td><td style="text-align:right">℃</td><td style="text-align:right">%</td>' +
-      '<td style="text-align:right">mb</td><td style="text-align:right">풍</td><td style="text-align:right">m/sec</td></tr></table>' +
+      (rp.self_na ? '<tr><td colspan="6" style="font-weight:700">해당없음</td></tr>'
+        : '<tr><td>□맑음, □흐림, □구름,\n□눈, □비</td><td style="text-align:right">℃</td><td style="text-align:right">%</td>' +
+          '<td style="text-align:right">mb</td><td style="text-align:right">풍</td><td style="text-align:right">m/sec</td></tr>') + '</table>' +
     '<table class="ck" style="margin-top:6px"><tr><th>⑦배출구<br>번호</th><th>⑧주요배출<br>시설명</th><th>⑨측정</th><th>⑩측정농도<br>(ppm, ㎎/S㎥)</th>' +
-      '<th>⑪일일<br>유량<br>(S㎥/일)</th><th>⑫일일<br>배출량<br>(㎏/일)</th><th>⑬검사<br>기기명</th><th>⑭검사<br>방법</th></tr><tr>' + blank8 + '</tr></table>' +
+      '<th>⑪일일<br>유량<br>(S㎥/일)</th><th>⑫일일<br>배출량<br>(㎏/일)</th><th>⑬검사<br>기기명</th><th>⑭검사<br>방법</th></tr>' +
+      (rp.self_na ? '<tr><td colspan="8" style="height:30px;font-weight:700">해당없음</td></tr>' : '<tr>' + blank8 + '</tr>') + '</table>' +
     '<table class="body" style="margin-top:8px"><tr><th style="width:190px">⑮ 연료명 및 사용량</th><td></td></tr>' +
       '<tr><th>⑯ 원료명 및 사용량<br><span style="font-weight:400;font-size:10.5px">(특정대기유해물질 배출원 포함)</span></th><td></td></tr>' +
       '<tr><th>⑰ 환경기술인의 의견</th><td><div class="pre">' + esc(r.opinion || '') + '</div></td></tr>' +
