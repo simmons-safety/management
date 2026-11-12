@@ -2694,6 +2694,23 @@ window.AI_CONFIG = {
   .pt-alert b{font-weight:700}
   .cr-ck td.r3{white-space:nowrap;width:200px}
   @media (max-width:760px){ .cr-ck td.r3{width:auto;white-space:normal} }
+  /* 대기일지 (환경 › 대기일지) : 순회점검일지 달력 모양을 7칸(월~일)으로 */
+  .al-cal7 .cal-h,.al-cal7 .cal-g{grid-template-columns:repeat(7,1fr)}
+  .al-cal7 .cal-d{min-height:72px}
+  .al-cal7 .cal-d.wkend{background:#FCFCFC}
+  .al-tb{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:var(--r-m);overflow:hidden}
+  .al-tb th{background:#000;color:#fff;font-weight:600;font-size:11px;padding:7px 8px;text-align:center;white-space:nowrap}
+  .al-tb td{padding:6px 8px;border-top:1px solid #eee;vertical-align:middle;text-align:center}
+  .al-tb td.l{text-align:left;white-space:pre-line;font-size:11.5px;color:var(--ink2)}
+  .al-tb input[type=text],.al-tb input[type=number],.al-tb input[type=time]{width:100%;box-sizing:border-box;padding:5px 7px;font-size:12px;min-width:0}
+  .al-tb .calc{font-weight:700;font-variant-numeric:tabular-nums}
+  .al-tb .src{display:block;font-size:10px;color:var(--ink3);margin-top:2px;white-space:nowrap}
+  .al-wx{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .al-wx select,.al-wx input{width:auto;min-width:0}
+  .al-wx input[type=number]{width:72px}
+  .al-sigs3{grid-template-columns:1fr 1fr 1fr}
+  .al-formula{font-size:11.5px;color:var(--ink3);margin:6px 0 0}
+  @media (max-width:760px){ .al-sigs3{grid-template-columns:1fr} .al-cal7 .cal-d{min-height:52px} }
 
   /* ══════════ ISO 게시판 하위 탭 · 활동 실적 · 관련 자료 ══════════ */
   .iso-tabbar{margin-bottom:14px;overflow-x:auto}
@@ -3465,6 +3482,9 @@ window.AI_CONFIG = {
       <div id="envAir"></div>
     </div>
   </section>
+
+  <!-- ══════════ 대기일지 (환경 › 대기일지) : 화면은 alBuild() 가 그립니다 · schema_airlog.sql 실행 필요 ══════════ -->
+  <section class="bpanel" id="bd-envairlog" hidden></section>
 
   <!-- ══════════ 안전사고 ══════════ -->
   <section class="bpanel" id="bd-accident" hidden>
@@ -4504,7 +4524,7 @@ function closeLightbox() { $('imgbox').classList.remove('on'); $('imgboxImg').sr
  * ============================================================ */
 function renderAll() { renderHeader(); renderMonthPanel(); renderWeekPanel(); renderMonitorPage(); }
 
-function renderInitial() { renderAll(); renderDataTabs(); renderCsaDashboard(); renderCsaTable(); renderLibSites(); renderLibList(); renderSdy(); actRenderAll(); crRender(); ptRender(); initApForm(); renderApLists(); renderVisitLog(); renderNews(); }
+function renderInitial() { renderAll(); renderDataTabs(); renderCsaDashboard(); renderCsaTable(); renderLibSites(); renderLibList(); renderSdy(); actRenderAll(); crRender(); ptRender(); alRender(); initApForm(); renderApLists(); renderVisitLog(); renderNews(); }
 
 function renderHeader() {
   var t = new Date();
@@ -14126,6 +14146,616 @@ function ptOpen(id) {
 }
 
 /* ============================================================
+ *  6-5-5. 대기일지 (환경 › 대기일지)  (schema_airlog.sql 실행 필요)
+ *  · 대기배출시설 및 방지시설 운영기록부 [별지 제7호서식]
+ *    = 폴더의 "26년 대기배출시설 및 방지시설 운영기록부(대기환경보전법 시행규칙).xlsx" 의 운영기록부 · 검침 시트를 그대로 옮김
+ *  · 날씨 · 최고/최저 기온 : 이천시 모가면, 기록 일자에 맞춰 자동 (Open-Meteo) — 칸에서 고칠 수 있음
+ *  · 가열로만 가동 · 종료 시각을 직접 입력 → 가동시간 자동 (엑셀 검침 J = L - K)
+ *  · 가스사용량 = 금일 지침값 - 전일 지침값 (금일만 입력 → 전일은 바로 전 기록에서 자동)
+ *  · 결재 : ① 담당 이재훈 과장(올리면 자동 도장) → ② 검토 최은성 차장 → ③ 승인 이종성 부사장
+ *          도장 날짜는 셋 모두 기록(작성) 일자로 찍힙니다.
+ * ============================================================ */
+var AL_WX = { lat: 37.1720, lon: 127.4297, name: '이천시 모가면' };   // 상단 사업장 날씨와 같은 좌표 (팩토리움)
+var AL_SIGN = [
+  { t: '담 당', name: '이재훈 과장' },
+  { t: '검 토', name: '최은성 차장' },
+  { t: '승 인', name: '이종성 부사장' }
+];
+/** 1. 배출구별 가동시간 — 엑셀 운영기록부(평일) / (주말 · 공휴일) 시트의 기본값 */
+var AL_OPS = [
+  { n: 1, name: '보일러\n(600,000kcal/hr)', biz: ['-', '미가동'], off: ['-', '미가동'] },
+  { n: 2, name: '보일러\n(600,000kcal/hr)', biz: ['-', '미가동'], off: ['-', '미가동'] },
+  { n: 3, name: '보일러\n(200,000kcal/hr)', biz: ['8시간', '정상가동'], off: ['-', '미가동'] },
+  { n: 4, name: '가열로(3.5㎥)', furnace: true, biz: ['', '방지시설설치의무면제'], off: ['', '방지시설설치의무면제'] }
+];
+/** 2. 방지시설 운전사항 — 지침값 외 칸은 운영기록부 그대로 */
+var AL_GAS = [
+  { lb: '보일러 1', name: '연소조절에 의한 시설\n저녹스버너/\nP-60M(LX)', place: '보일러실', cap: '1.12', pol: '먼지\nNox\nSox', conc: '-', eff: '60', chem: '-', qty: '-' },
+  { lb: '보일러 2', name: '연소조절에 의한 시설\n저녹스버너/\nP-60M(LX)', place: '보일러실', cap: '1.12', pol: '먼지\nNox\nSox', conc: '-', eff: '60', chem: '-', qty: '-' },
+  { lb: '보일러 3', name: '연소조절에 의한 시설\n저녹스버너/\nMAX.I-25(LX)', place: '보일러실', cap: '0.375', pol: '먼지\nNox\nSox', conc: '-', eff: '60', chem: '-', qty: '-' }
+];
+/** 대시보드 기록이 아직 없을 때 쓰는 전일 지침값 = 엑셀 '검침' 시트의 마지막 값 */
+var AL_SEED_PREV = [{ d: '2026-11-10', v: 12280.8 }, { d: '2026-11-10', v: 4188.73 }, { d: '2026-09-17', v: 24999.1 }];
+/** 이 날짜부터 평일 미작성을 "누락"으로 표시 (대시보드 대기일지 시작일) */
+var AL_START = '2026-11-12';
+var AL_ROWS = [];
+var AL = { ym: ymd(new Date()).slice(0, 7), day: '', err: '', built: false, wx: {}, wxReq: 0, wxWait: false };
+
+function alNum(v) { if (v === '' || v == null || isNaN(Number(v))) return null; return Math.round(Number(v) * 100) / 100; }
+function alFmt(v) { var n = alNum(v); return n == null ? '' : String(n); }
+function alStart(r) { return String(r.log_date || '').slice(0, 10); }
+function alEnd(r) { return String(r.end_date || r.log_date || '').slice(0, 10); }
+function alCovers(r, key) { return alStart(r) <= key && key <= alEnd(r); }
+function alObj(v) { if (typeof v === 'string') { try { v = JSON.parse(v); } catch (e) { v = {}; } } return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; }
+function alDateText(r) {
+  var s = alStart(r), e = r.end_date ? String(r.end_date).slice(0, 10) : '';
+  return s.replace(/-/g, '.') + ' (' + crDow(s) + ')' + (e && e !== s ? ' ~ ' + e.replace(/-/g, '.') + ' (' + crDow(e) + ')' : '');
+}
+/** 결재 상태 : 검토 대기 → 승인 대기 → 결재 완료 (어느 단계든 반려되면 반려) */
+function alStatus(r) {
+  var a = String(r.sign_review || ''), b = String(r.sign_boss || '');
+  if (a.indexOf('reject|') === 0 || b.indexOf('reject|') === 0) return '반려';
+  if (!a) return '검토 대기';
+  if (!b) return '승인 대기';
+  return '결재 완료';
+}
+function alReject(r) {
+  var a = String(r.sign_review || ''), b = String(r.sign_boss || '');
+  if (a.indexOf('reject|') === 0) return { who: '검토', why: a.slice(7) };
+  if (b.indexOf('reject|') === 0) return { who: '승인', why: b.slice(7) };
+  return null;
+}
+function alStatusText(r) {
+  var st = alStatus(r);
+  return st === '결재 완료' ? '✔ 결재 완료' : st === '반려' ? '<b style="color:#C0392B">반려</b>'
+    : st === '검토 대기' ? '검토 대기 (' + AL_SIGN[1].name + ')' : '승인 대기 (' + AL_SIGN[2].name + ')';
+}
+/** 가열로 가동시간 'HH:MM' ~ 'HH:MM' → '1시간 40분' */
+function alDur(s, e) {
+  if (!s || !e) return '';
+  var a = s.split(':'), b = e.split(':'), m = (+b[0] * 60 + +b[1]) - (+a[0] * 60 + +a[1]);
+  if (isNaN(m)) return '';
+  if (m < 0) m += 1440;
+  var h = Math.floor(m / 60), mm = m % 60;
+  return ((h ? h + '시간' : '') + (h && mm ? ' ' : '') + (mm ? mm + '분' : '')) || '0분';
+}
+/** 전일 지침값 = 이 날짜 바로 전 기록의 금일 지침값 (없으면 엑셀 검침 시트 마지막 값) */
+function alPrev(i, date) {
+  var best = null;
+  AL_ROWS.forEach(function (r) {
+    var d = alStart(r);
+    if (d >= date) return;
+    var g = crJson(r.gas)[i], v = g ? alNum(g.today) : null;
+    if (v == null) return;
+    if (!best || d > best.d) best = { d: d, v: v };
+  });
+  var s = AL_SEED_PREV[i];
+  if (s && s.d < date && (!best || s.d > best.d)) best = { d: s.d, v: s.v, seed: true };
+  return best;
+}
+/** 주말 · 연휴로 시작하면 끝 날짜 = 이어지는 마지막 쉬는 날 (엑셀 주말 양식처럼 한 장으로) */
+function alDefaultEnd(d) {
+  var x = parseYmd(d);
+  if (!x || ptBiz(x)) return '';
+  var e = x;
+  for (var i = 0; i < 10; i++) { var n = addDays(e, 1); if (ptBiz(n)) break; e = n; }
+  return ymd(e) === d ? '' : ymd(e);
+}
+
+/* ── 날씨 : 이천시 모가면 일 최고 · 최저 기온 (최근 · 예보 = forecast, 오래된 날 = archive) ── */
+function alWxMap(c) {
+  c = Number(c);
+  if (isNaN(c)) return '';
+  if (c <= 1) return '맑음';
+  if (c === 2) return '구름';
+  if (c === 3 || c === 45 || c === 48) return '흐림';
+  if ((c >= 71 && c <= 77) || c === 85 || c === 86) return '눈';
+  if (c >= 51) return '비';
+  return '';
+}
+function alFetchWx(date) {
+  if (AL.wx[date]) return Promise.resolve(AL.wx[date]);
+  if (typeof fetch !== 'function') return Promise.reject(new Error('브라우저가 지원하지 않습니다'));
+  var diff = Math.round((parseYmd(date) - parseYmd(ymd(new Date()))) / 864e5);
+  if (diff > 15) return Promise.reject(new Error('16일 이후 날짜는 예보가 없습니다'));
+  var q = '?latitude=' + AL_WX.lat + '&longitude=' + AL_WX.lon +
+    '&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Asia%2FSeoul&start_date=' + date + '&end_date=' + date;
+  function get(base) {
+    return fetch(base + q).then(function (r) { return r.json(); }).then(function (d) {
+      var dy = d && d.daily;
+      if (!dy || !dy.temperature_2m_max || dy.temperature_2m_max[0] == null) throw new Error((d && d.reason) || '기온 자료 없음');
+      return { max: Math.round(dy.temperature_2m_max[0]) || 0, min: Math.round(dy.temperature_2m_min[0]) || 0, wx: alWxMap(dy.weather_code && dy.weather_code[0]) };
+    });
+  }
+  var fc = 'https://api.open-meteo.com/v1/forecast', ar = 'https://archive-api.open-meteo.com/v1/archive';
+  var p = diff < -80 ? get(ar).catch(function () { return get(fc); }) : get(fc).catch(function () { return get(ar); });
+  return p.then(function (o) { AL.wx[date] = o; return o; });
+}
+function alLoadWx() {
+  if (!$('alDate')) return;
+  var sec = $('bd-envairlog');
+  if (sec && sec.hidden) { AL.wxWait = true; return; }      // 게시판을 열 때 불러옵니다
+  AL.wxWait = false;
+  var d = $('alDate').value;
+  if (!d) return;
+  var wd = $('alEnd').value || d, req = ++AL.wxReq, md = (+wd.slice(5, 7)) + '/' + (+wd.slice(8));
+  $('alWxNote').textContent = AL_WX.name + ' ' + md + ' 날씨 불러오는 중…';
+  alFetchWx(wd).then(function (o) {
+    if (req !== AL.wxReq) return;
+    if (o.wx) $('alWx').value = o.wx;
+    $('alTmax').value = o.max; $('alTmin').value = o.min;
+    $('alWxNote').textContent = '자동 · ' + AL_WX.name + ' ' + md + ' 최고 / 최저 기온 (칸에서 고칠 수 있습니다)';
+  }).catch(function (e) {
+    if (req !== AL.wxReq) return;
+    $('alWxNote').textContent = '날씨를 자동으로 불러오지 못했습니다 (' + ((e && e.message) || e) + ') — 직접 입력해 주세요.';
+  });
+}
+function alTabOpened() { if (AL.wxWait) alLoadWx(); }
+
+function loadAl() {
+  if (!RPC.live) { AL_ROWS = []; alRender(); return Promise.resolve(); }
+  return RPC.db.from('air_log').select('*').order('log_date', { ascending: false }).limit(3000)
+    .then(function (res) {
+      if (res.error) throw res.error;
+      AL_ROWS = res.data || []; AL.err = ''; alRender(); alPrevFill();
+    }).catch(function (e) {
+      console.warn('[EHS] 대기일지 조회 실패', e);
+      AL_ROWS = []; AL.err = (e && e.message) || String(e); alRender();
+    });
+}
+function alBuild() {
+  var sec = $('bd-envairlog');
+  if (!sec || AL.built) return;
+  AL.built = true;
+  var sig = function (i, note) {
+    return '<div class="cr-sig' + (i ? ' off' : '') + '">' + crStamp('', '') + '<div class="f" style="flex:1"><label>' + '①②③'.charAt(i) + ' ' + AL_SIGN[i].t.replace(' ', '') + '</label>' +
+      '<b>' + esc(AL_SIGN[i].name) + '</b><span class="cr-flow">' + note + '</span></div></div>';
+  };
+  sec.innerHTML =
+    '<div class="card"><header><h2>대기일지 작성 현황</h2><span class="note">평일 매일 · 주말 · 공휴일은 한 장으로 묶어 작성</span>' +
+      '<div class="filterbar" style="margin-left:auto"><button class="fb" id="alPrevM">◀</button><span id="alYm" style="font-weight:700;align-self:center;min-width:84px;text-align:center"></span><button class="fb" id="alNextM">▶</button></div></header>' +
+      '<div id="alAlert"></div><div id="alCal"></div></div>' +
+    '<div class="g-half" style="margin-top:12px;align-items:start">' +
+      '<div class="card" id="alForm" style="scroll-margin-top:80px"><header><h2>대기일지 작성</h2><span class="note">대기배출시설 및 방지시설 운영기록부 [별지 제7호서식]</span></header>' +
+        '<div class="form" style="grid-template-columns:1fr 1fr">' +
+          '<div class="f"><label>기록 일자</label><input type="date" id="alDate"><span id="alDateNote" style="font-size:11px;color:var(--ink3)"></span></div>' +
+          '<div class="f"><label>~ 끝 날짜 (주말 · 연휴 묶음일 때)</label><input type="date" id="alEnd"></div>' +
+          '<div class="f wide"><label>날씨 · 온도 (최고 / 최저)</label><div class="al-wx">' +
+            '<select id="alWx">' + ['', '맑음', '구름', '흐림', '비', '눈'].map(function (w) { return '<option value="' + w + '">' + (w || '날씨') + '</option>'; }).join('') + '</select>' +
+            '<input type="number" id="alTmax" step="0.1" placeholder="최고"><span>/</span><input type="number" id="alTmin" step="0.1" placeholder="최저"><span>℃</span>' +
+            '<button class="reset" type="button" id="alWxBtn" style="padding:5px 12px;font-size:11px">다시 불러오기</button></div>' +
+            '<span id="alWxNote" style="font-size:11px;color:var(--ink3)"></span></div>' +
+        '</div>' +
+        '<div class="subttl">1. 배출구별 주요 배출시설 및 방지시설 가동(조업)시간</div>' +
+        '<div class="tw"><table class="al-tb"><thead><tr><th>배출구</th><th>배출시설</th><th>가동시간</th><th>비고</th></tr></thead><tbody>' +
+          AL_OPS.map(function (o) {
+            return '<tr><td>' + o.n + '</td><td class="l">' + esc(o.name) + '</td><td>' +
+              (o.furnace
+                ? '<div style="display:flex;gap:4px;align-items:center"><input type="time" id="alFS" title="가동 시각"><span>~</span><input type="time" id="alFE" title="종료 시각"></div>' +
+                  '<span class="calc" id="alFT">-</span>'
+                : '<input type="text" id="alOpT' + o.n + '">') +
+              '</td><td><input type="text" id="alOpN' + o.n + '"></td></tr>';
+          }).join('') +
+        '</tbody></table></div>' +
+        '<p class="al-formula">* 비고란은 정상 여부를 기재합니다. · 가열로는 가동 · 종료 시각만 적으면 가동시간이 자동 계산됩니다 (가동하지 않은 날은 비워 두세요).</p>' +
+        '<div class="subttl">2. 방지시설 운전사항 — 가스 지침</div>' +
+        '<div class="tw"><table class="al-tb"><thead><tr><th>방지시설</th><th>금일 지침값(㎥)</th><th>전일 지침값(㎥)</th><th>가스사용량(㎥)</th></tr></thead><tbody>' +
+          AL_GAS.map(function (g, i) {
+            return '<tr><td class="l"><b style="color:var(--ink)">' + esc(g.lb) + '</b>\n' + esc(g.name.replace(/\n/g, ' ')) + '</td>' +
+              '<td><input type="number" step="0.01" inputmode="decimal" id="alG' + i + '" placeholder="금일 지침값"></td>' +
+              '<td><input type="number" step="0.01" inputmode="decimal" id="alP' + i + '"><span class="src" id="alPS' + i + '"></span></td>' +
+              '<td class="calc" id="alU' + i + '">-</td></tr>';
+          }).join('') +
+        '</tbody></table></div>' +
+        '<p class="al-formula">가스사용량 = 금일 지침값 − 전일 지침값 · 금일 지침값만 넣으면 자동 계산됩니다. 전일 지침값은 바로 전 기록에서 자동으로 채워집니다 (고칠 수 있습니다). 처리용량 · 처리효율 등 나머지 칸은 운영기록부 그대로 들어갑니다.</p>' +
+        '<div class="subttl">방지시설 보수사항 (있을 때만)</div>' +
+        '<div class="form" style="grid-template-columns:1fr 1fr">' +
+          '<div class="f"><label>방지시설명</label><input type="text" id="alRpName"></div>' +
+          '<div class="f"><label>배출구별</label><input type="text" id="alRpOutlet"></div>' +
+          '<div class="f"><label>보수기간</label><input type="text" id="alRpPeriod" placeholder="예) 11.12 ~ 11.13"></div>' +
+          '<div class="f"><label>보수자</label><input type="text" id="alRpBy"></div>' +
+          '<div class="f wide"><label>보수명세</label><input type="text" id="alRpDetail"></div>' +
+          '<div class="f wide"><label>환경기술인의 의견 (선택)</label><textarea id="alOpinion" rows="2"></textarea></div>' +
+          '<div class="f wide"><label>기타 (선택)</label><textarea id="alEtc" rows="2"></textarea></div>' +
+        '</div>' +
+        '<div class="subttl">결재</div>' +
+        '<div class="cr-sigs al-sigs3">' +
+          sig(0, '결재 올리기를 누르면 자동으로 도장이 찍힙니다.') +
+          sig(1, '기록을 열어 검토를 누르면 도장이 찍힙니다.') +
+          sig(2, '검토 후 기록을 열어 승인을 누르면 도장이 찍힙니다.') +
+        '</div>' +
+        '<p class="al-formula">도장 날짜는 담당 · 검토 · 승인 모두 기록 일자로 찍힙니다.</p>' +
+        '<div class="secthead" style="margin-top:14px"><button class="reset go" id="alSave">결재 올리기</button></div>' +
+      '</div>' +
+      '<div class="card"><header><h2>대기일지 기록</h2><span class="note" id="alCount"></span><span id="alBulk"></span></header><div id="alList"></div></div>' +
+    '</div>';
+  $('alDate').value = ymd(new Date());
+  sec.addEventListener('change', function (e) {
+    if (e.target.id === 'alDate') alOnDate();
+    else if (e.target.id === 'alEnd') alLoadWx();
+  });
+  sec.addEventListener('input', function (e) { if (/^al(G|P)\d$|^alF(S|E)$/.test(e.target.id)) alCalc(); });
+  $('alPrevM').onclick = function () { alMoveMonth(-1); };
+  $('alNextM').onclick = function () { alMoveMonth(1); };
+  $('alWxBtn').onclick = function () { delete AL.wx[$('alEnd').value || $('alDate').value]; alLoadWx(); };
+  $('alSave').onclick = alSubmit;
+  sec.addEventListener('click', function (e) {
+    var t;
+    if ((t = e.target.closest('[data-alwrite]'))) { alGoWrite(t.dataset.alwrite); return; }
+    if ((t = e.target.closest('[data-alday]'))) {
+      var d = t.dataset.alday;
+      var has = AL_ROWS.some(function (r) { return alCovers(r, d); });
+      if (!has && d <= ymd(new Date())) { alGoWrite(d); return; }     // 기록 없는 지난 날 → 그 날짜로 작성
+      AL.day = AL.day === d ? '' : d; alRender(); return;
+    }
+    if ((t = e.target.closest('[data-alopen]'))) { alOpen(t.dataset.alopen); return; }
+    if ((t = e.target.closest('[data-albulk]'))) { alBulk(t.dataset.albulk); return; }
+    if ((t = e.target.closest('#alPdfBtn'))) alPdfAll(t);
+  });
+  alOnDate();
+}
+function alOnDate() {
+  var d = $('alDate').value;
+  $('alEnd').value = d ? alDefaultEnd(d) : '';
+  alDateNote(); alApplyDefaults(); alPrevFill(); alLoadWx();
+}
+function alDateNote() {
+  var x = parseYmd($('alDate').value), el = $('alDateNote');
+  if (!x) { el.textContent = ''; return; }
+  var h = KR_HOLIDAYS[ymd(x)];
+  el.innerHTML = '(' + DOW[x.getDay()] + (h ? ' · ' + esc(h) : '') + ')' + (ptBiz(x) ? '' : ' 주말 · 공휴일 양식(보일러 미가동)으로 채웠습니다');
+}
+/** 가동시간 · 비고 기본값 : 평일 = 운영기록부 시트, 주말 · 공휴일 = 운영기록부(주말 · 공휴일) 시트 */
+function alApplyDefaults() {
+  var x = parseYmd($('alDate').value), biz = x ? ptBiz(x) : true;
+  AL_OPS.forEach(function (o) {
+    var dv = biz ? o.biz : o.off;
+    if (!o.furnace) $('alOpT' + o.n).value = dv[0];
+    $('alOpN' + o.n).value = dv[1];
+  });
+  alCalc();
+}
+function alPrevFill() {
+  if (!$('alP0')) return;
+  var d = $('alDate').value || ymd(new Date());
+  AL_GAS.forEach(function (g, i) {
+    var p = alPrev(i, d);
+    $('alP' + i).value = p ? p.v : '';
+    $('alPS' + i).textContent = p ? (p.seed ? '엑셀 검침 ' : '') + (+p.d.slice(5, 7)) + '/' + (+p.d.slice(8)) + ' 지침' : '이전 기록 없음 — 직접 입력';
+  });
+  alCalc();
+}
+function alCalc() {
+  if (!$('alFT')) return;
+  $('alFT').textContent = alDur($('alFS').value, $('alFE').value) || '-';
+  AL_GAS.forEach(function (g, i) {
+    var t = alNum($('alG' + i).value), p = alNum($('alP' + i).value), el = $('alU' + i);
+    if (t == null || p == null) { el.textContent = '-'; el.style.color = ''; return; }
+    var u = alNum(t - p);
+    el.textContent = String(u); el.style.color = u < 0 ? '#C0392B' : '';
+  });
+}
+function alGoWrite(d) {
+  $('alDate').value = d; alOnDate();
+  AL.day = d; alRender();
+  var f = $('alForm');
+  f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  f.style.transition = 'box-shadow .3s'; f.style.boxShadow = '0 0 0 3px #E8A33D';
+  setTimeout(function () { f.style.boxShadow = ''; }, 1600);
+}
+function alMoveMonth(n) {
+  var p = AL.ym.split('-'), d = new Date(+p[0], +p[1] - 1 + n, 1);
+  AL.ym = ymd(d).slice(0, 7); AL.day = ''; alRender();
+}
+function alRender() {
+  alBuild();
+  if (!$('alCal')) return;
+  var today = ymd(new Date()), p = AL.ym.split('-'), y = +p[0], mo = +p[1] - 1;
+  $('alYm').textContent = y + '년 ' + (mo + 1) + '월';
+  var last = new Date(y, mo + 1, 0).getDate(), cells = [], missN = [];
+  var lead = (new Date(y, mo, 1).getDay() + 6) % 7;           // 월요일부터
+  for (var b = 0; b < lead; b++) cells.push('<div class="cal-d void"></div>');
+  for (var dd = 1; dd <= last; dd++) {
+    var d = new Date(y, mo, dd), key = ymd(d), biz = ptBiz(d), hol = KR_HOLIDAYS[key];
+    var recs = AL_ROWS.filter(function (r) { return alCovers(r, key); });
+    var cls = 'cal-d' + (biz ? '' : ' wkend'), chip = '';
+    if (recs.length) {
+      var st = alStatus(recs[0]);
+      chip = '<i class="ec ' + (st === '반려' ? 'pt-miss' : 'pt-done') + '">' + (st === '결재 완료' ? '결재 완료' : st) + '</i>';
+    } else if (biz && key >= AL_START && key < today) {
+      chip = '<i class="ec pt-miss" data-alwrite="' + key + '" style="cursor:pointer" title="누르면 이 날짜로 작성">누락</i>'; missN.push(key);
+    } else if (biz && key === today) {
+      chip = '<i class="ec pt-need" data-alwrite="' + key + '" style="cursor:pointer" title="누르면 작성칸으로 이동">오늘 작성</i>';
+    }
+    if (hol) chip = '<i class="ec pt-hol">' + esc(hol) + '</i>' + chip;
+    if (chip) cls += ' has';
+    if (key === today) cls += ' today';
+    if (AL.day === key) cls += ' sel';
+    cells.push('<div class="' + cls + '" data-alday="' + key + '" title="누르면 이 날짜 기록 보기 · 작성"><div class="cal-top"><b>' + dd + '</b></div><div class="evs">' + chip + '</div></div>');
+  }
+  $('alCal').innerHTML = '<div class="pt-cal5 al-cal7"><div class="cal-h"><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span><span>일</span></div>' +
+    '<div class="cal-g">' + cells.join('') + '</div></div>';
+
+  var warn = [];
+  if (missN.length) warn.push('<b>누락 ' + missN.length + '일</b> : ' + missN.map(function (k) { return (+k.slice(5, 7)) + '.' + (+k.slice(8)); }).join(', '));
+  var nRv = AL_ROWS.filter(function (r) { return alStatus(r) === '검토 대기'; }).length;
+  var nBs = AL_ROWS.filter(function (r) { return alStatus(r) === '승인 대기'; }).length;
+  var nRj = AL_ROWS.filter(function (r) { return alStatus(r) === '반려'; }).length;
+  if (nRv) warn.push('검토 대기 <b>' + nRv + '건</b> (' + AL_SIGN[1].name + ')');
+  if (nBs) warn.push('승인 대기 <b>' + nBs + '건</b> (' + AL_SIGN[2].name + ')');
+  if (nRj) warn.push('반려 <b>' + nRj + '건</b> — 기록을 열어 고친 뒤 다시 결재 올리기');
+  $('alAlert').innerHTML = (AL.err ? '<div class="rg-issue" style="margin:0 0 12px">기록을 불러오지 못했습니다 : ' + esc(AL.err) +
+    '<br>Supabase SQL Editor 에서 <b>schema_airlog.sql</b> 을 먼저 실행해 주세요.</div>' : '') +
+    (warn.length ? '<div class="pt-alert">' + warn.join('<br>') + '</div>' : '');
+
+  var lst = alListRows();
+  $('alCount').textContent = AL.day ? +AL.day.slice(5, 7) + '.' + (+AL.day.slice(8)) + ' (' + crDow(AL.day) + ') 기록 · ' + lst.length + '건 — 날짜를 다시 누르면 결재 대기로'
+    : '결재 대기 · 반려 · ' + lst.length + '건';
+  var pr = lst.filter(function (r) { return alStatus(r) === '검토 대기'; }).length;
+  var pb = lst.filter(function (r) { return alStatus(r) === '승인 대기'; }).length;
+  $('alBulk').innerHTML = (pr ? '<button class="reset go" data-albulk="review" style="padding:5px 12px;font-size:11px;margin-left:8px">검토 대기 ' + pr + '건 일괄 검토</button>' : '') +
+    (pb ? '<button class="reset go" data-albulk="boss" style="padding:5px 12px;font-size:11px;margin-left:8px">승인 대기 ' + pb + '건 일괄 승인</button>' : '') +
+    (lst.length ? '<button class="reset" id="alPdfBtn" style="padding:5px 12px;font-size:11px;margin-left:8px">PDF 일괄 다운로드</button>' : '');
+  $('alList').innerHTML = lst.length ? lst.map(function (r) {
+    var ops = crJson(r.ops), gas = crJson(r.gas), fur = ops.filter(function (o) { return o.n === 4; })[0];
+    return '<div class="sdy-item" data-alopen="' + esc(r.id) + '">' +
+      '<div class="hd"><span class="d">' + esc(alDateText(r)) + '</span>' +
+        (r.weather ? '<span class="b b-gray">' + esc(r.weather) + '</span>' : '') +
+        (r.temp_max != null && r.temp_max !== '' ? '<span class="b b-gray">' + esc(r.temp_max) + ' / ' + esc(r.temp_min) + '℃</span>' : '') +
+        (fur && fur.t && fur.t !== '-' ? '<span class="b b-gray">가열로 ' + esc(fur.t) + '</span>' : '') +
+        '<span class="t"></span>' +
+        '<span class="meta">' + alStatusText(r) + '</span></div>' +
+      '<div class="pv">가스사용량 ' + gas.map(function (g, i) { return (i + 1) + '호 ' + (g.use == null ? '-' : esc(alFmt(g.use)) + '㎥'); }).join(' · ') + '</div>' +
+    '</div>';
+  }).join('') : '<div class="empty"><b>' + (AL.day ? '이 날짜의 대기일지가 없습니다' : '결재 대기 중인 대기일지가 없습니다') + '</b>' +
+    (!RPC.live ? 'Supabase에 연결되어야 기록을 불러오고 저장할 수 있습니다.' : AL.day ? '왼쪽 양식으로 대기일지를 작성하세요.' : '지난 기록은 달력에서 날짜를 누르면 볼 수 있습니다.') + '</div>';
+}
+/** 목록 = 고른 날짜의 기록 (안 골랐으면 결재 대기 · 반려 전체) · 최근순 */
+function alListRows() {
+  return AL_ROWS.filter(function (r) { return AL.day ? alCovers(r, AL.day) : alStatus(r) !== '결재 완료'; })
+    .sort(function (a, b) { return alStart(b).localeCompare(alStart(a)); });
+}
+function alSubmit() {
+  var date = $('alDate').value, end = $('alEnd').value;
+  if (!date) { toast('기록 일자를 입력해 주세요.', 'warn'); return; }
+  if (end && end < date) { toast('끝 날짜가 기록 일자보다 앞입니다.', 'warn'); return; }
+  if (end === date) end = '';
+  var biz = ptBiz(parseYmd(date));
+  var fs = $('alFS').value, fe = $('alFE').value;
+  if (!!fs !== !!fe) { toast('가열로 가동 시각과 종료 시각을 둘 다 적어 주세요.', 'warn'); return; }
+  var ops = AL_OPS.map(function (o) {
+    if (o.furnace) return { n: o.n, name: o.name, t: alDur(fs, fe) || '-', s: fs || '', e: fe || '', note: $('alOpN' + o.n).value.trim() };
+    return { n: o.n, name: o.name, t: $('alOpT' + o.n).value.trim() || '-', note: $('alOpN' + o.n).value.trim() };
+  });
+  var gas = AL_GAS.map(function (g, i) {
+    var t = alNum($('alG' + i).value), p = alNum($('alP' + i).value);
+    return { name: g.name, place: g.place, cap: g.cap, pol: g.pol, conc: g.conc, eff: g.eff, chem: g.chem, qty: g.qty,
+      today: t, prev: p, use: t != null && p != null ? alNum(t - p) : null };
+  });
+  var blank = gas.filter(function (g) { return g.today == null; }).length;
+  if (biz && blank && !confirm('금일 지침값이 비어 있는 칸이 ' + blank + '개 있습니다. 그대로 올릴까요?')) return;
+  var noPrev = gas.filter(function (g) { return g.today != null && g.prev == null; }).length;
+  if (noPrev && !confirm('전일 지침값이 없어 가스사용량을 계산하지 못한 칸이 ' + noPrev + '개 있습니다. 그대로 올릴까요?')) return;
+  var neg = gas.filter(function (g) { return g.use != null && g.use < 0; }).length;
+  if (neg && !confirm('금일 지침값이 전일 지침값보다 작은 칸이 ' + neg + '개 있습니다 (사용량이 음수). 그대로 올릴까요?')) return;
+  if (!RPC.live) { toast('Supabase에 연결되어야 저장할 수 있습니다.', 'warn'); return; }
+  var dup = AL_ROWS.some(function (r) { return alCovers(r, date) || (end && alCovers(r, end)); });
+  if (dup && !confirm(date + ' 대기일지가 이미 있습니다. 한 건 더 올릴까요?')) return;
+  var btn = $('alSave'); btn.disabled = true; btn.textContent = '결재 올리는 중…';
+  RPC.db.from('air_log').insert({
+    log_date: date, end_date: end || null,
+    weather: $('alWx').value || null, temp_max: alNum($('alTmax').value), temp_min: alNum($('alTmin').value),
+    ops: ops, gas: gas,
+    repair: { name: $('alRpName').value.trim(), outlet: $('alRpOutlet').value.trim(), period: $('alRpPeriod').value.trim(),
+      by: $('alRpBy').value.trim(), detail: $('alRpDetail').value.trim() },
+    opinion: $('alOpinion').value.trim() || null, etc: $('alEtc').value.trim() || null,
+    writer: AL_SIGN[0].name, sign_writer: 'stamp|' + date,                         // ① 담당 자동 도장 (날짜 = 기록 일자)
+    reviewer: AL_SIGN[1].name, sign_review: null, review_signed_at: null,          // ② 검토 대기
+    approver: AL_SIGN[2].name, sign_boss: null, boss_signed_at: null,              // ③ 승인 대기
+    created_by: state.user || null
+  }).then(function (res) {
+    if (res.error) throw res.error;
+    toast('결재를 올렸습니다. ' + AL_SIGN[1].name + ' 검토 대기 중입니다.');
+    ['alG0', 'alG1', 'alG2', 'alFS', 'alFE', 'alRpName', 'alRpOutlet', 'alRpPeriod', 'alRpBy', 'alRpDetail', 'alOpinion', 'alEtc']
+      .forEach(function (id) { $(id).value = ''; });
+    AL.ym = date.slice(0, 7); AL.day = '';
+    $('alDate').value = ymd(new Date());
+    return loadAl().then(function () { alOnDate(); });
+  }).catch(function (e) {
+    toast('저장 실패: ' + ((e && e.message) || e), 'err');
+  }).then(function () { btn.disabled = false; btn.textContent = '결재 올리기'; });
+}
+function alBulk(kind) {
+  var want = kind === 'review' ? '검토 대기' : '승인 대기', s = AL_SIGN[kind === 'review' ? 1 : 2], act = kind === 'review' ? '검토' : '승인';
+  var ids = alListRows().filter(function (r) { return alStatus(r) === want; }).map(function (r) { return r.id; });
+  if (!ids.length) return;
+  apAskPin('일괄 ' + act).then(function (ok) {
+    if (!ok || !confirm(s.name + ' 이름으로 ' + ids.length + '건을 ' + act + '합니다.')) return;
+    var now = new Date().toISOString();
+    var patch = kind === 'review' ? { sign_review: 'stamp', review_signed_at: now } : { sign_boss: 'stamp', boss_signed_at: now };
+    RPC.db.from('air_log').update(patch).in('id', ids).then(function (res) {
+      if (res.error) throw res.error;
+      toast(ids.length + '건을 ' + act + '했습니다.'); loadAl();
+    }).catch(function (e) { toast(act + ' 실패: ' + ((e && e.message) || e), 'err'); });
+  });
+}
+var AL_DOC_CSS =
+  '.al-doc .form7{font-size:10.5px;color:#333;margin-bottom:6px}' +
+  '.al-doc .sec{font-weight:700;font-size:12.5px;margin:14px 0 6px}' +
+  '.al-doc .sub{font-weight:600;font-size:12px;margin:8px 0 6px}' +
+  '.al-doc .ck th,.al-doc .ck td{font-size:10.5px;padding:4px 5px;text-align:center;white-space:pre-line;line-height:1.4}' +
+  '.al-doc .note{font-size:10.5px;color:#444;margin-top:4px}' +
+  '.al-doc .tech{text-align:right;margin-top:12px;font-size:12.5px}' +
+  '.al-doc .guide{margin-top:12px;font-size:9.5px;color:#555;line-height:1.55}';
+/** 기록 보기 : 운영기록부 [별지 제7호서식] 모양 · 결재 칸 = 담당 · 검토 · 승인 (도장 날짜 = 기록 일자) */
+function alDocHtml(r) {
+  var ops = crJson(r.ops), gas = crJson(r.gas), rp = alObj(r.repair), ld = alStart(r);
+  var rv = String(r.sign_review || ''), bs = String(r.sign_boss || ''), rej = alReject(r);
+  var cell = function (s, wait) {
+    if (s === 'stamp') return crStamp(ld, '');
+    if (s.indexOf('reject|') === 0) return '<b style="color:#C0392B">반려</b>';
+    return wait ? '<span style="color:#aaa">대기</span>' : '';
+  };
+  var names = [r.writer || AL_SIGN[0].name, r.reviewer || AL_SIGN[1].name, r.approver || AL_SIGN[2].name];
+  var blank8 = new Array(9).join('<td style="height:30px"></td>');
+  var tmp = r.temp_max != null && r.temp_max !== '' ? esc(r.temp_max) + ' / ' + esc(r.temp_min) + ' ℃' : '';
+  return '<style>' + AL_DOC_CSS + '</style><div class="apdoc al-doc">' +
+    '<div class="form7">■ 대기환경보전법 시행규칙 [별지 제7호서식] &lt;개정 2022. 5. 3.&gt;</div>' +
+    '<div class="h"><h1 style="font-size:19px;letter-spacing:.02em">대기배출시설 및 방지시설 운영기록부</h1>' +
+      '<table class="line"><tr><th class="g" rowspan="2">결<br>재</th>' +
+        AL_SIGN.map(function (s, i) { return '<th style="width:auto;min-width:84px;white-space:nowrap">' + s.t + '<br><span style="font-weight:400">' + esc(names[i]) + '</span></th>'; }).join('') + '</tr>' +
+      '<tr><td style="height:72px;min-width:78px">' + crStamp(ld, '') + '</td>' +
+        '<td style="min-width:78px">' + cell(rv, true) + '</td>' +
+        '<td style="min-width:78px">' + cell(bs, rv === 'stamp') + '</td></tr></table></div>' +
+    (rej ? '<div style="margin:0 0 12px;border:1px solid #C0392B;color:#C0392B;padding:8px 12px;font-size:12px">' + rej.who + ' 반려 사유 : ' + esc(rej.why) + '</div>' : '') +
+    '<table class="body"><tr><th style="width:64px">일 자</th><td><b>' + esc(alDateText(r)) + '</b></td>' +
+      '<th style="width:64px">날 씨</th><td style="width:64px;text-align:center">' + esc(r.weather || '') + '</td>' +
+      '<th style="width:64px">온 도</th><td style="width:96px;text-align:center">' + tmp + '</td></tr></table>' +
+    '<div class="sec">1. 배출구별 주요 배출시설 및 방지시설 가동(조업)시간</div>' +
+    '<table class="ck"><tr><th style="width:56px">배출구</th><th>배출시설</th><th style="width:190px">가동시간</th><th style="width:170px">비고</th></tr>' +
+      ops.map(function (o) {
+        return '<tr><td>' + esc(o.n) + '</td><td>' + esc(o.name) + '</td><td>' + esc(o.t || '-') +
+          (o.s && o.e ? '\n(' + esc(o.s) + ' ~ ' + esc(o.e) + ')' : '') + '</td><td>' + esc(o.note || '') + '</td></tr>';
+      }).join('') + '</table>' +
+    '<div class="note">* 비고란은 정상 여부를 기재합니다.</div>' +
+    '<div class="sec">2. 방지시설 운영사항</div><div class="sub">가. 방지시설 운전사항</div>' +
+    '<table class="ck"><tr><th rowspan="2">방지<br>시설명</th><th rowspan="2">설치<br>위치</th><th rowspan="2">가스<br>지침량(㎥)</th><th rowspan="2">가스<br>사용량(㎥)</th>' +
+      '<th rowspan="2">처리<br>용량<br>(㎥/min)</th><th rowspan="2">처리<br>오염<br>물질</th><th rowspan="2">처리<br>농도<br>(ppm또는<br>㎎/S㎥)</th><th rowspan="2">처리<br>효율(%)</th>' +
+      '<th colspan="2">사용약품</th></tr><tr><th>약품명</th><th>약품량</th></tr>' +
+      gas.map(function (g) {
+        return '<tr><td>' + esc(g.name || '') + '</td><td>' + esc(g.place || '') + '</td><td>' + esc(alFmt(g.today)) + '</td><td>' + esc(alFmt(g.use)) + '</td>' +
+          '<td>' + esc(g.cap || '') + '</td><td>' + esc(g.pol || '') + '</td><td>' + esc(g.conc || '') + '</td><td>' + esc(g.eff || '') + '</td>' +
+          '<td>' + esc(g.chem || '') + '</td><td>' + esc(g.qty || '') + '</td></tr>';
+      }).join('') + '</table>' +
+    '<div class="sub" style="margin-top:12px">나. 방지시설 보수사항</div>' +
+    '<table class="ck"><tr><th>방지시설명</th><th>배출구별</th><th>보수기간</th><th>보수자</th><th>보수명세</th></tr>' +
+      '<tr><td style="height:34px">' + esc(rp.name || '') + '</td><td>' + esc(rp.outlet || '') + '</td><td>' + esc(rp.period || '') + '</td>' +
+      '<td>' + esc(rp.by || '') + '</td><td>' + esc(rp.detail || '') + '</td></tr></table>' +
+    '<div class="sec">3. 자가측정사항</div><div style="font-size:11.5px;margin-bottom:4px">측정일 :</div>' +
+    '<table class="ck"><tr><th>①기상</th><th>②기온</th><th>③습도</th><th>④기압</th><th>⑤풍향</th><th>⑥풍속</th></tr>' +
+      '<tr><td>□맑음, □흐림, □구름,\n□눈, □비</td><td style="text-align:right">℃</td><td style="text-align:right">%</td>' +
+      '<td style="text-align:right">mb</td><td style="text-align:right">풍</td><td style="text-align:right">m/sec</td></tr></table>' +
+    '<table class="ck" style="margin-top:6px"><tr><th>⑦배출구<br>번호</th><th>⑧주요배출<br>시설명</th><th>⑨측정</th><th>⑩측정농도<br>(ppm, ㎎/S㎥)</th>' +
+      '<th>⑪일일<br>유량<br>(S㎥/일)</th><th>⑫일일<br>배출량<br>(㎏/일)</th><th>⑬검사<br>기기명</th><th>⑭검사<br>방법</th></tr><tr>' + blank8 + '</tr></table>' +
+    '<table class="body" style="margin-top:8px"><tr><th style="width:190px">⑮ 연료명 및 사용량</th><td></td></tr>' +
+      '<tr><th>⑯ 원료명 및 사용량<br><span style="font-weight:400;font-size:10.5px">(특정대기유해물질 배출원 포함)</span></th><td></td></tr>' +
+      '<tr><th>⑰ 환경기술인의 의견</th><td><div class="pre">' + esc(r.opinion || '') + '</div></td></tr>' +
+      '<tr><th>⑱ 기타</th><td><div class="pre">' + esc(r.etc || '') + '</div></td></tr></table>' +
+    '<div class="tech">환경기술인 직급 : 과 장 &nbsp;&nbsp;&nbsp; 성명 : 이 재 훈</div>' +
+    '<div class="guide">※ 작성요령<br>' +
+      '1. 「대기환경보전법」 제39조에 따라 「환경분야 시험·검사 등에 관한 법률」에 따른 측정대행업자에게 해당 오염물질 전부를 위탁하여 측정하도록 하는 경우에는 제3호란을 작성하지 아니할 수 있습니다.<br>' +
+      '2. 방지시설의 설치를 면제받은 사업장은 제2호와 제3호란을 작성하지 아니할 수 있습니다.<br>' +
+      '3. 제2호나목의 방지시설 보수사항은 별도의 계약서나 지출증빙서로 갈음할 수 있습니다.<br>' +
+      '4. 사물인터넷 측정기기를 부착한 배출시설 및 방지시설의 경우 제1호의 가동시간란 및 제2호가목의 방지시설명란ㆍ설치위치란은 「대기환경보전법 시행령」 제19조제1항제2호의 사물인터넷 측정기기 관제센터로 전송된 측정결과로 이를 갈음할 수 있습니다.</div>' +
+  '</div>';
+}
+function alPrintHtml(rows) {
+  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>대기일지 ' + esc(rows.length === 1 ? alStart(rows[0]) : rows.length + '건') + '</title>' +
+    '<style>body{margin:0;background:#eee;padding:20px 0}' + AP_DOC_CSS + '.apdoc{margin-bottom:20px}' +
+    '@media print{body{background:#fff;padding:0}.apdoc{width:auto;padding:0;margin:0;page-break-after:always}}@page{size:A4;margin:10mm}</style></head><body>' +
+    rows.map(alDocHtml).join('') + '<script>window.onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>';
+}
+function alOpen(id) {
+  var r = AL_ROWS.filter(function (x) { return String(x.id) === String(id); })[0];
+  if (!r) return;
+  var st = alStatus(r);
+  var bg = document.createElement('div');
+  bg.className = 'cr-bg';
+  bg.innerHTML = '<div class="cr-doc"><div class="bar">' +
+    '<span class="cr-st">' + esc(st) + '</span><span style="flex:1"></span>' +
+    (st === '검토 대기' ? '<button class="reset go" data-al="review">검토 (' + esc(AL_SIGN[1].name) + ')</button><button class="reset" data-al="reject">반려</button>' : '') +
+    (st === '승인 대기' ? '<button class="reset go" data-al="ok">승인 (' + esc(AL_SIGN[2].name) + ')</button><button class="reset" data-al="reject">반려</button>' : '') +
+    (st === '반려' ? '<button class="reset go" data-al="resubmit">다시 결재 올리기</button>' : '') +
+    '<button class="reset" data-al="print">인쇄 / PDF</button><button class="reset" data-al="del">삭제</button>' +
+    '<button class="reset" data-al="close">닫기</button></div>' + alDocHtml(r) + '</div>';
+  document.body.appendChild(bg);
+  function close() { bg.remove(); }
+  function save(patch, msg) {
+    RPC.db.from('air_log').update(patch).eq('id', r.id).then(function (res) {
+      if (res.error) throw res.error;
+      toast(msg); close();
+      loadAl().then(function () { alOpen(r.id); });
+    }).catch(function (e) { toast('결재 저장 실패: ' + ((e && e.message) || e), 'err'); });
+  }
+  bg.addEventListener('click', function (e) {
+    if (e.target === bg) { close(); return; }
+    var b = e.target.closest('[data-al]');
+    if (!b) return;
+    var a = b.dataset.al, now = new Date().toISOString();
+    if (a === 'close') close();
+    else if (a === 'print') {
+      var w = window.open('', '_blank');
+      if (!w) { toast('팝업이 막혀 있습니다. 팝업을 허용해 주세요.', 'warn'); return; }
+      w.document.write(alPrintHtml([r])); w.document.close();
+    } else if (a === 'review') {
+      apAskPin('검토').then(function (ok) { if (ok) save({ sign_review: 'stamp', review_signed_at: now }, '검토했습니다. ' + AL_SIGN[2].name + ' 승인 대기 중입니다.'); });
+    } else if (a === 'ok') {
+      apAskPin('승인').then(function (ok) { if (ok) save({ sign_boss: 'stamp', boss_signed_at: now }, '승인했습니다.'); });
+    } else if (a === 'reject') {
+      apAskPin('반려').then(function (ok) {
+        if (!ok) return;
+        var rs = prompt('반려 사유를 적어 주세요.');
+        if (rs == null) return;
+        if (!rs.trim()) { toast('반려 사유를 적어 주세요.', 'warn'); return; }
+        save(st === '검토 대기' ? { sign_review: 'reject|' + rs.trim(), review_signed_at: now }
+          : { sign_boss: 'reject|' + rs.trim(), boss_signed_at: now }, '반려했습니다.');
+      });
+    } else if (a === 'resubmit') {
+      save({ sign_review: null, review_signed_at: null, sign_boss: null, boss_signed_at: null, sign_writer: 'stamp|' + alStart(r) }, '다시 결재를 올렸습니다.');
+    } else if (a === 'del') {
+      delPin('이 대기일지를 삭제합니다.').then(function (ok) {
+        if (!ok) return;
+        RPC.db.from('air_log').delete().eq('id', r.id)
+          .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); close(); loadAl(); })
+          .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
+      });
+    }
+  });
+}
+/** 목록에 보이는 대기일지를 날짜순으로 한 PDF 에 — 일지마다 새 쪽 */
+function alPdfAll(btn) {
+  var rows = alListRows().slice().sort(function (a, b) { return alStart(a).localeCompare(alStart(b)); });
+  if (!rows.length) return;
+  var label = btn.textContent;
+  btn.disabled = true;
+  var box = null;
+  apLoadPdfLibs().then(function () {
+    var pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var pw = 210, ph = 297, m = 10, iw = pw - m * 2, ih = ph - m * 2, first = true;
+    box = document.createElement('div');
+    box.style.cssText = 'position:fixed;left:-10000px;top:0;width:720px;background:#fff';
+    document.body.appendChild(box);
+    var chain = Promise.resolve();
+    rows.forEach(function (r, n) {
+      chain = chain.then(function () {
+        btn.textContent = 'PDF 만드는 중… ' + (n + 1) + '/' + rows.length;
+        box.innerHTML = '<style>' + AP_DOC_CSS + '</style>' + alDocHtml(r);
+        return window.html2canvas(box.querySelector('.apdoc'), { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false }).then(function (cv) {
+          var pxPerMm = cv.width / iw, sliceH = Math.floor(ih * pxPerMm);
+          for (var y = 0; y < cv.height; y += sliceH) {
+            var h = Math.min(sliceH, cv.height - y), part = document.createElement('canvas');
+            part.width = cv.width; part.height = h;
+            part.getContext('2d').drawImage(cv, 0, y, cv.width, h, 0, 0, cv.width, h);
+            if (!first) pdf.addPage();
+            first = false;
+            pdf.addImage(part.toDataURL('image/jpeg', 0.9), 'JPEG', m, m, iw, h / pxPerMm);
+          }
+        });
+      });
+    });
+    return chain.then(function () {
+      apDownloadBlob(pdf.output('blob'), '대기일지_' + (AL.day || '결재대기_' + ymd(new Date())) + '(' + rows.length + '건).pdf');
+      toast(rows.length + '건을 PDF 한 파일로 내려받았습니다.');
+    });
+  }).catch(function (e) {
+    toast('PDF 만들기 실패: ' + ((e && e.message) || e), 'err');
+  }).then(function () {
+    if (box) box.remove();
+    btn.disabled = false; btn.textContent = label;
+  });
+}
+
+/* ============================================================
  *  6-6-1. 전자결재 (schema_approval.sql 실행 필요)
  *
  *  · 기안 작성 : 양식을 고르면 그 양식의 항목·체크리스트가 아래에 펼쳐집니다.
@@ -15705,6 +16335,7 @@ function refresh(silent) {
     loadAct();
     loadCr();
     loadPt();
+    loadAl();
     loadIso();
     loadAp();
     if (VISIT_LOG_UNLOCKED) loadVisitLog();
@@ -16418,7 +17049,7 @@ function dcBind() {
 /* ============================================================
  *  8. 이벤트 연결
  * ============================================================ */
-var TAB_LIST = ['month', 'week', 'monitor', 'monact', 'kpi', 'safdash', 'safinspect', 'safpatrol','safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'heanew', 'heaspc', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'envact', 'accident', 'budget', 'csa', 'qse', 'svscore', 'aiadv', 'library', 'rules', 'safeday', 'ceoround', 'etcact', 'approval', 'visit', 'visitlog', 'news', 'staff', 'dcmap'];
+var TAB_LIST = ['month', 'week', 'monitor', 'monact', 'kpi', 'safdash', 'safinspect', 'safpatrol','safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'heanew', 'heaspc', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'envairlog', 'envact', 'accident', 'budget', 'csa', 'qse', 'svscore', 'aiadv', 'library', 'rules', 'safeday', 'ceoround', 'etcact', 'approval', 'visit', 'visitlog', 'news', 'staff', 'dcmap'];
 /** 상단 "공통" · "안전" 버튼이 묶고 있는 게시판들. 그룹을 누르면 아래 두 번째 줄에 이 목록이 펼쳐집니다. */
 var NAV_GROUPS = {
   monitor: { label: '모니터링', sub: [
@@ -16470,6 +17101,8 @@ var NAV_GROUPS = {
     { tab: 'envghg', label: '온실가스' },
     { tab: 'envwater', label: '오수처리' },
     { tab: 'envair', label: '대기오염' },
+    // 대기일지 : 대기배출시설 및 방지시설 운영기록부 (담당 → 검토 → 승인 결재 · schema_airlog.sql 실행 필요)
+    { tab: 'envairlog', label: '대기일지' },
     { tab: 'envact', label: '환경활동' }
   ] }
 };
@@ -16566,6 +17199,7 @@ function activateTab(t) {
   if (t === 'visitlog' && VISIT_LOG_UNLOCKED) loadVisitLog();
   if (t === 'staff') renderStaff();
   if (t === 'dcmap') renderDcMap();
+  if (t === 'envairlog') alTabOpened();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -17131,14 +17765,14 @@ function bindLogin() {
     heaenv: ['Work Environment', '작업환경측정'], heaedu: ['Health Training', '정기교육'],
     heanew: ['New Hire Training', '신규교육'], heaspc: ['Special Training', '특별교육'],
     envwaste: ['Waste', '폐기물'], envghg: ['Emissions', '온실가스'],
-    envwater: ['Wastewater', '오수처리'], envair: ['Air Quality', '대기오염'], envact: ['Green Activities', '환경활동'],
+    envwater: ['Wastewater', '오수처리'], envair: ['Air Quality', '대기오염'], envairlog: ['Air Emission Log', '대기일지'], envact: ['Green Activities', '환경활동'],
     csa: ['Compliance', '중대재해처벌법'], qse: ['Contractor Review', '적격수급인평가'], svscore: ['Performance Review', '업무 수행 평가']
   };
   var GROUP = {
     safdash: '안전', safinspect: '안전', safrisk: '안전', safmeet: '안전', edu: '안전', safdevice: '안전',
     headash: '보건', envdash: '환경', monitor: '모니터링', monact: '모니터링',
     heaact: '보건', heaexam: '보건', heaenv: '보건', heaedu: '보건', heanew: '보건', heaspc: '보건',
-    envwaste: '환경', envghg: '환경', envwater: '환경', envair: '환경', envact: '환경',
+    envwaste: '환경', envghg: '환경', envwater: '환경', envair: '환경', envairlog: '환경', envact: '환경',
     kpi: '공통', accident: '공통', budget: '공통', library: '공통', aiadv: '공통', rules: '공통', safeday: '공통', ceoround: '공통', etcact: '공통', approval: '공통', news: '공통', visit: '공통', visitlog: '공통',
     qse: '중대재해처벌법', svscore: '중대재해처벌법'
   };
