@@ -1530,6 +1530,7 @@ window.AI_CONFIG = {
   .monthsel span.cnt{font-size:10.5px;font-weight:400;color:var(--ink3);margin-left:4px;font-variant-numeric:tabular-nums}
   select,input,textarea{font-size:12.5px;font-weight:400;color:var(--ink);background:#fff;
     border:1px solid var(--line);border-radius:0;padding:10px 12px;transition:.13s}
+  input[type="password"]{-webkit-text-security:disc}
   select{cursor:pointer}
   select:hover,input:hover,textarea:hover{border-color:#C4C4C4}
   select:focus-visible,input:focus-visible,textarea:focus-visible{outline:none;border-color:var(--ink);
@@ -2583,15 +2584,22 @@ window.AI_CONFIG = {
   .acm-chart .bc-b{width:14px;max-width:34%;border-radius:7px 7px 2px 2px;min-height:0}
   .acm-chart.acm-year .bc-b{width:34px;border-radius:10px 10px 3px 3px}
   .acm-chart .bc-b[style*="height:0.00%"]{visibility:hidden}
-  .acm-chart .bc-b span{top:-17px;font-size:10.5px;font-weight:600;color:var(--ink3)}
-  .acm-chart .bc-k{font-size:11px;color:var(--ink3)}
+  .acm-chart .bc-b{transition:opacity .15s,filter .15s}
+  .acm-chart .bc-b span{top:-16px;font-size:10px;font-weight:600;color:#9AA3AF}
+  .acm-chart .bc-g:hover .bc-b{filter:brightness(.92)}
+  .acm-chart .bc:hover .bc-g:not(:hover) .bc-b{opacity:.45}
+  .acm-chart .bc-k{font-size:11px;color:#8B95A1;font-weight:500}
+  .acm-chart .bc-g:hover .bc-k{color:#191F28;font-weight:700}
   .acm-chart .bc-line{z-index:0}
   .acm-chart .bc-set{z-index:1}
-  .acm-chart .bc-line polyline{stroke:#B4B4B4;stroke-width:1.6;stroke-dasharray:none}
-  .acm-chart .bc-dot{width:8px;height:8px;margin-left:-4px;box-shadow:inset 0 0 0 2px #A8A8A8}
-  .acm-chart .bc-tot{color:#1A1A1A;font-size:13px;font-weight:700;letter-spacing:-.02em}
+  /* 합계 추이선 : 얇은 차콜 실선 + 작은 흰 점 (모던 · 심플) */
+  .acm-chart .bc-line polyline{stroke:#4E5968;stroke-width:1.4;stroke-dasharray:none;opacity:.55}
+  .acm-chart .bc-dot{width:7px;height:7px;margin-left:-3.5px;background:#fff;box-shadow:inset 0 0 0 1.6px #4E5968}
+  /* 합계 숫자 : 배지 없이 굵은 차콜 숫자 */
+  .acm-chart .bc-tot{color:#191F28;font-size:12.5px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
   .acm-chart .lgd{gap:18px;margin-top:16px;font-size:11.5px;color:var(--ink2)}
-  .acm-chart .lgd div:last-child i{width:14px;height:2px;border-radius:2px}
+  .acm-chart .lgd i{border-radius:3px !important}
+  .acm-chart .lgd div:last-child i{width:16px;height:3px;border-radius:2px !important}
   /* 안전사고 상단 카드 : 높이를 줄이고 TRIR 아래 문구는 한 줄로 */
   #accKpi .kpi{padding:18px 22px 18px}
   #accKpi .kpi .v{font-size:44px}
@@ -2605,11 +2613,11 @@ window.AI_CONFIG = {
   .acm-ytbl th:first-child,.acm-ytbl td:first-child{text-align:left}
   .acm-ytbl td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums}
   .acm-ytbl td small{color:var(--ink3);font-size:10.5px}
-  .acm-ytbl td.h{color:#C9473D;font-weight:600}
-  .acm-ytbl td.p{color:#5E636B;font-weight:600}
-  .acm-ytbl td.t{font-weight:700;color:#1A1A1A}
-  .acm-ytbl .up{color:#C9473D}
-  .acm-ytbl .dn{color:#5FAE86}
+  .acm-ytbl td.h{color:#F04452;font-weight:600}
+  .acm-ytbl td.p{color:#6B7684;font-weight:600}
+  .acm-ytbl td.t{font-weight:700;color:#191F28}
+  .acm-ytbl .up{color:#F04452}
+  .acm-ytbl .dn{color:#12B886}
 
   /* ══════════ 안전보건의 날 ══════════ */
   .sdy-sum{font-size:13px;color:var(--ink3);margin-bottom:14px}
@@ -6152,7 +6160,7 @@ function svgBars(groups, series, opts) {
       if (trend && trend[gi] != null) {
         var tp = (trend[gi] / max * 100).toFixed(2);
         bars += '<i class="bc-dot" style="bottom:calc(' + tp + '% - 4px)"></i>' +
-          (trend[gi] > 0 ? '<em class="bc-tot" style="bottom:calc(' + tp + '% + 8px)">' + nf(trend[gi], opts.dec || 0) + '</em>' : '');
+          (trend[gi] > 0 ? '<em class="bc-tot" style="bottom:calc(' + tp + '% + 10px)">' + nf(trend[gi], opts.dec || 0) + '</em>' : '');
       }
     }
     return '<div class="bc-g"><div class="bc-set">' + bars + '</div><div class="bc-k">' + esc(g.k) + '</div></div>';
@@ -9286,10 +9294,21 @@ function renderAccident() {
   }
   var d1 = dist('사고유형'), d2 = dist('사고형태');
   var mx = Math.max.apply(null, d1.concat(d2).map(function (x) { return x.v; }).concat([1]));
+  // 그래프와 같은 색 : 인적 = 코랄 레드, 물적 · 그 외 = 쿨 그레이
+  var C_HUM = '#F04452', C_PROP = '#B0B8C1';
+  // 사고형태 : 건수가 많을수록 진한 그레이 (가장 많은 형태 = 차콜 #4E5968, 적을수록 #D1D6DB 쪽으로 옅게)
+  function shadeOf(list) {
+    var top = list.length ? list[0].v : 1, lo = [209, 214, 219], hi = [78, 89, 104];
+    return function (x) {
+      var t = top > 1 ? (x.v - 1) / (top - 1) : 1;
+      return 'rgb(' + lo.map(function (c, i) { return Math.round(c + (hi[i] - c) * t); }).join(',') + ')';
+    };
+  }
   function rowsOf(list, color) {
     return list.map(function (x) {
+      var c = typeof color === 'function' ? color(x) : color;
       return '<tr><td class="k">' + esc(x.k) + '</td><td style="width:60%">' +
-        '<span class="gz"><span class="tr"><span class="fl" style="width:' + (x.v / mx * 100) + '%;background:' + color + '"></span></span>' +
+        '<span class="gz"><span class="tr"><span class="fl" style="width:' + (x.v / mx * 100) + '%;background:' + c + '"></span></span>' +
         '<span class="pc">' + x.v + '</span></span></td></tr>';
     });
   }
@@ -9313,8 +9332,8 @@ function renderAccident() {
     return list.map(function (x) {
       return '<tr><td class="k">' + esc(x.k) + '</td><td style="width:60%">' +
         '<span class="gz"><span class="tr">' +
-        (x.인적 > 0 ? '<span class="fl" style="width:' + (x.인적 / dmx * 100) + '%;background:#C9473D"></span>' : '') +
-        (x.물적 > 0 ? '<span class="fl" style="width:' + (x.물적 / dmx * 100) + '%;background:#6E737C"></span>' : '') +
+        (x.인적 > 0 ? '<span class="fl" style="width:' + (x.인적 / dmx * 100) + '%;background:' + C_HUM + '"></span>' : '') +
+        (x.물적 > 0 ? '<span class="fl" style="width:' + (x.물적 / dmx * 100) + '%;background:' + C_PROP + '"></span>' : '') +
         '</span><span class="pc">' + x.total + '</span></span></td></tr>';
     });
   }
@@ -9322,10 +9341,10 @@ function renderAccident() {
   // 유형 · 형태 · 부서를 가로 3칸으로 (좁은 화면에서는 아래로)
   var EMPTY = '<div class="subttl" style="color:var(--ink3)">' + dLabel + ' 사고 없음</div>';
   $('accDist').innerHTML = '<div class="acd-grid">' +
-    '<div><div class="subttl">사고유형</div>' + (d1.length ? tbl([{ t: '유형' }, { t: '건수' }], rowsOf(d1, '#C9473D'), 240) : EMPTY) + '</div>' +
-    '<div><div class="subttl">사고형태</div>' + (d2.length ? tbl([{ t: '형태' }, { t: '건수' }], rowsOf(d2, '#6E737C'), 240) : EMPTY) + '</div>' +
+    '<div><div class="subttl">사고유형</div>' + (d1.length ? tbl([{ t: '유형' }, { t: '건수' }], rowsOf(d1, function (x) { return x.k.indexOf('인적') === 0 ? C_HUM : C_PROP; }), 240) : EMPTY) + '</div>' +
+    '<div><div class="subttl">사고형태</div>' + (d2.length ? tbl([{ t: '형태' }, { t: '건수' }], rowsOf(d2, shadeOf(d2)), 240) : EMPTY) + '</div>' +
     '<div><div class="subttl">부서별 사고현황</div>' + (d3.length ? tbl([{ t: '부서' }, { t: '건수' }], deptRows(d3), 240) : EMPTY) +
-      legend([{ c: '#C9473D', n: '인적' }, { c: '#6E737C', n: '물적' }]) + '</div>' +
+      legend([{ c: C_HUM, n: '인적' }, { c: C_PROP, n: '물적' }]) + '</div>' +
     '</div>';
 
   // 필터 + 검색 + 목록
@@ -9676,9 +9695,9 @@ function renderAccMonthly(stat, years) {
 
   var scope = SCOPES.filter(function (s) { return s.k === state.accMS; })[0];
   var rows = scopeRows(scope.k);
-  // 인적 = 모던 레드, 물적 = 차콜, 합계 추이선 = 그레이
-  var SER = [{ c: '#C9473D', n: '인적' }, { c: '#6E737C', n: '물적' }];
-  var TOT_LGD = { c: '#B4B4B4', n: '추이 (인적 + 물적 합계)' };
+  // 인적 = 코랄 레드(주의), 물적 = 쿨 그레이, 합계 추이선 = 블루
+  var SER = [{ c: '#F04452', n: '인적' }, { c: '#B0B8C1', n: '물적' }];
+  var TOT_LGD = { c: '#8B95A1', n: '합계 추이' };
 
   if (isYear) { renderAccYearly(rows, years, scope, SER, TOT_LGD, isHuman, thisY, now); return; }
 
@@ -9765,7 +9784,7 @@ function renderAccYearly(rows, years, scope, SER, TOT_LGD, isHuman, thisY, now) 
   if (full.length >= 2) {
     var a = full[full.length - 2], b = full[full.length - 1];
     notes.push(a.y + '년 → ' + b.y + '년 : ' +
-      (b.t === a.t ? '<b>변동 없음</b>' : '<b style="color:' + (b.t > a.t ? '#C9473D' : C.green) + '">' + (b.t > a.t ? '▲ ' : '▼ ') + Math.abs(b.t - a.t) + '건</b>'));
+      (b.t === a.t ? '<b>변동 없음</b>' : '<b style="color:' + (b.t > a.t ? '#F04452' : C.green) + '">' + (b.t > a.t ? '▲ ' : '▼ ') + Math.abs(b.t - a.t) + '건</b>'));
   }
 
   $('accMon').innerHTML =
@@ -17595,7 +17614,9 @@ var NAV_GROUPS = {
     { tab: 'envair', label: '대기오염' },
     // 대기일지 : 대기배출시설 및 방지시설 운영기록부 (담당 → 검토 → 승인 결재 · schema_airlog.sql 실행 필요)
     { tab: 'envairlog', label: '대기일지' },
-    { tab: 'envact', label: '환경활동' }
+    { tab: 'envact', label: '환경활동' },
+    // 밀폐작업 : 현장 플랫폼 안전작업허가 → 협력사용 작성 화면(밀폐공간 체크)을 새 창으로 바로 엽니다
+    { href: 'https://simmons-safety.github.io/field/?go=permit&wpmode=%ED%98%91%EB%A0%A5%EC%82%AC&wptype=%EB%B0%80%ED%8F%90%EA%B3%B5%EA%B0%84', label: '밀폐작업' }
   ] }
 };
 /** 메뉴에는 없고 다른 게시판 안의 버튼으로 들어가는 탭 → 메뉴에서 대신 켜 둘 게시판 */
