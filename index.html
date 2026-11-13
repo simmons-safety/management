@@ -2607,6 +2607,13 @@ window.AI_CONFIG = {
   #accKpi .kpi-foot{margin-top:8px;flex-wrap:nowrap;gap:6px;white-space:nowrap;overflow:hidden}
   .acd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;align-items:start}
   .acd-grid > div > .subttl:first-child{margin-top:0}
+  /* 분포 줄 클릭 → 사고 발생 내역 필터 */
+  .acd-grid tr[data-accdf]{cursor:pointer}
+  .acd-grid tr[data-accdf]:hover td{background:rgba(0,0,0,.035)}
+  .acd-grid tr[data-accdf].on td{background:#EEF3FB}
+  .acd-grid tr[data-accdf].on td.k{font-weight:700;color:#191F28}
+  .acc-dfbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding:8px 12px;border-radius:10px;background:#EEF3FB;font-size:12.5px;color:var(--ink)}
+  .acc-dfbar .reset{padding:5px 12px;font-size:11px}
   @media (max-width:980px){ .acd-grid{grid-template-columns:1fr} }
   .acm-ytbl{width:100%;border-collapse:collapse;font-size:12.5px}
   .acm-ytbl th{font-size:11px;font-weight:500;color:var(--ink3);text-align:right;padding:6px 8px;border-bottom:1px solid #111}
@@ -2616,6 +2623,17 @@ window.AI_CONFIG = {
   .acm-ytbl td.h{color:#F04452;font-weight:600}
   .acm-ytbl td.p{color:#6B7684;font-weight:600}
   .acm-ytbl td.t{font-weight:700;color:#191F28}
+  .acm-ytbl td.s{color:#C0392B;font-weight:700}
+  .acm-ytbl tr.sel td{background:#EEF3FB}
+  .acm-ytbl tbody tr:hover td{background:#F5F8FD}
+  /* 연간 그래프 : 연도 클릭 · 고른 연도 강조 · 산재 표시 */
+  .acm-chart .bc-g[data-accyear]{cursor:pointer}
+  .acm-chart .bc-g.sel .bc-k{color:#191F28;font-weight:700}
+  .acm-chart .bc-g.sel .bc-k::before{content:'▲ ';font-size:9px;color:#191F28}
+  .acm-chart .bc-badge{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);z-index:3;font-style:normal;font-size:10px;font-weight:700;
+    color:#fff;background:#C0392B;border-radius:999px;padding:2px 7px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+  .acm-chart .bc-badge.sm{position:static;transform:none;display:inline-block;padding:1px 6px;font-size:9.5px;box-shadow:none;vertical-align:1px}
+  .acm-hint{margin-top:8px;text-align:center;font-size:11px;color:var(--ink3)}
   .acm-ytbl .up{color:#F04452}
   .acm-ytbl .dn{color:#12B886}
 
@@ -2895,6 +2913,11 @@ window.AI_CONFIG = {
   mark.rg-m.cur{background:#ffb020}
   .b.rg-warn{background:#fff4e5;color:#b45309;border-color:#f5c27a}
   .b.rg-new{background:var(--ink);color:#fff;border-color:var(--ink)}
+  /* 매장 상세 창 : 테마의 .sheet{overflow:hidden} 때문에 아래 이력이 잘리므로
+     제목 · 닫기는 고정하고 가운데 내용만 창 안에서 스크롤 · 표가 넉넉하게 창을 넓힘 */
+  .sheet.store-sheet{width:min(980px,100%);max-height:92vh;display:flex;flex-direction:column}
+  .store-sheet .sheet-hd,.store-sheet .sheet-ft{flex:none}
+  .store-sheet #storeShBody{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:8px}
   /* 테마의 .sheet{overflow:hidden} 때문에 긴 문서 본문이 잘리므로, 이 창은 창 안에서 스크롤합니다 */
   .sheet.rg-sheet{width:min(980px,100%);max-height:92vh;overflow-y:auto;overscroll-behavior:contain}
   .rg-body table.dt td[colspan]{text-align:center}
@@ -4207,7 +4230,7 @@ window.AI_CONFIG = {
 </div>
 
 <div class="scrim" id="storeScrim">
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="storeShTitle">
+  <div class="sheet store-sheet" role="dialog" aria-modal="true" aria-labelledby="storeShTitle">
     <div class="sheet-hd">
       <p class="eyebrow">STORE</p>
       <h3 id="storeShTitle">매장 정보</h3>
@@ -6208,7 +6231,10 @@ function svgBars(groups, series, opts) {
           (trend[gi] > 0 ? '<em class="bc-tot" style="bottom:calc(' + tp + '% + 10px)">' + nf(trend[gi], opts.dec || 0) + '</em>' : '');
       }
     }
-    return '<div class="bc-g"><div class="bc-set">' + bars + '</div><div class="bc-k">' + esc(g.k) + '</div></div>';
+    // opts.gattr(gi) : 묶음에 붙일 속성(클릭용) · opts.sel : 강조할 묶음 번호 · opts.badge[gi] : 막대 아래쪽에 띄울 작은 표시(예: 산재 1)
+    var badge = opts.badge && opts.badge[gi] ? '<i class="bc-badge">' + esc(opts.badge[gi]) + '</i>' : '';
+    return '<div class="bc-g' + (opts.sel === gi ? ' sel' : '') + '"' + (opts.gattr ? ' ' + opts.gattr(gi) : '') + '><div class="bc-set">' + bars + badge +
+      '</div><div class="bc-k">' + esc(g.k) + '</div></div>';
   }).join('');
 
   // 추이 선 : 막대 영역(위 여백 · 아래 월 라벨 제외)에 겹친 SVG. 각 묶음 가운데를 잇고, null 인 곳에서 끊습니다
@@ -9349,10 +9375,16 @@ function renderAccident() {
       return 'rgb(' + lo.map(function (c, i) { return Math.round(c + (hi[i] - c) * t); }).join(',') + ')';
     };
   }
-  function rowsOf(list, color) {
+  // 분포 줄을 누르면 아래 사고 발생 내역이 그 값으로 걸러집니다 (연도 · 사업장은 이 분포와 같은 범위로)
+  state.accDFY = dYear ? 'all' : String(selY); state.accDFS = dScope; state.accDFYs = dYear ? dYs : null;
+  function dfAttr(key, v) {
+    var on = state.accDF && state.accDF.k === key && String(state.accDF.v).replace(/\s+/g, ' ').trim() === String(v).replace(/\s+/g, ' ').trim();
+    return ' data-accdf="' + esc(key + '|' + v) + '"' + (on ? ' class="on"' : '') + ' title="누르면 아래 사고 발생 내역을 ' + esc(v) + ' 로 걸러 봅니다"';
+  }
+  function rowsOf(list, color, key) {
     return list.map(function (x) {
       var c = typeof color === 'function' ? color(x) : color;
-      return '<tr><td class="k">' + esc(x.k) + '</td><td style="width:60%">' +
+      return '<tr' + dfAttr(key, x.k) + '><td class="k">' + esc(x.k) + '</td><td style="width:60%">' +
         '<span class="gz"><span class="tr"><span class="fl" style="width:' + (x.v / mx * 100) + '%;background:' + c + '"></span></span>' +
         '<span class="pc">' + x.v + '</span></span></td></tr>';
     });
@@ -9375,7 +9407,7 @@ function renderAccident() {
   var dmx = Math.max.apply(null, d3.map(function (x) { return x.total; }).concat([1]));
   function deptRows(list) {
     return list.map(function (x) {
-      return '<tr><td class="k">' + esc(x.k) + '</td><td style="width:60%">' +
+      return '<tr' + dfAttr('소속', x.k) + '><td class="k">' + esc(x.k) + '</td><td style="width:60%">' +
         '<span class="gz"><span class="tr">' +
         (x.인적 > 0 ? '<span class="fl" style="width:' + (x.인적 / dmx * 100) + '%;background:' + C_HUM + '"></span>' : '') +
         (x.물적 > 0 ? '<span class="fl" style="width:' + (x.물적 / dmx * 100) + '%;background:' + C_PROP + '"></span>' : '') +
@@ -9386,8 +9418,8 @@ function renderAccident() {
   // 유형 · 형태 · 부서를 가로 3칸으로 (좁은 화면에서는 아래로)
   var EMPTY = '<div class="subttl" style="color:var(--ink3)">' + dLabel + ' 사고 없음</div>';
   $('accDist').innerHTML = '<div class="acd-grid">' +
-    '<div><div class="subttl">사고유형</div>' + (d1.length ? tbl([{ t: '유형' }, { t: '건수' }], rowsOf(d1, function (x) { return x.k.indexOf('인적') === 0 ? C_HUM : C_PROP; }), 240) : EMPTY) + '</div>' +
-    '<div><div class="subttl">사고형태</div>' + (d2.length ? tbl([{ t: '형태' }, { t: '건수' }], rowsOf(d2, shadeOf(d2)), 240) : EMPTY) + '</div>' +
+    '<div><div class="subttl">사고유형</div>' + (d1.length ? tbl([{ t: '유형' }, { t: '건수' }], rowsOf(d1, function (x) { return x.k.indexOf('인적') === 0 ? C_HUM : C_PROP; }, '사고유형'), 240) : EMPTY) + '</div>' +
+    '<div><div class="subttl">사고형태</div>' + (d2.length ? tbl([{ t: '형태' }, { t: '건수' }], rowsOf(d2, shadeOf(d2), '사고형태'), 240) : EMPTY) + '</div>' +
     '<div><div class="subttl">부서별 사고현황</div>' + (d3.length ? tbl([{ t: '부서' }, { t: '건수' }], deptRows(d3), 240) : EMPTY) +
       legend([{ c: C_HUM, n: '인적' }, { c: C_PROP, n: '물적' }]) + '</div>' +
     '</div>';
@@ -9441,13 +9473,22 @@ function renderAccident() {
             (state.accS === 'all' || r._site === state.accS))) return false;
       var tf = ACC_TYPES.filter(function (t) { return t.k === state.accT; })[0];
       if (tf && !tf.f(String(r.사고유형 || '').replace(/\s+/g, ''))) return false;
+      // 위 유형 · 형태 · 부서 분포에서 고른 값 (분포와 같은 셈법 : 앞뒤 공백 무시, 부서는 인적 · 물적만)
+      if (state.accDF) {
+        // 엑셀 값의 줄바꿈(\r\n) · 연속 공백은 화면 속성에서 바뀌므로 공백을 하나로 맞춰 비교
+        if (String(r[state.accDF.k] || '-').replace(/\s+/g, ' ').trim() !== String(state.accDF.v).replace(/\s+/g, ' ').trim()) return false;
+        if (state.accDF.k === '소속' && !/^(인적|물적)/.test(String(r.사고유형 || '').trim())) return false;
+        if (state.accY === 'all' && state.accDFYs && state.accDFYs.indexOf(yearOf(r.발생일)) === -1) return false;
+      }
       if (!q) return true;
       var hay = [r._site, r.소속, r.성함, r.직무, r.사고유형, r.사고형태,
         r['발생경위(육하원칙)'], r['위험성평가(개선후)']].join(' ');
       return hay.indexOf(q) !== -1;
     }).sort(function (a, b) { return normDate(b.발생일).localeCompare(normDate(a.발생일)); });
 
-    $('accList').innerHTML = tbl(
+    var dfChip = state.accDF ? '<div class="acc-dfbar"><span>' + esc(state.accDF.k === '소속' ? '부서' : state.accDF.k) + ' : <b>' + esc(state.accDF.v) + '</b> · ' + list.length + '건</span>' +
+      '<button type="button" class="reset" data-accdfclear="1">필터 해제 ✕</button></div>' : '';
+    $('accList').innerHTML = dfChip + tbl(
       [{ t: '발생일', w: '86px' }, { t: '사업장', w: '82px' }, { t: '소속', w: '108px' }, { t: '성함', w: '68px' },
        { t: '직무', w: '58px' }, { t: '유형', w: '92px' }, { t: '형태', w: '76px' },
        { t: '발생경위' }, { t: '개선대책' }, { t: '요양일수', w: '92px' }],
@@ -9798,22 +9839,29 @@ function renderAccMonthly(stat, years) {
 function renderAccYearly(rows, years, scope, SER, TOT_LGD, isHuman, thisY, now) {
   var ys = years.filter(function (y) { return y >= 2023; });
   if (!ys.length) ys = years.slice(-4);
+  function isSanjae(r) { return String(r.사고유형 || '').indexOf('산재') !== -1; }
   var data = ys.map(function (y) {
-    var h = 0, p = 0;
-    rows.forEach(function (r) { if (yearOf(r.발생일) === y) { if (isHuman(r)) h++; else p++; } });
-    return { y: y, h: h, p: p, t: h + p };
+    var h = 0, p = 0, sj = 0;
+    rows.forEach(function (r) { if (yearOf(r.발생일) === y) { if (isHuman(r)) h++; else p++; if (isSanjae(r)) sj++; } });
+    return { y: y, h: h, p: p, t: h + p, s: sj };
   });
+  // 막대를 누르면 위 카드(발생 · 인적 · 물적 · 산재 · TRIR)가 그 연도로 바뀝니다 → 고른 연도는 강조
+  var selI = -1; data.forEach(function (d, i) { if (String(d.y) === String(state.accMY)) selI = i; });
   var chart = '<div class="acm-chart acm-year">' + svgBars(data.map(function (d) {
     return { k: d.y + '년' + (d.y === thisY ? ' (~' + (now.getMonth() + 1) + '월)' : ''), v: [d.h, d.p] };
-  }), SER, { h2: 250, showVal: true, trend: data.map(function (d) { return d.t; }) }) +
-    legend(SER.concat([TOT_LGD])) + '</div>';
+  }), SER, { h2: 250, showVal: true, trend: data.map(function (d) { return d.t; }),
+    sel: selI, badge: data.map(function (d) { return d.s ? '산재 ' + d.s : ''; }),
+    gattr: function (i) { return 'data-accyear="' + data[i].y + '" title="' + data[i].y + '년 — 누르면 위 카드가 이 연도로 바뀝니다"'; } }) +
+    legend(SER.concat([TOT_LGD])) +
+    '<div class="acm-hint">막대를 누르면 위 카드가 그 연도로 바뀝니다' + (data.some(function (d) { return d.s; }) ? ' · <i class="bc-badge sm">산재</i> 산재 발생 연도' : '') + '</div></div>';
 
   // 오른쪽 : 연도별 숫자 요약 + 분석
-  var tbl2 = '<table class="acm-ytbl"><thead><tr><th>연도</th><th>인적</th><th>물적</th><th>합계</th><th>전년 대비</th></tr></thead><tbody>' +
+  var tbl2 = '<table class="acm-ytbl"><thead><tr><th>연도</th><th>인적</th><th>물적</th><th>합계</th><th>산재</th><th>전년 대비</th></tr></thead><tbody>' +
     data.slice().reverse().map(function (d) {
       var pv = data.filter(function (x) { return x.y === d.y - 1; })[0], diff = pv ? d.t - pv.t : null;
-      return '<tr><td>' + d.y + (d.y === thisY ? '<small> ~' + (now.getMonth() + 1) + '월</small>' : '') + '</td>' +
+      return '<tr' + (String(d.y) === String(state.accMY) ? ' class="sel"' : '') + ' data-accyear="' + d.y + '" style="cursor:pointer"><td>' + d.y + (d.y === thisY ? '<small> ~' + (now.getMonth() + 1) + '월</small>' : '') + '</td>' +
         '<td class="h">' + d.h + '</td><td class="p">' + d.p + '</td><td class="t">' + d.t + '</td>' +
+        '<td class="s">' + (d.s ? d.s : '<span style="color:var(--ink3)">—</span>') + '</td>' +
         '<td class="d">' + (diff == null ? '—' : diff === 0 ? '0' :
           '<span class="' + (diff > 0 ? 'up' : 'dn') + '">' + (diff > 0 ? '▲ ' : '▼ ') + Math.abs(diff) + '</span>') + '</td></tr>';
     }).join('') + '</tbody></table>';
@@ -9821,11 +9869,22 @@ function renderAccYearly(rows, years, scope, SER, TOT_LGD, isHuman, thisY, now) 
   var sumT = 0, sumH = 0; data.forEach(function (d) { sumT += d.t; sumH += d.h; });
   notes.push('<b>' + data[0].y + '~' + data[data.length - 1].y + '년 누계 ' + sumT + '건</b> (인적 ' + sumH + ' · 물적 ' + (sumT - sumH) + ')' +
     (sumT ? ' · 인적 비율 ' + Math.round(sumH / sumT * 100) + '%' : ''));
-  var full = data.filter(function (d) { return d.y < thisY; });
-  if (full.length) {
-    var mx = full.reduce(function (a, b) { return b.t > a.t ? b : a; });
-    notes.push('최다 발생 연도 <b>' + mx.y + '년</b> (' + mx.t + '건)');
+  // 최다 발생 연도 : 올해(진행 중)까지 포함해 합계 · 인적 · 물적을 따로 (같은 건수면 모두 표시)
+  function topYears(key) {
+    var mx = Math.max.apply(null, data.map(function (d) { return d[key]; }));
+    if (!mx) return '<b>—</b>';
+    return data.filter(function (d) { return d[key] === mx; }).map(function (d) {
+      return '<b>' + d.y + '년</b>' + (d.y === thisY ? '<small style="color:var(--ink3)">(~' + (now.getMonth() + 1) + '월)</small>' : '');
+    }).join(' · ') + ' (' + mx + '건)';
   }
+  notes.push('최다 발생 연도 : 합계 ' + topYears('t'));
+  notes.push('인적 최다 ' + topYears('h') + '  ·  물적 최다 ' + topYears('p'));
+  // 산재 발생 연도
+  var sjYears = data.filter(function (d) { return d.s; });
+  notes.push('산재 발생 연도 : ' + (sjYears.length
+    ? sjYears.map(function (d) { return '<b style="color:#C0392B">' + d.y + '년</b> ' + d.s + '건'; }).join(' · ')
+    : '<b>없음</b>'));
+  var full = data.filter(function (d) { return d.y < thisY; });
   if (full.length >= 2) {
     var a = full[full.length - 2], b = full[full.length - 1];
     notes.push(a.y + '년 → ' + b.y + '년 : ' +
@@ -11743,7 +11802,9 @@ function paintHeaderWx(d, name) {
       if (ts.slice(11, 13) === '15') pm = Math.round(d.hourly.temperature_2m[i]) + '°';
     });
   }
-  $('wxSub').textContent = (am ? '오전 ' + am : '') + (am && pm ? ' · ' : '') + (pm ? '오후 ' + pm : '');
+  // 오전 · 오후 기온은 표시하지 않습니다 (요청) — 다시 보이려면 아래 줄을 되살리고 이 줄을 지우세요
+  // $('wxSub').textContent = (am ? '오전 ' + am : '') + (am && pm ? ' · ' : '') + (pm ? '오후 ' + pm : '');
+  $('wxSub').textContent = ''; $('wxSub').hidden = true;
   $('wx').hidden = false;
 }
 
@@ -18283,7 +18344,7 @@ function bind() {
     if (e.target.closest('[data-acctrir]')) { openAccTrir(); return; }
     var fak = e.target.closest('[data-acckpi]');
     if (fak) {
-      state.accY = fak.dataset.acckpiy; state.accS = 'all'; state.accQ = ''; state.accT = fak.dataset.acckpi;
+      state.accY = fak.dataset.acckpiy; state.accS = 'all'; state.accQ = ''; state.accT = fak.dataset.acckpi; state.accDF = null;
       renderAccident();
       var al = $('accList'); if (al) (al.closest('.card') || al).scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
@@ -18294,6 +18355,20 @@ function bind() {
     if (fmy) { state.accMY = fmy.dataset.accmy; renderAccident(); return; }
     var fmv = e.target.closest('[data-accmv]');
     if (fmv) { state.accMV = fmv.dataset.accmv; renderAccident(); return; }
+    // 연간 사고 추이 : 연도 막대 · 표 줄을 누르면 위 카드가 그 연도로 (연간 화면은 그대로)
+    var fay = e.target.closest('[data-accyear]');
+    if (fay) { state.accMY = fay.dataset.accyear; renderAccident(); return; }
+    // 사고 유형 · 형태 · 부서 분포 줄 → 아래 사고 발생 내역을 그 값으로 (같은 줄을 다시 누르면 해제)
+    var fdf = e.target.closest('[data-accdf]');
+    if (fdf) {
+      var dp = fdf.dataset.accdf, di = dp.indexOf('|'), dk = dp.slice(0, di), dv = dp.slice(di + 1).replace(/\s+/g, ' ').trim();
+      if (state.accDF && state.accDF.k === dk && String(state.accDF.v).replace(/\s+/g, ' ').trim() === dv) state.accDF = null;
+      else { state.accDF = { k: dk, v: dv }; state.accY = state.accDFY; state.accS = state.accDFS; state.accT = 'all'; state.accQ = ''; }
+      renderAccident();
+      if (state.accDF) { var al2 = $('accList'); if (al2) (al2.closest('.card') || al2).scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      return;
+    }
+    if (e.target.closest('[data-accdfclear]')) { state.accDF = null; renderAccident(); return; }
     var fk = e.target.closest('[data-kpip]');
     if (fk) { state.kpiP = fk.dataset.kpip; renderKpi(); return; }
     var fyc = e.target.closest('[data-yrc]');
