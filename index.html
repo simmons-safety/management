@@ -14497,14 +14497,21 @@ function alFetchWx(date) {
   var q = '?latitude=' + AL_WX.lat + '&longitude=' + AL_WX.lon +
     '&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Asia%2FSeoul&start_date=' + date + '&end_date=' + date;
   function get(base) {
-    return fetch(base + q).then(function (r) { return r.json(); }).then(function (d) {
+    // 서버가 응답 없이 멈추는 경우가 있어 8초 넘으면 끊고 다른 서버로 넘어갑니다
+    var ac = typeof AbortController === 'function' ? new AbortController() : null;
+    var tm = setTimeout(function () { if (ac) ac.abort(); }, 8000);
+    return Promise.race([
+      fetch(base + q, ac ? { signal: ac.signal } : undefined),
+      new Promise(function (_, rej) { setTimeout(function () { rej(new Error('응답 시간 초과')); }, 8000); })
+    ]).then(function (r) { clearTimeout(tm); return r.json(); }, function (e) { clearTimeout(tm); throw e; }).then(function (d) {
       var dy = d && d.daily;
       if (!dy || !dy.temperature_2m_max || dy.temperature_2m_max[0] == null) throw new Error((d && d.reason) || '기온 자료 없음');
       return { max: Math.round(dy.temperature_2m_max[0]) || 0, min: Math.round(dy.temperature_2m_min[0]) || 0, wx: alWxMap(dy.weather_code && dy.weather_code[0]) };
     });
   }
   var fc = 'https://api.open-meteo.com/v1/forecast', ar = 'https://archive-api.open-meteo.com/v1/archive';
-  var p = diff < -80 ? get(ar).catch(function () { return get(fc); }) : get(fc).catch(function () { return get(ar); });
+  // 오늘 · 지난 날짜는 기록 서버(archive) 먼저, 앞으로의 날짜만 예보 서버 먼저
+  var p = diff <= 0 ? get(ar).catch(function () { return get(fc); }) : get(fc).catch(function () { return get(ar); });
   return p.then(function (o) { AL.wx[date] = o; return o; });
 }
 function alLoadWx() {
@@ -15919,7 +15926,9 @@ function bindAp() {
  *             수집일로부터 6개월이 지난 건은 서버(pg_cron)가 매일 지우고,
  *             화면도 열릴 때마다 한 번 더 지운 뒤 6개월 이내 건만 보여줍니다.
  * ============================================================ */
-var VISIT_LOG_PIN = '1004';
+/*  기록대장 비밀번호는 이 파일에 없습니다 — 서버 함수 visit_list / visit_delete 가 확인합니다
+ *  (schema_visit_private.sql 맨 아래 줄로 정함). 표(visit_pledges)는 사이트에서 직접 읽기 · 지우기 불가, 제출(insert)만 됨 */
+var VISIT_PW = '';            // 맞게 넣은 기록대장 비밀번호 (이 화면을 닫으면 사라짐)
 var VISIT_DEL_PIN = DEL_PIN;  // 방문 기록 삭제 비밀번호 = 공통 삭제 비밀번호
 var VISIT_KEEP_MONTHS = 6;
 var VISIT_ROWS = [];
@@ -15947,32 +15956,33 @@ function openVisitFrame() {
 /** 6개월이 지난 건을 지우고(서버 자동 삭제의 보조), 6개월 이내 건만 다시 읽어 옵니다. */
 function loadVisitLog() {
   if (!RPC.live) { VISIT_ROWS = []; renderVisitLog(); return Promise.resolve(); }
-  var cut = visitCutoff().toISOString();
-  return RPC.db.from('visit_pledges').delete().lt('created_at', cut)
-    .then(function (res) { if (res.error) console.warn('[EHS] 방문기록 기한 경과분 삭제 실패', res.error); })
-    .then(function () {
-      return RPC.db.from('visit_pledges').select('*').gte('created_at', cut)
-        .order('created_at', { ascending: false }).limit(5000);
-    })
+  // 서버 함수가 비밀번호 확인 → 6개월 지난 건 삭제 → 6개월 이내 건만 돌려줌
+  return RPC.db.rpc('visit_list', { pw: VISIT_PW })
     .then(function (res) {
       if (res.error) throw res.error;
       VISIT_ROWS = res.data || [];
       renderVisitLog();
     }).catch(function (e) {
       console.warn('[EHS] 방문 기록대장 조회 실패', e);
+      if (/비밀번호/.test((e && e.message) || '')) { VISIT_LOG_UNLOCKED = false; VISIT_PW = ''; }   // 비밀번호가 바뀐 경우 → 다시 잠금
       VISIT_ROWS = []; renderVisitLog();
     });
 }
 function tryVisitLogPin() {
-  var el = $('visitLogPin');
-  if ((el ? el.value.trim() : '') === VISIT_LOG_PIN) {
-    VISIT_LOG_UNLOCKED = true;
+  var el = $('visitLogPin'), pw = el ? el.value.trim() : '';
+  var err = $('visitLogPinErr');
+  if (!pw) return;
+  if (!RPC.live) { if (err) { err.textContent = '서버에 연결되어 있지 않습니다.'; err.hidden = false; } return; }
+  RPC.db.rpc('visit_list', { pw: pw }).then(function (res) {
+    if (res.error) throw res.error;
+    VISIT_PW = pw; VISIT_LOG_UNLOCKED = true;
+    VISIT_ROWS = res.data || [];
     renderVisitLog();
-    loadVisitLog();
-  } else {
-    var err = $('visitLogPinErr'); if (err) err.hidden = false;
+  }).catch(function (e) {
+    var m = (e && e.message) || String(e);
+    if (err) { err.textContent = /비밀번호/.test(m) ? '비밀번호가 올바르지 않습니다.' : '확인하지 못했습니다: ' + m + ' (schema_visit_private.sql 실행 여부 확인)'; err.hidden = false; }
     if (el) { el.value = ''; el.focus(); }
-  }
+  });
 }
 function visitFiltered() {
   var q = ($('vsLogQ').value || '').trim().toLowerCase().replace(/\s+/g, '');
@@ -15990,7 +16000,7 @@ function renderVisitLog() {
     $('visitLogGate').innerHTML =
       '<div class="pin-gate"><div class="pin-box"><p class="ic">🔒</p>' +
       '<h3>방문 기록대장</h3><p>개인정보가 담긴 게시판입니다.<br>비밀번호를 입력하면 열람할 수 있습니다.</p>' +
-      '<div class="pin-row"><input type="password" inputmode="numeric" maxlength="4" id="visitLogPin" placeholder="••••" autocomplete="off">' +
+      '<div class="pin-row"><input type="password" id="visitLogPin" placeholder="비밀번호" autocomplete="off">' +
       '<button class="btn-go" id="visitLogPinGo">확인</button></div>' +
       '<p class="pin-err" id="visitLogPinErr" hidden>비밀번호가 올바르지 않습니다.</p></div></div>';
     $('visitLogBody').hidden = true;
@@ -16027,7 +16037,7 @@ function renderVisitLog() {
 function deleteVisit(id) {
   delPin('이 방문 기록을 삭제합니다.').then(function (ok) {
     if (!ok) return;
-    RPC.db.from('visit_pledges').delete().eq('id', id)
+    RPC.db.rpc('visit_delete', { pw: VISIT_PW, vid: id })
       .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); loadVisitLog(); })
       .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
   });
