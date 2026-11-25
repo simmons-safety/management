@@ -1171,46 +1171,53 @@ window.AI_CONFIG = {
   .smap-hd input{padding:7px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:12.5px;min-width:180px}
   .smap-x{border:0;background:none;font-size:24px;line-height:1;cursor:pointer;padding:0 4px;color:var(--ink)}
   .smap-bd{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
-  .smap-map{position:relative;min-height:0;border-right:1px solid var(--line);background:#FAFAFA}
+  .smap-map{position:relative;min-height:0;border-right:1px solid var(--line);background:#F8F9FB}
   .smap-bd{grid-template-rows:minmax(0,1fr)}
   .smap-map svg{display:block;position:absolute;inset:0;width:100%;height:100%;max-height:none}
   .smap-map{cursor:grab;touch-action:none;user-select:none;overflow:hidden}
   .smap-map.dragging{cursor:grabbing}
   .smap-map svg{overflow:visible}
+  .smap-map svg.smap-ov{pointer-events:none;overflow:hidden}
+  /* 매장 안내창 : 부드럽게 나타나고 사라짐 */
+  .smap-map .dc-tip{display:block;opacity:0;visibility:hidden;transition:opacity .15s ease,visibility .15s}
+  .smap-map .dc-tip.on{opacity:1;visibility:visible}
   .smap-map.dragging svg{will-change:transform}
   .smap-map.dragging *{cursor:grabbing !important}
   .smap-map.dragging .dc-tip{display:none}
   .smap-help{position:absolute;left:10px;bottom:8px;font-size:11px;color:var(--ink3);background:rgba(255,255,255,.85);padding:2px 8px;pointer-events:none}
-  .smap-map .pv{cursor:pointer;vector-effect:non-scaling-stroke}
-  .smap-map .pv.dim{fill:#F3F3F3}
+  /* 매장 지도 색 : 매장 = 인디고 · 배송센터 = 틸 · AS 사무소 = 바이올렛 / 지도 바탕은 연한 회색 한 가지 */
+  .smap-map{--sm-s:#212529;--sm-s2:#000000;--sm-d:#12B886;--sm-d2:#0B8A64;--sm-a:#9C36B5;--sm-a2:#862E9C;--sm-land:#E9ECF1;--sm-dim:#F1F3F6}
+  .smap-map svg{text-rendering:geometricPrecision;font-family:inherit}
+  .smap-map .pv{cursor:pointer;vector-effect:non-scaling-stroke;fill:var(--sm-land);stroke:#fff;stroke-width:1.2}
+  .smap-map .pv:hover{fill:#E1E5EC}
+  .smap-map .pv.dim{fill:var(--sm-dim)}
   .smap-map .bub{cursor:pointer}
-  .smap-map .bub circle{fill:#111;stroke:#fff;stroke-width:2;vector-effect:non-scaling-stroke;transition:fill .15s}
-  .smap-map .bub:hover circle,.smap-map .bub.on circle{fill:#2563C9}
+  .smap-map .bub circle{fill:var(--sm-s);stroke:#fff;stroke-width:2;vector-effect:non-scaling-stroke;transition:fill .15s}
+  .smap-map .bub:hover circle,.smap-map .bub.on circle{fill:var(--sm-s2)}
   .smap-map .bub text{fill:#fff;font-weight:800;text-anchor:middle;pointer-events:none}
-  .smap-map .bub .nm{fill:#111;font-weight:700;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+  .smap-map .bub .nm{fill:#1F2937;font-weight:700;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
   .smap-map .sd{cursor:pointer}
-  .smap-map .sd circle{fill:#111;stroke:#fff;vector-effect:non-scaling-stroke;stroke-width:1.5}
-  .smap-map .sd.on circle{fill:#2563C9}
+  .smap-map .sd circle{fill:var(--sm-s);stroke:#fff;vector-effect:non-scaling-stroke;stroke-width:1.5}
   .smap-map .sd.off{display:none}
-  .smap-map .sgl{fill:#6B6B6B;font-weight:700;text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:#FAFAFA;stroke-linejoin:round}
+  .smap-map .sgl{fill:#4B5563;font-weight:700;text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:#fff;stroke-linejoin:round}
   .smap-map .sgb{fill:none;stroke:#FFFFFF;stroke-width:.9;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:none}
-  .smap-map svg.det .pv{stroke:#A3A8B0;stroke-width:1.4}
-  .smap-map .sgl.mt{fill:#111;font-weight:800}
-  /* 배송센터(주황 네모) · AS 사무소(파랑 마름모) · 매장 점(검정) — 매장 강조는 빨강으로 (파랑 = AS) */
-  .smap-map .sd.on circle{fill:#E03131}
+  .smap-map svg.det .pv{stroke:#C4CAD4;stroke-width:1.2}
+  .smap-map .sgl.mt{fill:#1F2937;font-weight:800}
+  /* 매장 강조는 진한 남색 (색이 다른 배송 · AS 와 헷갈리지 않게) */
+  .smap-map .sd.on circle{fill:#4263EB;stroke-width:2.5}
   .smap-map .dcm{cursor:pointer}
   .smap-map .dcm circle{stroke:#fff;stroke-width:1.5;vector-effect:non-scaling-stroke}
-  .smap-map .dcm.D circle{fill:#E67E22} .smap-map .dcm.A circle{fill:#2563C9}
-  .smap-map .dcm.on circle{stroke:#111;stroke-width:2.5}
-  .smap-map .dcm text{font-weight:700;paint-order:stroke;stroke:#fff;stroke-linejoin:round}
-  .smap-map .dcm.D text{fill:#C0610F} .smap-map .dcm.A text{fill:#2563C9}
+  .smap-map .dcm.D circle{fill:var(--sm-d)} .smap-map .dcm.A circle{fill:var(--sm-a)}
+  .smap-map .dcm.on circle{stroke:#1F2937;stroke-width:2.5}
+  .smap-map .dct{font-weight:700;text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:#fff;stroke-linejoin:round}
+  .smap-map .dct.D{fill:var(--sm-d2)} .smap-map .dct.A{fill:var(--sm-a2)}
   .smap-lg{position:absolute;left:10px;top:10px;display:flex;gap:4px;flex-wrap:wrap;z-index:4}
   .smap-lg button{display:flex;align-items:center;gap:6px;font:inherit;font-size:12px;padding:5px 10px;background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:99px;cursor:pointer;color:var(--ink)}
   .smap-lg button[aria-pressed="false"]{opacity:.45;text-decoration:line-through}
-  .smap-lg i{display:inline-block;width:10px;height:10px;background:#111;border-radius:50%}
-  .smap-lg i.D{background:#E67E22} .smap-lg i.A{background:#2563C9}
-  .smap-bg .dc-tag.D{background:#E67E22} .smap-bg .dc-tag.A{background:#2563C9}
-  .smap-it.dc{border-left:3px solid #E67E22;cursor:pointer} .smap-it.dc.A{border-left-color:#2563C9}
+  .smap-lg i{display:inline-block;width:10px;height:10px;background:#212529;border-radius:50%}
+  .smap-lg i.D{background:#12B886} .smap-lg i.A{background:#9C36B5}
+  .smap-bg .dc-tag.D{background:#12B886} .smap-bg .dc-tag.A{background:#9C36B5}
+  .smap-it.dc{border-left:3px solid #12B886;cursor:pointer} .smap-it.dc.A{border-left-color:#9C36B5}
   .smap-it.dc .fold{margin-left:auto;font-size:11px;font-weight:600;color:var(--ink3);white-space:nowrap}
   .smap-it.dc:hover .fold{color:var(--ink)}
   .smap-it.dc .dci-sum{margin-top:4px;font-size:11px;color:var(--ink2)} .smap-it.dc .dci-sum b{color:var(--ink)}
@@ -1229,12 +1236,12 @@ window.AI_CONFIG = {
   .smap-rt .rg{font-weight:800;font-size:16px}
   .smap-rt .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
   .smap-rt .bar{width:38%}
-  .smap-rt .bar i{display:block;height:8px;background:#111}
+  .smap-rt .bar i{display:block;height:8px;background:#212529;border-radius:4px}
   .smap-rt .tot td{font-weight:800;border-top:1px solid #000;border-bottom:0}
   .smap-sg{margin:14px 0 6px;font-size:13px;font-weight:800;display:flex;gap:6px;align-items:baseline}
   .smap-sg em{font-style:normal;font-weight:600;color:var(--ink3);font-size:12px}
   .smap-it{border:1px solid var(--line);padding:9px 12px;margin-bottom:5px;font-size:12px;line-height:1.55;transition:background .15s,border-color .15s}
-  .smap-it.on{border-color:#2563C9;background:#F3F7FD}
+  .smap-it.on{border-color:#212529;background:#F3F4F6}
   .smap-it .h{display:flex;gap:7px;align-items:center;font-size:13.5px;font-weight:700}
   .smap-it .h a{color:inherit;text-decoration:underline;cursor:pointer}
   .smap-it .s{color:var(--ink2)}
@@ -5188,6 +5195,8 @@ var DE_NO_EDIT = { '예산': 1 };
 var DE_PAGE = 50;
 var DE = { tab: '', sheets: [], sheet: '', items: [], cols: [], q: '', page: 0, dirty: [], saving: false, timer: null };
 
+/** 시트별로 늘 보여 줄 칸 (엑셀에 아직 그 열이 없어도 편집 창에 나옵니다) */
+var DE_EXTRA_COLS = { '전체 폐기물': ['비고'] };
 function deSheetsOf(tab) {
   return (UPD_SHEETS[tab] || TAB_SHEETS[tab] || []).filter(function (s) { return !DE_NO_EDIT[s]; });
 }
@@ -5259,7 +5268,10 @@ function deLoadSheet(name) {
   DE.sheet = name; DE.page = 0; DE.q = '';
   var rows = ds(name);
   DE.items = rows.map(function (r) { return { sheet: name, data: deCopy(r), base: deCopy(r), saved: deStable(r) }; });
-  DE.cols = deColumns(rows).map(function (c) { return deColInfo(rows, c); });
+  // 아직 값이 하나도 없어도 늘 보여 줄 칸 (DE_EXTRA_COLS)
+  var extra = DE_EXTRA_COLS[name] || [], blank = {};
+  extra.forEach(function (k) { blank[k] = ''; });
+  DE.cols = deColumns(extra.length ? rows.concat([blank]) : rows).map(function (c) { return deColInfo(rows, c); });
   deRenderBar(); deRender();
 }
 function deRenderBar() {
@@ -7920,11 +7932,12 @@ function renderStoreList() {
     [{ t: '채널', w: '90px' }, { t: '매장명', w: '160px' }, { t: '영업담당', w: '80px' }, { t: '점주', w: '90px' },
      { t: '인원', r: 1, w: '50px' }, { t: '주소' }, { t: '연락처', w: '120px' }, { t: '비고' }],
     filtered.map(function (s) {
+      var pih = storePiHidden(s.매장명);   // 가림 매장 : 영업담당 · 점주 · 인원 비움
       return '<tr><td><span class="b b-gray">' + esc(s.채널) + '</span></td>' +
         '<td><span class="k" style="cursor:pointer;text-decoration:underline" data-storeopen="' + esc(s.매장명) + '">' + esc(s.매장명) + '</span></td>' +
-        '<td class="dim">' + esc(s.영업담당) + '</td>' +
-        '<td class="dim">' + esc(s.점주) + '</td>' +
-        '<td class="n r">' + esc(s.매장인원수) + '</td>' +
+        '<td class="dim">' + (pih ? '' : esc(s.영업담당)) + '</td>' +
+        '<td class="dim">' + (pih ? '' : esc(s.점주)) + '</td>' +
+        '<td class="n r">' + (pih ? '' : esc(s.매장인원수)) + '</td>' +
         '<td class="dim">' + esc(s.주소) + '</td>' +
         '<td class="dim">' + esc(s.연락처) + '</td>' +
         '<td class="dim">' + esc(s.비고 || '') + '</td></tr>';
@@ -7949,6 +7962,10 @@ function storeAccidents(name, site) {
 }
 
 /** 매장(부서) 이력 창 — site 를 주지 않으면 매장(서울사무소) 기준. 안전사고 소속을 눌렀을 때는 그 사고의 사업장 */
+/* 개인정보 가림 매장 (2026-11-23 요청) : 점주 · 영업담당 · 매장인원수 + 그 매장 사고 내역의 사고자 이름을 숨김
+   — 엑셀 자료는 그대로 두고 화면에서만 가림. 복구 = 아래 목록에서 매장명을 빼면 됨 */
+var STORE_PI_HIDE = [];   // 2026-11-23 '갤러리 논현학동' 가림 → 같은 날 복구 요청으로 다시 보임
+function storePiHidden(name) { var n = storeNorm(name); return STORE_PI_HIDE.some(function (x) { return storeNorm(x) === n; }); }
 function openStoreDetail(name, site) {
   var n = storeNorm(name);
   var info = ds('매장정보').find(function (s) { return storeNorm(s.매장명) === n; });
@@ -7983,9 +8000,10 @@ function openStoreDetail(name, site) {
     (info
       ? '<div class="form">' +
         '<div class="f"><label>채널</label><div class="k">' + esc(info.채널) + '</div></div>' +
+        (storePiHidden(info.매장명) ? '' :
         '<div class="f"><label>영업담당</label><div class="k">' + esc(info.영업담당) + '</div></div>' +
         '<div class="f"><label>점주</label><div class="k">' + esc(info.점주) + '</div></div>' +
-        '<div class="f"><label>매장인원수</label><div class="k">' + esc(info.매장인원수) + '명</div></div>' +
+        '<div class="f"><label>매장인원수</label><div class="k">' + esc(info.매장인원수) + '명</div></div>') +
         '<div class="f wide"><label>주소</label><div class="k">' + esc(info.주소) + '</div></div>' +
         '<div class="f wide"><label>연락처</label><div class="k">' + esc(info.연락처) + '</div></div>' +
         (info.비고 ? '<div class="f wide"><label>비고</label><div class="k">' + esc(info.비고) + '</div></div>' : '') +
@@ -7997,7 +8015,7 @@ function openStoreDetail(name, site) {
           [{ t: '사고일자', w: '86px' }, { t: '유형', w: '92px' }, { t: '내용' }, { t: '비고', w: '200px' }],
           accs.map(function (r) {
             var how = clean(r['발생경위(육하원칙)']), fix = clean(r['위험성평가(개선후)']);
-            var memo = accMemoText(accMemoKey(r)), who = clean(r.성함);
+            var memo = accMemoText(accMemoKey(r)), who = storePiHidden(name) ? '' : clean(r.성함);
             return '<tr><td class="n">' + esc(String(r.발생일 || '').slice(0, 10)) + '</td>' +
               '<td><span class="b ' + accTypeCls(r.사고유형) + '">' + esc(r.사고유형 || '—') + '</span>' +
                 (clean(r.사고형태) ? '<div class="dim" style="font-size:11px;margin-top:3px">' + esc(clean(r.사고형태)) + '</div>' : '') + '</td>' +
@@ -8596,7 +8614,7 @@ function renderEnvWastePage() {
     '</div>' +
     tbl(
       [{ t: '연월', w: '80px' }, { t: '항목', w: '150px' }, { t: '사업장', w: '90px' },
-       { t: '배출량(톤)', r: 1 }, { t: '처리비용(원)', r: 1 }, { t: '톤당 비용(원)', r: 1 }, { t: '처리업체' }],
+       { t: '배출량(톤)', r: 1 }, { t: '처리비용(원)', r: 1 }, { t: '톤당 비용(원)', r: 1 }, { t: '처리업체' }, { t: '비고' }],
       filtered.slice().sort(function (a, b) {
         return b._ym.localeCompare(a._ym) || items.findIndex(function (it) { return it.k === a._item; }) - items.findIndex(function (it) { return it.k === b._item; });
       }).map(function (r) {
@@ -8607,9 +8625,10 @@ function renderEnvWastePage() {
           '<td class="n r"><b>' + wasteT(t) + '</b></td>' +
           '<td class="n r">' + nf(c) + '</td>' +
           '<td class="n r dim">' + (t > 0 && c > 0 ? nf(c / t) : '') + '</td>' +
-          '<td class="dim">' + esc(r.처리업체 || '') + '</td></tr>';
+          '<td class="dim">' + esc(r.처리업체 || '') + '</td>' +
+          '<td class="dim" style="white-space:pre-wrap">' + esc(r.비고 == null ? '' : String(r.비고)) + '</td></tr>';
       }).concat(filtered.length ? ['<tr style="background:var(--panel2)"><td colspan="3"><b>합계</b></td><td class="n r"><b>' + wasteT(fT) + '</b></td>' +
-        '<td class="n r"><b>' + nf(fC) + '</b></td><td class="n r dim">' + (fT > 0 && fC > 0 ? nf(fC / fT) : '') + '</td><td></td></tr>'] : []), 760) +
+        '<td class="n r"><b>' + nf(fC) + '</b></td><td class="n r dim">' + (fT > 0 && fC > 0 ? nf(fC / fT) : '') + '</td><td></td><td></td></tr>'] : []), 760) +
     '<div class="subttl">' + filtered.length + '건 표시</div>';
 
   $('envWasteMonthSel').onchange = function () { state.envWasteMonth = this.value; renderEnvWastePage(); };
@@ -17818,7 +17837,10 @@ function smapFit(b) {
   return [cx - w / 2, cy - h / 2, w, h];
 }
 function smapFull() { return smapFit([0, 0, KR_MAP.w, KR_MAP.h]); }
-function smapSetVb(vb) { SMAP.vb = vb; var svg = document.querySelector('#smapMap svg'); if (svg) svg.setAttribute('viewBox', vb.join(' ')); }
+function smapSetVb(vb) {
+  SMAP.vb = vb; var svg = document.querySelector('#smapMap svg'); if (svg) svg.setAttribute('viewBox', vb.join(' '));
+  var ov = document.querySelector('#smapMap .smap-ov'); if (ov) ov.style.visibility = 'hidden';   // 글자 층은 다시 그릴 때 새 위치로
+}
 function openStoreMap() {
   if (typeof KR_MAP === 'undefined') { toast('지도 자료를 불러오지 못했습니다.', 'err'); return; }
   var old = document.querySelector('.smap-bg'); if (old) old.remove();
@@ -17839,6 +17861,11 @@ function openStoreMap() {
   SMAP.show = SMAP.show || { S: true, D: true, A: true };   // 범례 켜기/끄기 : 매장 · 배송센터 · AS 사무소
   smapBind(bg);
   smapRender();
+  if (!SMAP.onResize) {   // 창 크기가 바뀌면 글자 층 위치를 다시 맞춤
+    var rzT = 0;
+    SMAP.onResize = function () { clearTimeout(rzT); rzT = setTimeout(function () { if (document.querySelector('.smap-bg')) smapRenderKeep(); }, 150); };
+    window.addEventListener('resize', SMAP.onResize);
+  }
   // 배송센터 · AS 사무소 : 화면에서 수정한 자료(서버 'dc_centers')가 있으면 그것으로 (공통 › 배송센터 게시판을 아직 안 열었어도)
   if (!DC.loaded) {
     var redraw = function () { if (document.querySelector('.smap-bg')) smapRender(); };
@@ -17871,24 +17898,47 @@ function smapCounts() {
 }
 function smapRender() {
   var m = KR_MAP, cnt = smapCounts(), vis = SMAP.items.filter(smapVisible);
-  var max = Math.max.apply(null, [1].concat(Object.keys(cnt).map(function (k) { return cnt[k]; })));
   var vb = SMAP.vb, s = vb[2] / m.w;   // s : 확대 배율의 역수 (전국 = 1)
-  var shade = function (n) { var t = Math.sqrt(n / max); var v = Math.round(222 - t * 92); return 'rgb(' + v + ',' + v + ',' + v + ')'; };
+  // 권역 바탕은 연한 회색 한 가지 (매장 수에 따라 진하게 칠하던 것 없앰) — 권역을 고르면 나머지만 더 옅게
   var svg = '<svg viewBox="' + vb.join(' ') + '" role="img" aria-label="매장 지도"><g>' + m.prov.map(function (p) {
-    var n = cnt[p.n] || 0, dim = SMAP.reg && p.n !== SMAP.reg;
-    return '<path class="pv' + (dim ? ' dim' : '') + '" data-pv="' + esc(p.n) + '" d="' + p.d + '"' + (SMAP.reg ? (dim ? '' : ' style="fill:#E4E6EA"') : (n ? ' style="fill:' + shade(n) + '"' : '')) + '></path>';
+    var dim = SMAP.reg && p.n !== SMAP.reg;
+    return '<path class="pv' + (dim ? ' dim' : '') + '" data-pv="' + esc(p.n) + '" d="' + p.d + '"></path>';
   }).join('') + '</g>';
+  var obst = [];   // 전국 화면 : 권역 동그라미(+이름) 자리 — 배송 · AS 점이 이 위에 겹치지 않게 비켜 놓음
   var detail = !!SMAP.reg || s < 0.55;   // 권역을 골랐거나 휠로 충분히 확대하면 매장 점 + 시군 이름
+  /* 확대 화면의 글자는 지도 그림(viewBox)과 따로, 화면 픽셀 기준 층(.smap-ov)에 그림
+     — 아주 작은 글자를 크게 키우면 Chrome · Edge 에서 테두리와 글자가 어긋나 두 겹으로 깨져 보였음 */
+  var mr = $('smapMap') ? $('smapMap').getBoundingClientRect() : { width: 0, height: 0 };
+  var MW = mr.width || 800, MH = mr.height || 600, U = Math.max(vb[2] / MW, vb[3] / MH) || 1;
+  var OX = vb[0] + (vb[2] - MW * U) / 2, OY = vb[1] + (vb[3] - MH * U) / 2;
+  function tx(cls, x, y, fs, sw, txt) {   // x · y 는 지도 좌표, fs · sw 는 화면 픽셀
+    return '<text class="' + cls + '" x="' + ((x - OX) / U).toFixed(1) + '" y="' + ((y - OY) / U).toFixed(1) + '" font-size="' + fs + '" stroke-width="' + sw + '">' + txt + '</text>';
+  }
+  var ps = s / U;   // 지도 좌표 s 한 칸이 화면에서 몇 픽셀인지 (점 크기와 글자 간격 맞춤용)
   // 확대 화면 : 시 · 군 · 구 경계선 (KR_SGG_D — 시도 경계보다 가늘게)
   if (detail && typeof KR_SGG_D !== 'undefined') svg += '<path class="sgb" d="' + KR_SGG_D + '"></path>';
   if (detail) svg = svg.replace('<svg ', '<svg class="det" ');   // 시도 경계는 진하게 → 시군 경계(흰 선)와 구분
-  if (!detail) {   // 전국 : 권역별 큰 숫자 동그라미
-    svg += '<g>' + Object.keys(SMAP.show.S ? cnt : {}).map(function (pv) {
-      var z = Math.min(1, s);   // 휠로 확대하면 동그라미 · 글자도 같이 작게 (화면에서 같은 크기)
-      var xy = smapXY(SMAP_PV[pv]), n = cnt[pv], r0 = 10 + Math.sqrt(n) * 1.7, r = r0 * z;
-      return '<g class="bub" data-sreg="' + esc(pv) + '"><circle cx="' + xy[0] + '" cy="' + xy[1] + '" r="' + r + '"></circle>' +
-        '<text x="' + xy[0] + '" y="' + (xy[1] + 4.5 * z) + '" font-size="' + ((r0 > 16 ? 13 : 11.5) * z) + '">' + n + '</text>' +
-        '<text class="nm" x="' + xy[0] + '" y="' + (xy[1] + r + 12 * z) + '" font-size="' + (11.5 * z) + '" stroke-width="' + (3 * z) + '">' + esc(pv) + '</text></g>';
+  if (!detail) {   // 전국 : 권역별 숫자 동그라미
+    var z = Math.min(1, s);   // 휠로 확대하면 동그라미 · 글자도 같이 작게 (화면에서 같은 크기)
+    var bubs = Object.keys(SMAP.show.S ? cnt : {}).map(function (pv) {
+      var xy = smapXY(SMAP_PV[pv]), n = cnt[pv], r0 = 9 + Math.sqrt(n) * 1.3;
+      return { pv: pv, n: n, x: xy[0], y: xy[1], r0: r0, r: r0 * z };
+    });
+    // 서울 · 경기 · 인천처럼 가까운 동그라미는 서로 겹치지 않게 조금씩 밀어 냄 (동그라미 + 아래 이름을 한 덩어리로 봄)
+    for (var it = 0; it < 80; it++) {
+      var moved = false;
+      for (var a = 0; a < bubs.length; a++) for (var b = a + 1; b < bubs.length; b++) {
+        var A = bubs[a], B = bubs[b], dx = B.x - A.x, dy = B.y - A.y, d = Math.sqrt(dx * dx + dy * dy) || 0.01;
+        var need = A.r + B.r + 15 * z;
+        if (d < need) { var p = (need - d) / 2; dx /= d; dy /= d; A.x -= dx * p; A.y -= dy * p; B.x += dx * p; B.y += dy * p; moved = true; }
+      }
+      if (!moved) break;
+    }
+    svg += '<g>' + bubs.map(function (o) {
+      obst.push({ x: o.x, y: o.y + 6 * z, r: o.r + 9 * z });
+      return '<g class="bub" data-sreg="' + esc(o.pv) + '"><circle cx="' + o.x.toFixed(2) + '" cy="' + o.y.toFixed(2) + '" r="' + o.r.toFixed(2) + '"></circle>' +
+        '<text x="' + o.x.toFixed(2) + '" y="' + (o.y + 4.5 * z).toFixed(2) + '" font-size="' + ((o.r0 > 15 ? 13 : 11.5) * z).toFixed(2) + '">' + o.n + '</text>' +
+        '<text class="nm" x="' + o.x.toFixed(2) + '" y="' + (o.y + o.r + 12 * z).toFixed(2) + '" font-size="' + (11.5 * z).toFixed(2) + '" stroke-width="' + (3 * z).toFixed(2) + '">' + esc(o.pv) + '</text></g>';
     }).join('') + '</g>';
   } else {           // 권역 확대 : 시군구 이름 + 매장 점 (같은 시군구는 둥글게 펼쳐 놓음)
     var groups = {};
@@ -17906,8 +17956,8 @@ function smapRender() {
       var metroFar = SMAP_METRO.indexOf(it0.pv) !== -1 && it0.pv !== SMAP.reg && s >= 0.16;
       if (nVis && !metroFar) {   // 검색 중 0곳인 곳은 이름 숨김
         var rad = gap * Math.sqrt(idx.length) * 0.62 + R;
-        labels += '<text class="sgl" x="' + c[0] + '" y="' + (c[1] + rad + 11 * s) + '" font-size="' + (10.5 * s).toFixed(2) + '" stroke-width="' + (3 * s).toFixed(2) + '">' +
-          esc(it0.exact ? it0.sg : it0.pv + ' (위치 미상)') + ' ' + nVis + '</text>';
+        labels += tx('sgl', c[0], c[1] + rad + 12.5 * s, (12 * ps).toFixed(2), (3.5 * ps).toFixed(2),
+          esc(it0.exact ? it0.sg : it0.pv + ' (위치 미상)') + ' ' + nVis);
       }
       seen[it0.pv + '|' + it0.sg] = 1;
     });
@@ -17915,7 +17965,7 @@ function smapRender() {
     SMAP_METRO.forEach(function (pv) {
       if (pv === SMAP.reg || s < 0.16 || !cnt[pv]) return;
       var xy = smapXY(SMAP_PV[pv]);
-      labels += '<text class="sgl mt" x="' + xy[0] + '" y="' + (xy[1] - 9 * s) + '" font-size="' + (12 * s).toFixed(2) + '" stroke-width="' + (3.5 * s).toFixed(2) + '">' + esc(pv) + ' ' + cnt[pv] + '</text>';
+      labels += tx('sgl mt', xy[0], xy[1] - 9 * s, (13 * ps).toFixed(2), (3.5 * ps).toFixed(2), esc(pv) + ' ' + cnt[pv]);
     });
     // 매장이 없는 시 · 군도 연한 글씨로 (위치 가늠용)
     var ctx = '';
@@ -17924,25 +17974,38 @@ function smapRender() {
       if (seen[k] || SMAP_METRO.indexOf(pv) !== -1 || !/[시군]$/.test(sg)) return;
       seen[k] = 1;
       var xy = smapXY(SMAP_CTX[k] || SMAP_SGG[k]);
-      ctx += '<text class="sgl ctx" x="' + xy[0] + '" y="' + (xy[1] + 3 * s) + '" font-size="' + (9.5 * s).toFixed(2) + '" stroke-width="' + (2.5 * s).toFixed(2) + '">' + esc(sg) + '</text>';
+      ctx += tx('sgl ctx', xy[0], xy[1] + 3 * s, (10.5 * ps).toFixed(2), (2.5 * ps).toFixed(2), esc(sg));
     });
-    svg += '<g>' + ctx + '</g><g>' + labels + '</g><g>' + dots + '</g>';
+    // 점만 지도에 — 글자는 아래에서 위 층(.smap-ov)에 따로 그려 점에 가려지지 않게
+    svg += '<g>' + dots + '</g>';
   }
-  // 배송센터(주황 점) · AS 사무소(파랑 점) — 매장 점과 같은 크기 · 같은 글씨 크기. 같은 자리면 옆으로 비켜 놓음
-  var z2 = detail ? s : Math.min(1, s), h = 5.5 * z2, used = {}, dcm = '';
+  // 배송센터(틸) · AS 사무소(바이올렛) — 매장 점과 같은 크기. 같은 자리 · 전국 화면의 권역 동그라미와 겹치면 비켜 놓음
+  var z2 = detail ? s : Math.min(1, s), h = 5.5 * z2, placed = [], dcm = '', dct = '';
   (typeof DC_DATA !== 'undefined' ? DC_DATA : []).forEach(function (it, i) {
     if (!smapDcVisible(it)) return;
-    var xy = smapXY(it.ll), key = Math.round(xy[0]) + ',' + Math.round(xy[1]);
-    while (used[key]) { xy[0] += h * 2.4; key = Math.round(xy[0]) + ',' + Math.round(xy[1]); }
-    used[key] = 1;
-    var x = xy[0], y = xy[1];
-    var shape = '<circle cx="' + x.toFixed(2) + '" cy="' + y.toFixed(2) + '" r="' + h.toFixed(2) + '"></circle>';
-    dcm += '<g class="dcm ' + it.t + '" data-dci="' + i + '">' + shape +
-      (detail ? '<text x="' + x.toFixed(2) + '" y="' + (y + h + 11 * s).toFixed(2) + '" text-anchor="middle" font-size="' + (10.5 * s).toFixed(2) + '" stroke-width="' + (3 * s).toFixed(2) + '">' + esc(smapDcLabel(it)) + '</text>' : '') + '</g>';
+    var xy = smapXY(it.ll), x = xy[0], y = xy[1];
+    for (var k = 0; k < 40; k++) {
+      var hit = false;
+      obst.forEach(function (o) {   // 권역 동그라미 밖 가장자리로 밀어 냄
+        var dx = x - o.x, dy = y - o.y, d = Math.sqrt(dx * dx + dy * dy), need = o.r + h + 1.5 * z2;
+        if (d < need) { if (d < 0.01) { dx = 1; dy = 0; d = 1; } x = o.x + dx / d * need; y = o.y + dy / d * need; hit = true; }
+      });
+      placed.forEach(function (q) {   // 다른 배송 · AS 점과도 붙지 않게
+        var dx = x - q[0], dy = y - q[1], d = Math.sqrt(dx * dx + dy * dy), need = h * 2.3;
+        if (d < need) { if (d < 0.01) { dx = 1; dy = 0; d = 1; } x = q[0] + dx / d * need; y = q[1] + dy / d * need; hit = true; }
+      });
+      if (!hit) break;
+    }
+    placed.push([x, y]);
+    dcm += '<g class="dcm ' + it.t + '" data-dci="' + i + '"><circle cx="' + x.toFixed(2) + '" cy="' + y.toFixed(2) + '" r="' + h.toFixed(2) + '"></circle></g>';
+    if (detail) dct += tx('dct ' + it.t, x, y + h + 12.5 * s, (12 * ps).toFixed(2), (3.5 * ps).toFixed(2), esc(smapDcLabel(it)));
   });
   svg += '<g>' + dcm + '</g>';
   var nD = 0, nA = 0; (typeof DC_DATA !== 'undefined' ? DC_DATA : []).forEach(function (it) { if (it.ll) { if (it.t === 'A') nA++; else nD++; } });
-  svg += '</svg><div class="dc-tip" id="smapTip"></div><div class="smap-help">끌어서 이동 · 휠로 확대/축소</div>' +
+  svg += '</svg>';
+  // 이름 글자 층 (화면 픽셀 기준 · 모든 점 위)
+  if (detail) svg += '<svg class="smap-ov" viewBox="0 0 ' + MW.toFixed(1) + ' ' + MH.toFixed(1) + '" aria-hidden="true"><g>' + ctx + '</g><g>' + labels + '</g><g>' + dct + '</g></svg>';
+  svg += '<div class="dc-tip" id="smapTip"></div><div class="smap-help">끌어서 이동 · 휠로 확대/축소</div>' +
     '<div class="smap-lg">' + [['S', '매장', SMAP.items.length], ['D', '배송센터', nD], ['A', 'AS 사무소', nA]].map(function (l) {
       return '<button type="button" data-smaplg="' + l[0] + '" aria-pressed="' + !!SMAP.show[l[0]] + '"><i class="' + l[0] + '"></i>' + l[1] + ' <b>' + l[2] + '</b></button>';
     }).join('') + '</div>';
@@ -17966,7 +18029,7 @@ function smapSide(cnt, vis) {
     rows.forEach(function (r) { sum += cnt[r] || 0; });
     var dcCell = function (o) {
       if (!o) return '-';
-      return [o.D ? '<span style="color:#C0610F">배송 ' + o.D + '</span>' : '', o.A ? '<span style="color:#2563C9">AS ' + o.A + '</span>' : ''].filter(Boolean).join(' · ');
+      return [o.D ? '<span style="color:#0B8A64">배송 ' + o.D + '</span>' : '', o.A ? '<span style="color:#862E9C">AS ' + o.A + '</span>' : ''].filter(Boolean).join(' · ');
     };
     side.innerHTML = '<div class="smap-ttl"><b>권역별 매장</b><span>' + rows.length + '개 시도 · 매장 ' + sum + '곳 · 배송센터 ' + dcD + '곳 · AS 사무소 ' + dcA + '곳</span></div>' +
       '<p class="smap-hint">권역(지도의 숫자 · 아래 줄)을 누르면 그 지역으로 확대되고 매장 · 배송센터 · AS 위치가 나옵니다.</p>' +
@@ -18022,7 +18085,7 @@ function smapItHtml(o, withPv) {
   return '<div class="smap-it' + (SMAP.on === o.i ? ' on' : '') + '" data-si="' + o.i + '"' + (withPv ? ' style="cursor:pointer"' : '') + '><div class="h">' +
     (s.채널 ? '<span class="dc-tag">' + esc(s.채널) + '</span>' : '') + '<a data-smapopen="' + esc(s.매장명) + '">' + esc(s.매장명) + '</a>' +
     (withPv && o.x.pv ? ' <em style="font-style:normal;font-weight:600;color:var(--ink3);font-size:12px">' + esc(o.x.pv + (o.x.sg ? ' ' + o.x.sg : '')) + '</em>' : '') + '</div>' +
-    '<div class="s">' + esc(s.주소 || '') + (s.매장인원수 ? ' · ' + esc(s.매장인원수) + '명' : '') + (s.영업담당 ? ' · 영업 ' + esc(s.영업담당) : '') + '</div></div>';
+    '<div class="s">' + esc(s.주소 || '') + (storePiHidden(s.매장명) ? '' : (s.매장인원수 ? ' · ' + esc(s.매장인원수) + '명' : '') + (s.영업담당 ? ' · 영업 ' + esc(s.영업담당) : '')) + '</div></div>';
 }
 /** 배송센터 · AS 칸(접힌 상태) 아래 점검 이력 한 줄 요약 */
 function smapDciSum(it) {
@@ -18099,8 +18162,9 @@ function smapHot(i) {
   if (!x || !dotEl) { tip.classList.remove('on'); return; }
   var s = x.s;
   tip.innerHTML = '<div class="h">' + (s.채널 ? '<span class="dc-tag">' + esc(s.채널) + '</span>' : '') + esc(s.매장명) + '</div><dl>' +
-    [['주소', s.주소], ['영업담당', s.영업담당], ['점주', s.점주], ['인원', s.매장인원수 ? s.매장인원수 + '명' : '']].filter(function (r) { return r[1]; })
-      .map(function (r) { return '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>';
+    (storePiHidden(s.매장명) ? [['주소', s.주소]] : [['주소', s.주소], ['영업담당', s.영업담당], ['점주', s.점주], ['인원', s.매장인원수 ? s.매장인원수 + '명' : '']]).filter(function (r) { return r[1]; })
+      .map(function (r) { return '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>' +
+    '<div style="margin-top:8px;font-size:11px;color:var(--ink3)">점을 누르면 점검 · 사고 이력</div>';
   tip.classList.add('on');
   var box = $('smapMap').getBoundingClientRect(), d = dotEl.getBoundingClientRect();
   var cx = d.left + d.width / 2 - box.left, cy = d.top + d.height / 2 - box.top, tw = tip.offsetWidth, th = tip.offsetHeight;
@@ -18125,20 +18189,21 @@ function smapBind(bg) {
     if (!drag.moved) {
       drag.moved = true; try { map.setPointerCapture(drag.id); } catch (er) {}
       map.classList.add('dragging'); smapHot(-1); smapHotDc(-1);
-      drag.svg = map.querySelector('svg');
+      drag.svg = map.querySelectorAll('svg');   // 지도 + 글자 층을 같이 밂
     }
     drag.dx = dx; drag.dy = dy;
     if (!raf) raf = requestAnimationFrame(function () {
       raf = 0;
-      if (drag && drag.svg) drag.svg.style.transform = 'translate(' + drag.dx + 'px,' + drag.dy + 'px)';
+      if (drag && drag.svg) drag.svg.forEach(function (g) { g.style.transform = 'translate(' + drag.dx + 'px,' + drag.dy + 'px)'; });
     });
   });
   function endDrag() {
     cancelAnimationFrame(raf); raf = 0;
     if (drag && drag.moved) {
       var r = map.getBoundingClientRect(), u = Math.max(drag.vb[2] / r.width, drag.vb[3] / r.height);
-      if (drag.svg) drag.svg.style.transform = '';
+      if (drag.svg) drag.svg.forEach(function (g) { g.style.transform = ''; });
       smapSetVb([drag.vb[0] - drag.dx * u, drag.vb[1] - drag.dy * u, drag.vb[2], drag.vb[3]]);
+      smapRenderKeep();   // 글자 층을 새 위치에 다시 그림
       SMAP.dragged = true; setTimeout(function () { SMAP.dragged = false; }, 0);
     }
     drag = null; map.classList.remove('dragging');
@@ -18192,16 +18257,21 @@ function smapBind(bg) {
     var pv = e.target.closest('#smapMap .pv');
     if (pv && pv.dataset.pv !== SMAP.reg && smapCounts()[pv.dataset.pv]) { smapZoom(pv.dataset.pv); return; }
     var d = e.target.closest('#smapMap .sd');
-    if (d) {   // 점을 누르면 오른쪽 목록에서 그 매장으로
+    if (d) {   // 점을 누르면 오른쪽 목록에서 그 매장으로 + 점검 · 사고 이력 창 (매장명 누른 것과 같음)
       smapHot(+d.dataset.si);
       var el = document.querySelector('#smapSide .smap-it[data-si="' + d.dataset.si + '"]'); if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      var sx = SMAP.items[+d.dataset.si];
+      if (sx && sx.s && sx.s.매장명) { openStoreDetail(sx.s.매장명); var sc2 = $('storeScrim'); if (sc2) sc2.style.zIndex = '9500'; }
     }
   });
   bg.addEventListener('mouseover', function (e) {
     if (drag) return;   // 끄는 중에는 매장 안내창을 띄우지 않음
     var dc =e.target.closest('#smapMap .dcm, #smapSide .smap-it.dc');
     if (dc) { if (+dc.dataset.dci !== SMAP.onDc) smapHotDc(+dc.dataset.dci); return; }
-    var d = e.target.closest('#smapMap .sd, #smapSide .smap-it'); if (d && +d.dataset.si !== SMAP.on) smapHot(+d.dataset.si);
+    var d = e.target.closest('#smapMap .sd, #smapSide .smap-it'); if (d) { if (+d.dataset.si !== SMAP.on) smapHot(+d.dataset.si); return; }
+    // 점 · 목록 칸 밖으로 커서가 나가면 안내창을 닫음 (예전엔 지도 밖으로 나갈 때만 닫혀서 계속 떠 있었음)
+    if (SMAP.on !== -1) smapHot(-1);
+    if (SMAP.onDc !== -1 && SMAP.onDc != null) smapHotDc(-1);
   });
   $('smapMap').addEventListener('mouseleave', function () { smapHot(-1); smapHotDc(-1); });
   bg.addEventListener('keydown', function (e) { if (e.key === 'Escape') bg.remove(); });
