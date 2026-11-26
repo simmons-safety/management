@@ -13519,7 +13519,7 @@ function spBuild() {
           '<div class="f"><label>지급 일자</label><input type="date" id="spDate" value="' + ymd(new Date()) + '"></div>' +
           '<div class="f"><label>소속</label><input type="text" id="spDept" placeholder="예) 물류운영팀"></div>' +
           '<div class="f"><label id="spNameLb">수령인</label><input type="text" id="spName" placeholder="이름"></div>' +
-          '<div class="f"><label>비고 (선택)</label><input type="text" id="spNote" placeholder="예) 교체 · 분실"></div>' +
+          '<div class="f"><label id="spNoteLb">비고 (선택)</label><input type="text" id="spNote" placeholder="예) 교체 · 분실"></div>' +
         '</div>' +
         '<div id="spPpeBox"><div class="subttl" style="margin:10px 26px 0">보호구 지급 현황 (수량)</div>' +
           '<div class="form sp-ppe">' +
@@ -13570,6 +13570,8 @@ function spSetKind(k) {
   $('spPpeBox').hidden = k !== '보호구';
   $('spMedBox').hidden = k !== '의약품';
   $('spNameLb').textContent = k === '보호구' ? '수령인' : '이름';
+  $('spNoteLb').textContent = k === '보호구' ? '비고 (선택)' : '증상';
+  $('spNote').placeholder = k === '보호구' ? '예) 교체 · 분실' : '예) 두통 · 소화불량';
   $('spRules').innerHTML = '<ol style="margin:0;padding:0">' + SP_RULES[k].map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>' +
     '<p>' + esc(SP_PLEDGE) + '</p>';
   $('spAgree').checked = false;
@@ -13662,7 +13664,7 @@ function spDocHtml(r) {
       '<tr><th>소속</th><td>' + esc(r.dept || '') + '</td></tr>' +
       '<tr><th>' + (r.kind === '보호구' ? '수령인' : '이름') + '</th><td>' + esc(r.name) + '</td></tr>' +
       '<tr><th>' + (r.kind === '보호구' ? '보호구 지급 현황' : '제공 현황 (품명, 수량)') + '</th><td>' + esc(spItemsText(r)) + '</td></tr>' +
-      '<tr><th>비고</th><td>' + esc(r.note || '') + '</td></tr>' +
+      '<tr><th>' + (r.kind === '보호구' ? '비고' : '증상') + '</th><td>' + esc(r.note || '') + '</td></tr>' +
       '<tr><th>준수사항</th><td><ol style="margin:0;padding-left:18px">' + (SP_RULES[r.kind] || []).map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>' +
         '<div style="margin-top:6px;font-weight:600">' + esc(SP_PLEDGE) + (r.agree ? ' ☑' : '') + '</div></td></tr>' +
       '<tr><th>서명</th><td style="height:64px">' + (spSigImg(r.sign, 56) || '<span style="color:#aaa">(서명 없음)</span>') + '</td></tr>' +
@@ -13807,7 +13809,7 @@ function spPrintLedger(kind) {
     });
     html = '<div class="apdoc wide"><div class="h"><h1>[ 의약품 지급대장 ]' + esc(mLabel) + '</h1></div>' +
       '<table class="lg"><tr><th style="width:34px">No.</th><th style="width:330px">의료인 상담 내용</th><th>제공 현황 (품명, 수량)</th><th style="width:100px">소속</th>' +
-        '<th style="width:80px">이름</th><th style="width:110px">서명</th><th style="width:70px">비고</th></tr>' + mb.join('') + '</table>' + rules + '</div>';
+        '<th style="width:80px">이름</th><th style="width:110px">서명</th><th style="width:70px">증상</th></tr>' + mb.join('') + '</table>' + rules + '</div>';
   }
   spPrintHtml(SP_TITLE[kind] + mLabel, html, true);
 }
