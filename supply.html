@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>보호구 · 의약품 지급 신청</title>
+<link rel="icon" href="data:,">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- ══════════════════════════════════════════════════════════
+     보호구 · 의약품 지급 신청 전용 페이지 (QR코드로 접속)
+     · 신청서 작성 · 손 서명 · 제출만 할 수 있고, 대시보드로 가는 메뉴나 링크가 없습니다.
+     · 제출 건은 대시보드 "공통 › 보호구 · 의약품 지급대장"에 쌓입니다. (schema_supply.sql 실행 필요)
+     · 의약품의 '의료인 상담 내용'은 이 페이지에 없습니다 — 보건담당자가 대시보드에서 따로 작성합니다.
+     · SB_CONFIG 는 index.html 과 같은 값을 넣으세요.
+     ══════════════════════════════════════════════════════════ -->
+<script>
+window.SB_CONFIG = {
+  url:     'https://mzycdebwcwacyvybblhp.supabase.co',
+  anonKey: 'sb_publishable_XPjM8DGizb3V5no9-AaC0w_vF6vohra'
+};
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --paper:#F6F6F6; --panel:#FFFFFF; --panel2:#F6F6F6; --line:#E4E4E4;
+    --ink:#111111; --ink2:#5E5E5E; --ink3:#9B9B9B; --human:#C0392B;
+    --f:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f);letter-spacing:-.012em;word-break:keep-all;
+       -webkit-font-smoothing:antialiased;padding:0 0 48px}
+  button,input,textarea{font-family:var(--f)}
+  .top{background:var(--panel);border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;justify-content:center;
+       font-size:15px;font-weight:800;letter-spacing:.32em;padding-left:.32em}
+  .wrap{max-width:720px;margin:0 auto;padding:0 16px}
+  .hero{padding:28px 4px 18px}
+  .hero .eyebrow{margin:0 0 8px;font-size:10.5px;font-weight:600;letter-spacing:.2em;color:var(--ink3)}
+  .hero h1{margin:0 0 10px;font-size:24px;font-weight:700;letter-spacing:-.045em;line-height:1.25}
+  .hero p{margin:0;font-size:13.5px;color:var(--ink2);line-height:1.7}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-top:12px}
+  .card h2{margin:0 0 12px;font-size:15.5px;font-weight:700;letter-spacing:-.035em;line-height:1.4}
+  .card h2 small{margin-left:6px;font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0}
+  .kinds{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .kind{display:flex;flex-direction:column;gap:4px;padding:16px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;background:var(--panel2)}
+  .kind input{position:absolute;opacity:0;pointer-events:none}
+  .kind b{font-size:17px}.kind span{font-size:12px;color:var(--ink3)}
+  .kind:has(input:checked){border-color:var(--ink);background:#fff;box-shadow:inset 0 0 0 1px var(--ink)}
+  .kind:has(input:checked) b::before{content:'✔ '}
+  .fields{display:grid;gap:16px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .f{display:flex;flex-direction:column;gap:7px;min-width:0}
+  .f label{font-size:13px;font-weight:600;color:var(--ink2)}
+  .f input{width:100%;font-size:16px;padding:13px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  .f input:focus{outline:2px solid var(--ink);outline-offset:-1px}
+  .ppe{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ppe .f{flex-direction:row;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+  .ppe .f label{font-size:14.5px;color:var(--ink)}
+  .step{display:flex;align-items:center;gap:6px}
+  .step button{width:38px;height:38px;border-radius:9px;border:1px solid var(--line);background:#fff;font-size:20px;cursor:pointer;color:var(--ink)}
+  .step input{width:48px;text-align:center;padding:8px 4px;font-size:16px;border:1px solid var(--line);border-radius:8px}
+  .mrow{display:grid;grid-template-columns:2fr 1fr 40px;gap:8px;margin-bottom:8px}
+  .mrow input{width:100%;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:10px}
+  .mrow button,.add{border:1px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;font-size:14px;color:var(--ink)}
+  .add{padding:10px 14px;font-weight:600}
+  .hint{margin:10px 0 0;font-size:12.5px;color:var(--ink3);line-height:1.6}
+  ol{margin:0;padding-left:22px;font-size:13.5px;line-height:1.75}
+  ol li + li{margin-top:7px}
+  .pledge{margin:12px 0 0;font-size:13.5px;font-weight:700;line-height:1.6}
+  .chk{display:flex;align-items:flex-start;gap:11px;margin-top:14px;padding:15px 16px;border:1px solid var(--line);
+       border-radius:10px;background:var(--panel2);font-size:14px;line-height:1.6;cursor:pointer}
+  .chk input{flex:none;width:20px;height:20px;margin:1px 0 0;accent-color:var(--ink)}
+  .chk:has(input:checked){border-color:var(--ink);background:#fff}
+  .sig{display:block;width:100%;height:190px;border:1.5px dashed #999;border-radius:12px;background:#FAFAFA;touch-action:none;cursor:crosshair}
+  .sigbar{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12.5px;color:var(--ink3)}
+  .sigbar button{padding:8px 14px;font-size:13px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}
+  .chk.remember small{display:block;margin-top:3px;font-size:12px;color:var(--ink3)}
+  .submit{display:block;width:100%;margin-top:18px;padding:16px;font-size:16px;font-weight:700;color:#fff;background:var(--ink);
+          border:1px solid var(--ink);border-radius:12px;cursor:pointer}
+  .submit:disabled{opacity:.5;cursor:default}
+  .done{text-align:center;padding:48px 22px}
+  .done .ic{width:56px;height:56px;margin:0 auto 16px;border-radius:50%;background:var(--ink);color:#fff;font-size:26px;
+            display:flex;align-items:center;justify-content:center}
+  .done h2{font-size:19px}
+  .done p{margin:0 0 6px;font-size:13.5px;color:var(--ink2);line-height:1.7}
+  .done .again{margin-top:22px;padding:12px 20px;font-size:14px;font-weight:600;background:#fff;border:1px solid var(--ink);border-radius:10px;cursor:pointer}
+  .foot{margin-top:22px;text-align:center;font-size:11px;color:var(--ink3);line-height:1.7}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:calc(100% - 32px);padding:12px 18px;
+         background:var(--ink);color:#fff;font-size:13px;border-radius:10px;z-index:10;line-height:1.5}
+  .toast.warn{background:var(--human)}
+  .ppe > .f, .two > .f{min-width:0}
+  @media (max-width:540px){.ppe{grid-template-columns:1fr}}
+  @media (max-width:400px){.two{grid-template-columns:1fr}.kind b{font-size:15.5px}}
+</style>
+</head>
+<body>
+<div class="top">SIMMONS</div>
+<div class="wrap">
+  <div id="formView">
+    <div class="hero">
+      <p class="eyebrow">PPE &amp; MEDICINE</p>
+      <h1>보호구 · 의약품 지급 신청</h1>
+      <p>받으실 품목을 고르고 내용을 적은 뒤, 준수사항에 서약하고 손으로 서명해 제출해 주세요.</p>
+    </div>
+
+    <div class="card">
+      <h2>1. 구분 선택</h2>
+      <div class="kinds">
+        <label class="kind"><input type="radio" name="kind" value="보호구" checked><b>보호구</b><span>안전모 · 안전화 · 보안경 · 안전장갑 등</span></label>
+        <label class="kind"><input type="radio" name="kind" value="의약품"><b>의약품</b><span>상비약 등</span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. 신청자 정보</h2>
+      <div class="fields">
+        <div class="two">
+          <div class="f"><label for="spDate">지급 일자</label><input type="date" id="spDate"></div>
+          <div class="f"><label for="spDept">소속</label><input type="text" id="spDept" placeholder="예) 물류운영팀" autocomplete="organization"></div>
+        </div>
+        <div class="f"><label for="spName" id="spNameLb">수령인 (이름)</label><input type="text" id="spName" placeholder="이름" autocomplete="name"></div>
+      </div>
+    </div>
+
+    <div class="card" id="ppeCard">
+      <h2>3. 보호구 지급 현황 <small>받을 수량</small></h2>
+      <div class="ppe" id="ppeList"></div>
+      <div class="two" style="margin-top:12px">
+        <div class="f"><label for="spEtcN">기타 품목</label><input type="text" id="spEtcN" placeholder="예) 방진마스크"></div>
+        <div class="f"><label for="spEtcQ">기타 수량</label><input type="number" id="spEtcQ" min="0" inputmode="numeric" placeholder="0"></div>
+      </div>
+    </div>
+
+    <div class="card" id="medCard" hidden>
+      <h2>3. 제공 현황 <small>품명, 수량</small></h2>
+      <div id="medRows"></div>
+      <button type="button" class="add" id="medAdd">+ 품목 추가</button>
+      <p class="hint">의료인 상담 내용은 제출 후 보건담당자가 따로 작성합니다.</p>
+    </div>
+
+    <div class="card">
+      <h2>4. 비고 <small>선택</small></h2>
+      <div class="f"><input type="text" id="spNote" placeholder="예) 교체 · 분실"></div>
+    </div>
+
+    <div class="card">
+      <h2>5. 준수사항</h2>
+      <ol id="rules"></ol>
+      <p class="pledge">본인은 위 사항을 사업장 내에서 어떠한 일이 있더라도 준수할 것을 서약합니다.</p>
+      <label class="chk"><input type="checkbox" id="spAgree"> <span>위 준수사항을 읽었으며 준수할 것을 서약합니다.</span></label>
+    </div>
+
+    <div class="card">
+      <h2>6. 서명 <small>손가락으로 직접 서명해 주세요</small></h2>
+      <canvas class="sig" id="sig"></canvas>
+      <div class="sigbar"><span id="sigState">서명 칸이 비어 있습니다</span><button type="button" id="sigClear">지우기</button></div>
+      <label class="chk remember"><input type="checkbox" id="spRemember"> <span>이 기기에 소속 · 이름 저장 <small>다음 신청 때 자동으로 입력됩니다.</small></span></label>
+      <button type="button" class="submit" id="btnSubmit">제출</button>
+    </div>
+    <p class="foot">제출한 내용은 안전보건경영부 보호구 · 의약품 지급대장에 기록됩니다.</p>
+  </div>
+
+  <div id="doneView" hidden>
+    <div class="card done">
+      <div class="ic">✔</div>
+      <h2>제출되었습니다</h2>
+      <p id="doneMsg"></p>
+      <button type="button" class="again" id="btnAgain">새로 신청하기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function today() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function toast(msg, kind) {
+    var el = document.createElement('div');
+    el.className = 'toast' + (kind ? ' ' + kind : '');
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 3200);
+  }
+
+  var PPE = ['안전모', '안전화', '보안경', '안전장갑'];
+  var RULES = {
+    '보호구': [
+      '나는 금일 수령한 개인보호구를 작업 시 항상 착용함은 물론 그 관리에 철저를 기하겠습니다.',
+      '나는 고의 또는 중대한 과실로 이를 분실하거나 훼손 시는 회사규정에 따라 보상하겠습니다.',
+      '나는 전출, 퇴직, 기타 해당 작업의 완료 등으로 불필요 시 반납하겠습니다.',
+      '나는 개인 보호장구의 미착용 등으로 인하여 부상 시 민형사상의 책임을 회사에 묻지 않겠습니다.'
+    ],
+    '의약품': [
+      '나는 금일 수령한 의약품을 사용 용법과 용량에 맞추어 복용하겠습니다.',
+      '나는 금일 개인의 증상에 따라 수령한 의약품을 타인에게 제공하지 않겠습니다.',
+      '나는 수령한 의약품이 불필요 시 반납하겠습니다.',
+      '나는 개인 용법과 용량에 적합하지 않은 복용의 경우 민형사상의 책임을 회사에 묻지 않겠습니다.'
+    ]
+  };
+  var SAVE_KEY = 'ehs.supply.me';
+  var cfg = window.SB_CONFIG || {};
+  var db = window.supabase ? window.supabase.createClient(cfg.url, cfg.anonKey, { auth: { persistSession: false } }) : null;
+  var kind = '보호구';
+
+  /* 보호구 수량 : − / + 버튼 */
+  $('ppeList').innerHTML = PPE.map(function (p, i) {
+    return '<div class="f"><label for="ppe' + i + '">' + esc(p) + '</label><div class="step">' +
+      '<button type="button" data-step="-1" data-i="' + i + '" aria-label="' + esc(p) + ' 빼기">−</button>' +
+      '<input type="number" id="ppe' + i + '" min="0" inputmode="numeric" value="0">' +
+      '<button type="button" data-step="1" data-i="' + i + '" aria-label="' + esc(p) + ' 더하기">+</button></div></div>';
+  }).join('');
+  $('ppeList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-step]'); if (!b) return;
+    var el = $('ppe' + b.dataset.i);
+    el.value = Math.max(0, (parseInt(el.value, 10) || 0) + parseInt(b.dataset.step, 10));
+  });
+
+  /* 의약품 품목 줄 */
+  function medRow() {
+    var d = document.createElement('div');
+    d.className = 'mrow';
+    d.innerHTML = '<input type="text" class="n" placeholder="품명 (예: 타이레놀)"><input type="text" class="q" placeholder="수량">' +
+      '<button type="button" aria-label="이 줄 지우기">✕</button>';
+    d.querySelector('button').onclick = function () {
+      if ($('medRows').children.length > 1) d.remove(); else d.querySelectorAll('input').forEach(function (x) { x.value = ''; });
+    };
+    $('medRows').appendChild(d);
+  }
+  $('medAdd').onclick = medRow;
+
+  function setKind(k) {
+    kind = k;
+    $('ppeCard').hidden = k !== '보호구';
+    $('medCard').hidden = k !== '의약품';
+    $('spNameLb').textContent = k === '보호구' ? '수령인 (이름)' : '이름';
+    $('rules').innerHTML = RULES[k].map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('');
+    $('spAgree').checked = false;
+  }
+  document.querySelectorAll('input[name="kind"]').forEach(function (r) { r.onchange = function () { setKind(this.value); }; });
+
+  /* 서명 패드 */
+  var cv = $('sig'), ctx = cv.getContext('2d'), drawn = false, down = false, last = null;
+  function sizePad() {
+    var ratio = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+    cv.width = w * ratio; cv.height = h * ratio;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.lineWidth = 2.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#111';
+    drawn = false; $('sigState').textContent = '서명 칸이 비어 있습니다';
+  }
+  function pt(e) { var b = cv.getBoundingClientRect(); return { x: e.clientX - b.left, y: e.clientY - b.top }; }
+  cv.addEventListener('pointerdown', function (e) { down = true; last = pt(e); cv.setPointerCapture(e.pointerId); e.preventDefault(); });
+  cv.addEventListener('pointermove', function (e) {
+    if (!down) return;
+    var p = pt(e);
+    ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+    last = p; e.preventDefault();
+    if (!drawn) { drawn = true; $('sigState').textContent = '서명됨'; }
+  });
+  cv.addEventListener('pointerup', function () { down = false; });
+  cv.addEventListener('pointercancel', function () { down = false; });
+  $('sigClear').onclick = sizePad;
+  var lastW = window.innerWidth;
+  window.addEventListener('resize', function () { if (window.innerWidth !== lastW) { lastW = window.innerWidth; sizePad(); } });
+
+  /* 이 기기에 소속 · 이름 저장 */
+  function fillSaved() {
+    var s = null;
+    try { s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) {}
+    $('spRemember').checked = !!s;
+    if (s) { $('spDept').value = s.dept || ''; $('spName').value = s.name || ''; }
+  }
+  function storeSaved(dept, name) {
+    try {
+      if ($('spRemember').checked) localStorage.setItem(SAVE_KEY, JSON.stringify({ dept: dept, name: name }));
+      else localStorage.removeItem(SAVE_KEY);
+    } catch (e) {}
+  }
+
+  function reset() {
+    $('spDate').value = today();
+    ['spDept', 'spName', 'spNote', 'spEtcN', 'spEtcQ'].forEach(function (id) { $(id).value = ''; });
+    PPE.forEach(function (p, i) { $('ppe' + i).value = 0; });
+    $('medRows').innerHTML = ''; medRow();
+    setKind(kind);
+    fillSaved();
+    sizePad();
+  }
+
+  function itemsText(items) {
+    return items.map(function (it) { return it.n + ' ' + it.q + (/^\d+$/.test(String(it.q)) ? (kind === '의약품' ? 'EA' : '개') : ''); }).join(', ');
+  }
+
+  function submit() {
+    var date = $('spDate').value, dept = $('spDept').value.trim(), name = $('spName').value.trim();
+    if (!date) { toast('지급 일자를 골라 주세요.', 'warn'); $('spDate').focus(); return; }
+    if (!dept) { toast('소속을 적어 주세요.', 'warn'); $('spDept').focus(); return; }
+    if (!name) { toast('이름을 적어 주세요.', 'warn'); $('spName').focus(); return; }
+    var items = [];
+    if (kind === '보호구') {
+      PPE.forEach(function (p, i) { var q = parseInt($('ppe' + i).value, 10); if (q > 0) items.push({ n: p, q: q }); });
+      var en = $('spEtcN').value.trim(), eq = parseInt($('spEtcQ').value, 10);
+      if (en) items.push({ n: en, q: eq > 0 ? eq : 1 });
+    } else {
+      $('medRows').querySelectorAll('.mrow').forEach(function (row) {
+        var n = row.querySelector('.n').value.trim(), q = row.querySelector('.q').value.trim();
+        if (n) items.push({ n: n, q: q || '1' });
+      });
+    }
+    if (!items.length) { toast(kind === '보호구' ? '받을 보호구 수량을 넣어 주세요.' : '받을 의약품 품명을 적어 주세요.', 'warn'); return; }
+    if (!$('spAgree').checked) { toast('준수사항 서약에 체크해 주세요.', 'warn'); $('spAgree').focus(); return; }
+    if (!drawn) { toast('서명 칸에 직접 서명해 주세요.', 'warn'); cv.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    if (!db) { toast('서버에 연결하지 못했습니다. 인터넷 연결을 확인해 주세요.', 'warn'); return; }
+    var btn = $('btnSubmit'); btn.disabled = true; btn.textContent = '제출 중…';
+    db.from('supply_ledger').insert({
+      kind: kind, issue_date: date, dept: dept, name: name, items: items, note: $('spNote').value.trim() || null,
+      agree: true, sign: cv.toDataURL('image/png'), consult: null, created_by: 'QR 신청'
+    }).then(function (res) {
+      if (res.error) throw res.error;
+      storeSaved(dept, name);
+      $('doneMsg').innerHTML = esc(name) + ' 님 · ' + esc(kind) + '<br>' + esc(itemsText(items)) +
+        (kind === '의약품' ? '<br><br>보건담당자가 상담 내용을 확인한 뒤 지급합니다.' : '');
+      $('formView').hidden = true; $('doneView').hidden = false;
+      window.scrollTo(0, 0);
+    }).catch(function (e) {
+      toast('제출하지 못했습니다: ' + ((e && e.message) || e), 'warn');
+    }).then(function () { btn.disabled = false; btn.textContent = '제출'; });
+  }
+
+  $('btnSubmit').onclick = submit;
+  $('btnAgain').onclick = function () { $('doneView').hidden = true; $('formView').hidden = false; reset(); window.scrollTo(0, 0); };
+  reset();
+})();
+</script>
+</body>
+</html>
