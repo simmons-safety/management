@@ -90,6 +90,7 @@ window.SB_CONFIG = {
   .f{display:flex;flex-direction:column;gap:6px}
   .f > label{font-size:13px;font-weight:600;color:var(--ink2)}
 
+  .etc{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:8px;margin-top:12px}
   .ppe-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .pi{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 8px 8px 12px;border:1px solid var(--line);border-radius:10px}
   .pi.has{border-color:var(--ppe);background:var(--ppe-bg)}
@@ -179,9 +180,9 @@ window.SB_CONFIG = {
     <div class="card" id="ppeCard">
       <h2><span class="badge ppe">보호구</span>3. 지급 현황<span class="req">*</span> <small>받을 수량</small></h2>
       <div class="ppe-list" id="ppeList"></div>
-      <div class="two" style="margin-top:12px">
+      <div class="etc">
         <div class="f"><label for="spEtcN">기타 품목</label><input type="text" id="spEtcN" placeholder="예) 방진마스크"></div>
-        <div class="f"><label for="spEtcQ">기타 수량</label><input type="number" id="spEtcQ" min="0" inputmode="numeric" placeholder="0"></div>
+        <div class="f"><label for="spEtcQ">수량</label><input type="number" id="spEtcQ" min="0" inputmode="numeric" placeholder="0"></div>
       </div>
     </div>
 
@@ -304,6 +305,7 @@ window.SB_CONFIG = {
     });
     $('ppeCard').hidden = k !== '보호구';
     $('medCard').hidden = k !== '의약품';
+    $('spNote').placeholder = k === '보호구' ? '예) 교체 · 분실' : '';
     $('spNameLb').innerHTML = (k === '보호구' ? '수령인 (이름)' : '이름') + '<span class="req">*</span>';
     $('rules').innerHTML = RULES[k].map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('');
     setAgree(false);
