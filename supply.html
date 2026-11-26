@@ -194,7 +194,7 @@ window.SB_CONFIG = {
     </div>
 
     <div class="card">
-      <h2>4. 비고 <small>선택</small></h2>
+      <h2>4. <span id="spNoteLb">비고</span> <small>선택</small></h2>
       <input type="text" id="spNote" placeholder="예) 교체 · 분실" aria-label="비고">
     </div>
 
@@ -305,7 +305,9 @@ window.SB_CONFIG = {
     });
     $('ppeCard').hidden = k !== '보호구';
     $('medCard').hidden = k !== '의약품';
-    $('spNote').placeholder = k === '보호구' ? '예) 교체 · 분실' : '';
+    $('spNote').placeholder = k === '보호구' ? '예) 교체 · 분실' : '예) 두통 · 소화불량';
+    $('spNoteLb').textContent = k === '보호구' ? '비고' : '증상';
+    $('spNote').setAttribute('aria-label', k === '보호구' ? '비고' : '증상');
     $('spNameLb').innerHTML = (k === '보호구' ? '수령인 (이름)' : '이름') + '<span class="req">*</span>';
     $('rules').innerHTML = RULES[k].map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('');
     setAgree(false);
