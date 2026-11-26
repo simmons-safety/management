@@ -3350,6 +3350,8 @@ window.AI_CONFIG = {
   <section class="bpanel" id="bd-envact" hidden></section>
   <!-- ══════════ 대표님 라운딩 (대표이사 월간 안전보건 점검 일지) — 내용은 JS(crBuild)가 채움, schema_ceoround.sql 실행 필요 ══════════ -->
   <section class="bpanel" id="bd-ceoround" hidden></section>
+  <!-- ══════════ 보호구 · 의약품 지급대장 — 내용은 JS(spBuild)가 채움, schema_supply.sql 실행 필요 ══════════ -->
+  <section class="bpanel" id="bd-supply" hidden></section>
   <!-- ══════════ 법적일지 (안전 › 법적일지) : 산업안전보건위원회 · 협력업체 협의체 · 순회점검일지
        위 = 세 일지 요약 카드 (누르면 그 일지로) · 아래 = 고른 일지의 작성 · 결재 · 기록 관리
        위원회 · 협의체 = lgBuild() 가 그림 (schema_legal.sql) · 순회점검일지 = 기존 ptBuild() 그대로 (schema_patrol.sql) ══════════ -->
@@ -13434,6 +13436,383 @@ function crOpen(id) {
 }
 
 /* ============================================================
+ *  6-5-3b. 보호구 · 의약품 지급대장 (공통)  (schema_supply.sql 실행 필요)
+ *  · 작성 : 구분(보호구 / 의약품) 체크 → 종이 대장과 같은 칸 입력 → 준수사항 서약 → 제출할 때 수령인 손 서명
+ *  · 의약품 : '의료인 상담 내용'은 제출 양식에 없습니다. 제출된 건을 지급 기록에서 열어
+ *             보건담당자가 따로 작성합니다(지급일자 · 증상 · 기존 질환 · 복약안내 + 담당자 손 서명).
+ *  · 대장 인쇄 : 고른 달의 기록을 종이 대장(안전보호구 지급대장 / 의약품 지급대장) 모양으로 출력
+ * ============================================================ */
+var SP_PPE = ['안전모', '안전화', '보안경', '안전장갑'];
+var SP_RULES = {
+  '보호구': [
+    '나는 금일 수령한 개인보호구를 작업 시 항상 착용함은 물론 그 관리에 철저를 기하겠습니다.',
+    '나는 고의 또는 중대한 과실로 이를 분실하거나 훼손 시는 회사규정에 따라 보상하겠습니다.',
+    '나는 전출, 퇴직, 기타 해당 작업의 완료 등으로 불필요 시 반납하겠습니다.',
+    '나는 개인 보호장구의 미착용 등으로 인하여 부상 시 민형사상의 책임을 회사에 묻지 않겠습니다.'
+  ],
+  '의약품': [
+    '나는 금일 수령한 의약품을 사용 용법과 용량에 맞추어 복용하겠습니다.',
+    '나는 금일 개인의 증상에 따라 수령한 의약품을 타인에게 제공하지 않겠습니다.',
+    '나는 수령한 의약품이 불필요 시 반납하겠습니다.',
+    '나는 개인 용법과 용량에 적합하지 않은 복용의 경우 민형사상의 책임을 회사에 묻지 않겠습니다.'
+  ]
+};
+var SP_PLEDGE = '본인은 위 사항을 사업장 내에서 어떠한 일이 있더라도 준수할 것을 서약합니다.';
+var SP_TITLE = { '보호구': '안전보호구 지급대장', '의약품': '의약품 지급대장' };
+var SP_ROWS = [], SP = { kind: '보호구', filter: '', month: ymd(new Date()).slice(0, 7), err: '', built: false };
+var SP_CSS =
+  '.sp-kind{display:flex;gap:10px;padding:18px 26px 0}' +
+  '.sp-kind label{flex:1;display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}' +
+  '.sp-kind label b{font-size:14px}.sp-kind label span{display:block;font-size:11px;color:var(--ink3)}' +
+  '.sp-kind label:has(input:checked){border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}' +
+  '.sp-ppe{grid-template-columns:repeat(4,1fr)!important}.sp-mrow{display:flex;gap:8px;align-items:center}' +
+  '.sp-mrow .n{flex:2;min-width:0}.sp-mrow .q{flex:1;min-width:0}' +
+  '.sp-rules{margin:0 26px;padding:12px 14px 12px 32px;border:1px solid var(--line);border-radius:8px;font-size:12px;line-height:1.8;color:var(--ink)}' +
+  '.sp-rules p{margin:6px 0 0 -18px;font-weight:600}' +
+  '.sp-agree{display:flex;gap:8px;align-items:center;margin:12px 26px 0;font-size:12.5px;font-weight:600;cursor:pointer}' +
+  '.sp-hint{margin:8px 26px 0;font-size:11.5px;color:var(--ink3)}' +
+  '@media (max-width:720px){.sp-ppe{grid-template-columns:1fr 1fr!important}.sp-kind{flex-direction:column}}';
+function spConsult(r) {
+  var c = r && r.consult;
+  if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { c = null; } }
+  return c && typeof c === 'object' ? c : null;
+}
+function spItemsText(r) {
+  return crJson(r.items).map(function (it) { return it.n + ' ' + it.q + (/^\d+$/.test(String(it.q)) ? (r.kind === '의약품' ? 'EA' : '개') : ''); }).join(', ');
+}
+function spQty(r, name) {
+  var it = crJson(r.items).filter(function (x) { return x.n === name; })[0];
+  return it ? it.q : '';
+}
+function spEtc(r) {
+  return crJson(r.items).filter(function (x) { return SP_PPE.indexOf(x.n) === -1; }).map(function (x) { return x.n + ' ' + x.q; }).join(', ');
+}
+function loadSp() {
+  if (!RPC.live) { SP_ROWS = []; spRender(); return Promise.resolve(); }
+  return RPC.db.from('supply_ledger').select('*').order('issue_date', { ascending: false }).order('created_at', { ascending: false }).limit(3000)
+    .then(function (res) {
+      if (res.error) throw res.error;
+      SP_ROWS = res.data || []; SP.err = ''; spRender();
+    }).catch(function (e) {
+      console.warn('[EHS] 보호구 · 의약품 지급대장 조회 실패', e);
+      SP_ROWS = []; SP.err = (e && e.message) || String(e); spRender();
+    });
+}
+function spMedRow() {
+  return '<div class="sp-mrow"><input type="text" class="n" placeholder="품명 (예: 타이레놀)">' +
+    '<input type="text" class="q" placeholder="수량 (예: 2EA)"><button class="reset" type="button" data-spx style="padding:6px 10px">✕</button></div>';
+}
+function spBuild() {
+  var sec = $('bd-supply');
+  if (!sec || SP.built) return;
+  SP.built = true;
+  var st = document.createElement('style'); st.textContent = SP_CSS; document.head.appendChild(st);
+  sec.innerHTML =
+    '<div class="card"><header><h2>보호구 · 의약품 지급 현황</h2><div class="filterbar" id="spFilters"></div></header><div id="spSum"></div></div>' +
+    '<div class="g-half" style="margin-top:12px;align-items:start">' +
+      '<div class="card"><header><h2>지급대장 작성</h2><span class="note">제출할 때 수령인이 손으로 서명합니다</span></header>' +
+        '<div class="sp-kind" role="radiogroup" aria-label="구분">' +
+          '<label><input type="radio" name="spKind" value="보호구" checked><div><b>보호구</b><span>안전보호구 지급대장</span></div></label>' +
+          '<label><input type="radio" name="spKind" value="의약품"><div><b>의약품</b><span>의약품 지급대장</span></div></label>' +
+        '</div>' +
+        '<div class="form">' +
+          '<div class="f"><label>지급 일자</label><input type="date" id="spDate" value="' + ymd(new Date()) + '"></div>' +
+          '<div class="f"><label>소속</label><input type="text" id="spDept" placeholder="예) 물류운영팀"></div>' +
+          '<div class="f"><label id="spNameLb">수령인</label><input type="text" id="spName" placeholder="이름"></div>' +
+          '<div class="f"><label>비고 (선택)</label><input type="text" id="spNote" placeholder="예) 교체 · 분실"></div>' +
+        '</div>' +
+        '<div id="spPpeBox"><div class="subttl" style="margin:10px 26px 0">보호구 지급 현황 (수량)</div>' +
+          '<div class="form sp-ppe">' +
+            SP_PPE.map(function (p, i) {
+              return '<div class="f"><label>' + esc(p) + '</label><input type="number" min="0" id="spP' + i + '" placeholder="0"></div>';
+            }).join('') +
+            '<div class="f" style="grid-column:span 3"><label>기타 품목</label><input type="text" id="spEtcN" placeholder="예) 방진마스크, 귀마개"></div>' +
+            '<div class="f"><label>기타 수량</label><input type="number" min="0" id="spEtcQ" placeholder="0"></div>' +
+          '</div></div>' +
+        '<div id="spMedBox" hidden><div class="subttl" style="margin:10px 26px 0">제공 현황 (품명, 수량)</div>' +
+          '<div class="form" style="grid-template-columns:1fr"><div class="f wide"><div id="spMedRows" style="display:flex;flex-direction:column;gap:8px">' + spMedRow() + '</div>' +
+            '<button class="reset" type="button" id="spMedAdd" style="align-self:flex-start;padding:6px 12px;font-size:11px">+ 품목 추가</button></div></div>' +
+          '<div class="sp-hint">의료인 상담 내용은 제출 후 지급 기록에서 해당 건을 열어 보건담당자가 따로 작성합니다.</div></div>' +
+        '<div class="subttl" style="margin:16px 26px 8px">준수사항</div>' +
+        '<div class="sp-rules" id="spRules"></div>' +
+        '<label class="sp-agree"><input type="checkbox" id="spAgree"> 위 준수사항을 읽었으며 준수할 것을 서약합니다.</label>' +
+        '<div class="secthead" style="margin-top:14px"><button class="reset go" id="spSave">서명하고 제출</button></div>' +
+      '</div>' +
+      '<div class="card"><header><h2>지급 기록</h2><span class="note" id="spCount"></span></header>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">' +
+          '<input type="month" id="spMonth" value="' + SP.month + '" style="width:auto">' +
+          '<span style="flex:1"></span>' +
+          '<button class="reset" type="button" data-spprint="보호구" style="padding:6px 12px;font-size:11px">보호구 대장 인쇄</button>' +
+          '<button class="reset" type="button" data-spprint="의약품" style="padding:6px 12px;font-size:11px">의약품 대장 인쇄</button>' +
+        '</div><div id="spList"></div></div>' +
+    '</div>';
+  spSetKind('보호구');
+  sec.addEventListener('change', function (e) {
+    if (e.target.name === 'spKind') spSetKind(e.target.value);
+    else if (e.target.id === 'spMonth') { SP.month = e.target.value; spRender(); }
+  });
+  $('spSave').onclick = spSubmit;
+  $('spMedAdd').onclick = function () { $('spMedRows').insertAdjacentHTML('beforeend', spMedRow()); };
+  sec.addEventListener('click', function (e) {
+    var t;
+    if ((t = e.target.closest('[data-spx]'))) {
+      var rows = $('spMedRows').querySelectorAll('.sp-mrow');
+      if (rows.length > 1) t.closest('.sp-mrow').remove(); else rows[0].querySelectorAll('input').forEach(function (x) { x.value = ''; });
+      return;
+    }
+    if ((t = e.target.closest('[data-spfilter]'))) { SP.filter = t.dataset.spfilter; spRender(); return; }
+    if ((t = e.target.closest('[data-spprint]'))) { spPrintLedger(t.dataset.spprint); return; }
+    if ((t = e.target.closest('[data-spopen]'))) { spOpen(t.dataset.spopen); }
+  });
+}
+function spSetKind(k) {
+  SP.kind = k;
+  $('spPpeBox').hidden = k !== '보호구';
+  $('spMedBox').hidden = k !== '의약품';
+  $('spNameLb').textContent = k === '보호구' ? '수령인' : '이름';
+  $('spRules').innerHTML = '<ol style="margin:0;padding:0">' + SP_RULES[k].map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>' +
+    '<p>' + esc(SP_PLEDGE) + '</p>';
+  $('spAgree').checked = false;
+}
+function spMonthRows() {
+  return SP_ROWS.filter(function (r) { return !SP.month || String(r.issue_date).slice(0, 7) === SP.month; });
+}
+function spRender() {
+  spBuild();
+  if (!$('spSum')) return;
+  var mrows = spMonthRows();
+  var ppe = mrows.filter(function (r) { return r.kind === '보호구'; }), med = mrows.filter(function (r) { return r.kind === '의약품'; });
+  var waitAll = SP_ROWS.filter(function (r) { return r.kind === '의약품' && !spConsult(r); }).length;
+  var tot = {}; ppe.forEach(function (r) { crJson(r.items).forEach(function (it) { var q = parseInt(it.q, 10) || 0; tot[it.n] = (tot[it.n] || 0) + q; }); });
+  var mLabel = SP.month ? (+SP.month.slice(0, 4)) + '년 ' + (+SP.month.slice(5, 7)) + '월' : '전체 기간';
+  $('spFilters').innerHTML = [['', '전체'], ['보호구', '보호구'], ['의약품', '의약품'], ['상담대기', '상담 대기']].map(function (f) {
+    return '<button class="fb" data-spfilter="' + f[0] + '" aria-pressed="' + (SP.filter === f[0]) + '">' + f[1] + '</button>';
+  }).join('');
+  $('spSum').innerHTML =
+    (SP.err ? '<div class="rg-issue" style="margin:0 0 12px">기록을 불러오지 못했습니다 : ' + esc(SP.err) +
+      '<br>Supabase SQL Editor 에서 <b>schema_supply.sql</b> 을 먼저 실행해 주세요.</div>' : '') +
+    '<div class="sdy-sum">' + mLabel + ' · 보호구 지급 <b>' + ppe.length + '</b>건' +
+      (Object.keys(tot).length ? ' (' + Object.keys(tot).map(function (k) { return esc(k) + ' ' + tot[k]; }).join(' · ') + ')' : '') +
+      ' · 의약품 지급 <b>' + med.length + '</b>건 · 의료인 상담 작성 대기 <b>' + waitAll + '</b>건 (전체 기간)</div>';
+  var lst = (SP.filter === '상담대기' ? SP_ROWS : mrows).filter(function (r) {
+    if (SP.filter === '상담대기') return r.kind === '의약품' && !spConsult(r);
+    return !SP.filter || r.kind === SP.filter;
+  });
+  $('spCount').textContent = (SP.filter === '상담대기' ? '상담 대기 전체' : mLabel) + ' · ' + lst.length + '건';
+  $('spList').innerHTML = lst.length ? lst.map(function (r) {
+    var c = spConsult(r);
+    return '<div class="sdy-item" data-spopen="' + esc(r.id) + '">' +
+      '<div class="hd"><span class="d">' + esc(String(r.issue_date).replace(/-/g, '.')) + '</span>' +
+        '<span class="b ' + (r.kind === '의약품' ? 'b-hi' : 'b-gray') + '">' + esc(r.kind) + '</span>' +
+        '<span class="t">' + esc(r.name) + (r.dept ? ' <span style="font-weight:400;color:var(--ink3)">· ' + esc(r.dept) + '</span>' : '') + '</span>' +
+        '<span class="meta">' + (r.kind === '의약품' ? (c ? '✔ 상담 작성' : '<b style="color:#C0392B">상담 대기</b>') : (r.sign ? '✔ 서명' : '')) + '</span></div>' +
+      '<div class="pv">' + esc(spItemsText(r)) + (r.note ? ' · ' + esc(r.note) : '') + '</div>' +
+    '</div>';
+  }).join('') : '<div class="empty"><b>지급 기록이 없습니다</b>' +
+    (RPC.live ? '왼쪽 양식으로 지급대장을 작성하세요.' : 'Supabase에 연결되어야 기록을 불러오고 저장할 수 있습니다.') + '</div>';
+}
+function spSubmit() {
+  var kind = SP.kind, date = $('spDate').value, dept = $('spDept').value.trim(), name = $('spName').value.trim();
+  if (!date) { toast('지급 일자를 입력해 주세요.', 'warn'); $('spDate').focus(); return; }
+  if (!dept) { toast('소속을 입력해 주세요.', 'warn'); $('spDept').focus(); return; }
+  if (!name) { toast((kind === '보호구' ? '수령인' : '이름') + '을 입력해 주세요.', 'warn'); $('spName').focus(); return; }
+  var items = [];
+  if (kind === '보호구') {
+    SP_PPE.forEach(function (p, i) { var q = parseInt($('spP' + i).value, 10); if (q > 0) items.push({ n: p, q: q }); });
+    var en = $('spEtcN').value.trim(), eq = parseInt($('spEtcQ').value, 10);
+    if (en) items.push({ n: en, q: eq > 0 ? eq : 1 });
+  } else {
+    $('spMedRows').querySelectorAll('.sp-mrow').forEach(function (row) {
+      var n = row.querySelector('.n').value.trim(), q = row.querySelector('.q').value.trim();
+      if (n) items.push({ n: n, q: q || '1' });
+    });
+  }
+  if (!items.length) { toast(kind === '보호구' ? '지급한 보호구 수량을 입력해 주세요.' : '제공한 의약품의 품명을 입력해 주세요.', 'warn'); return; }
+  if (!$('spAgree').checked) { toast('준수사항 서약에 체크해 주세요.', 'warn'); $('spAgree').focus(); return; }
+  if (!RPC.live) { toast('Supabase에 연결되어야 저장할 수 있습니다.', 'warn'); return; }
+  var rec = { kind: kind, items: items };
+  apSign(kind === '보호구' ? '수령인 서명' : '본인 서명', SP_TITLE[kind] + ' · ' + spItemsText(rec) + ' 를 수령하고 준수사항을 서약합니다.', name).then(function (sig) {
+    if (!sig) return;
+    var btn = $('spSave'); btn.disabled = true; btn.textContent = '제출 중…';
+    RPC.db.from('supply_ledger').insert({
+      kind: kind, issue_date: date, dept: dept, name: name, items: items, note: $('spNote').value.trim() || null,
+      agree: true, sign: sig, consult: null, created_by: state.user || null
+    }).then(function (res) {
+      if (res.error) throw res.error;
+      toast(kind === '의약품' ? '제출했습니다. 지급 기록에서 의료인 상담 내용을 작성해 주세요.' : '제출했습니다.');
+      ['spDept', 'spName', 'spNote', 'spEtcN', 'spEtcQ'].forEach(function (id) { $(id).value = ''; });
+      SP_PPE.forEach(function (p, i) { $('spP' + i).value = ''; });
+      $('spMedRows').innerHTML = spMedRow();
+      $('spAgree').checked = false;
+      SP.month = date.slice(0, 7); $('spMonth').value = SP.month;
+      loadSp();
+    }).catch(function (e) {
+      toast('저장 실패: ' + ((e && e.message) || e), 'err');
+    }).then(function () { btn.disabled = false; btn.textContent = '서명하고 제출'; });
+  });
+}
+function spSigImg(s, h) { return s ? '<img src="' + esc(s) + '" alt="서명" style="max-height:' + (h || 46) + 'px;max-width:100%">' : ''; }
+/** 한 건 보기 : 지급 내용 + 준수사항 서약 + 수령인 서명 (+ 의약품 : 의료인 상담 내용) */
+function spDocHtml(r) {
+  var c = spConsult(r);
+  return '<div class="apdoc">' +
+    '<div class="h"><h1 style="font-size:20px">' + esc(SP_TITLE[r.kind] || '지급대장') + '</h1></div>' +
+    '<table class="body"><tr><th>구분</th><td>' + esc(r.kind) + '</td></tr>' +
+      '<tr><th>지급 일자</th><td>' + esc(String(r.issue_date).replace(/-/g, '.')) + '</td></tr>' +
+      '<tr><th>소속</th><td>' + esc(r.dept || '') + '</td></tr>' +
+      '<tr><th>' + (r.kind === '보호구' ? '수령인' : '이름') + '</th><td>' + esc(r.name) + '</td></tr>' +
+      '<tr><th>' + (r.kind === '보호구' ? '보호구 지급 현황' : '제공 현황 (품명, 수량)') + '</th><td>' + esc(spItemsText(r)) + '</td></tr>' +
+      '<tr><th>비고</th><td>' + esc(r.note || '') + '</td></tr>' +
+      '<tr><th>준수사항</th><td><ol style="margin:0;padding-left:18px">' + (SP_RULES[r.kind] || []).map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>' +
+        '<div style="margin-top:6px;font-weight:600">' + esc(SP_PLEDGE) + (r.agree ? ' ☑' : '') + '</div></td></tr>' +
+      '<tr><th>서명</th><td style="height:64px">' + (spSigImg(r.sign, 56) || '<span style="color:#aaa">(서명 없음)</span>') + '</td></tr>' +
+    '</table>' +
+    (r.kind === '의약품'
+      ? '<b style="display:block;margin:16px 0 6px">의료인 상담 내용</b>' +
+        (c ? '<table class="body"><tr><th>지급 일자</th><td>' + esc(String(c.date || '').replace(/-/g, '.')) + '</td></tr>' +
+            '<tr><th>증상</th><td><div class="pre">' + esc(c.symptom || '') + '</div></td></tr>' +
+            '<tr><th>기존 질환 보유 여부</th><td>' + esc(c.disease || '') + (c.diseaseNote ? ' (' + esc(c.diseaseNote) + ')' : '') + '</td></tr>' +
+            '<tr><th>복약안내 등 기타사항</th><td><div class="pre">' + esc(c.guide || '') + '</div></td></tr>' +
+            '<tr><th>담당자 서명</th><td style="height:64px">' + spSigImg(c.sign, 56) + (c.staff ? ' <span style="margin-left:8px">' + esc(c.staff) + '</span>' : '') + '</td></tr></table>'
+          : '<div style="border:1px dashed #bbb;padding:14px;text-align:center;color:#888">아직 작성되지 않았습니다 — 위 [의료인 상담 작성] 버튼으로 작성합니다.</div>')
+      : '') +
+  '</div>';
+}
+/** 의료인 상담 내용 입력 창 → { date, symptom, disease, diseaseNote, guide, staff } 또는 null */
+function spConsultDialog(r) {
+  var c = spConsult(r) || {};
+  return new Promise(function (resolve) {
+    var bg = document.createElement('div');
+    bg.className = 'ap-sigbg';
+    bg.innerHTML = '<div class="ap-sigbox" role="dialog" aria-label="의료인 상담 내용" style="max-width:440px">' +
+      '<h3>의료인 상담 내용</h3><p>' + esc(r.name) + ' (' + esc(r.dept || '') + ') · ' + esc(spItemsText(r)) + '</p>' +
+      '<div class="form" style="padding:0;grid-template-columns:1fr;gap:10px">' +
+        '<div class="f"><label>지급 일자</label><input type="date" id="spcDate" value="' + esc(c.date || r.issue_date || ymd(new Date())) + '"></div>' +
+        '<div class="f"><label>증상</label><input type="text" id="spcSym" value="' + esc(c.symptom || '') + '" placeholder="예) 두통, 감기 몸살"></div>' +
+        '<div class="f"><label>기존 질환 보유 여부</label><div style="display:flex;gap:16px;align-items:center;font-size:13px">' +
+          '<label style="letter-spacing:0;font-size:13px;color:inherit"><input type="radio" name="spcDis" value="X"' + (c.disease !== 'O' ? ' checked' : '') + '> 없음 (X)</label>' +
+          '<label style="letter-spacing:0;font-size:13px;color:inherit"><input type="radio" name="spcDis" value="O"' + (c.disease === 'O' ? ' checked' : '') + '> 있음 (O)</label></div>' +
+          '<input type="text" id="spcDisN" value="' + esc(c.diseaseNote || '') + '" placeholder="있으면 질환명 (선택)"></div>' +
+        '<div class="f"><label>복약안내 등 기타사항</label><textarea id="spcGuide" rows="3" placeholder="예) 1일 3회 식후 복용 안내">' + esc(c.guide || '') + '</textarea></div>' +
+        '<div class="f"><label>담당자 이름</label><input type="text" id="spcStaff" value="' + esc(c.staff || '') + '" placeholder="예) 보건관리자 이름"></div>' +
+      '</div>' +
+      '<div class="ap-sigbtns" style="margin-top:12px"><span style="flex:1"></span><button class="reset" data-spc="cancel">취소</button>' +
+        '<button class="reset go" data-spc="ok">다음 (담당자 서명)</button></div></div>';
+    document.body.appendChild(bg);
+    function done(v) { bg.remove(); resolve(v); }
+    bg.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-spc]'); if (!b) return;
+      if (b.dataset.spc === 'cancel') { done(null); return; }
+      var v = {
+        date: bg.querySelector('#spcDate').value, symptom: bg.querySelector('#spcSym').value.trim(),
+        disease: (bg.querySelector('input[name="spcDis"]:checked') || {}).value || 'X',
+        diseaseNote: bg.querySelector('#spcDisN').value.trim(), guide: bg.querySelector('#spcGuide').value.trim(),
+        staff: bg.querySelector('#spcStaff').value.trim()
+      };
+      if (!v.date) { toast('지급 일자를 골라 주세요.', 'warn'); return; }
+      if (!v.symptom) { toast('증상을 적어 주세요.', 'warn'); return; }
+      if (!v.staff) { toast('담당자 이름을 적어 주세요.', 'warn'); return; }
+      done(v);
+    });
+  });
+}
+function spOpen(id) {
+  var r = SP_ROWS.filter(function (x) { return String(x.id) === String(id); })[0];
+  if (!r) return;
+  var c = spConsult(r);
+  var bg = document.createElement('div');
+  bg.className = 'cr-bg';
+  bg.innerHTML = '<div class="cr-doc"><div class="bar">' +
+    '<span class="cr-st">' + esc(r.kind) + (r.kind === '의약품' ? (c ? ' · 상담 작성 완료' : ' · 상담 대기') : '') + '</span><span style="flex:1"></span>' +
+    (r.kind === '의약품' ? '<button class="reset go" data-sp="consult">' + (c ? '상담 내용 수정' : '의료인 상담 작성') + '</button>' : '') +
+    '<button class="reset" data-sp="print">인쇄 / PDF</button><button class="reset" data-sp="del">삭제</button>' +
+    '<button class="reset" data-sp="close">닫기</button></div>' + spDocHtml(r) + '</div>';
+  document.body.appendChild(bg);
+  function close() { bg.remove(); }
+  bg.addEventListener('click', function (e) {
+    if (e.target === bg) { close(); return; }
+    var b = e.target.closest('[data-sp]');
+    if (!b) return;
+    var a = b.dataset.sp;
+    if (a === 'close') close();
+    else if (a === 'print') spPrintHtml(SP_TITLE[r.kind] + ' ' + r.issue_date + ' ' + r.name, spDocHtml(r));
+    else if (a === 'consult') {
+      var info;
+      spConsultDialog(r).then(function (v) {
+        if (!v) return null;
+        info = v;
+        return apSign('담당자 서명', '의료인 상담 내용 · ' + r.name + ' (' + String(v.date).replace(/-/g, '.') + ')', v.staff);
+      }).then(function (sig) {
+        if (!sig) return;
+        info.sign = sig;
+        RPC.db.from('supply_ledger').update({ consult: info, consult_at: new Date().toISOString() }).eq('id', r.id).then(function (res) {
+          if (res.error) throw res.error;
+          toast('의료인 상담 내용을 저장했습니다.');
+          close();
+          loadSp().then(function () { spOpen(r.id); });
+        }).catch(function (e) { toast('저장 실패: ' + ((e && e.message) || e), 'err'); });
+      });
+    } else if (a === 'del') {
+      delPin('이 지급 기록(' + r.name + ' · ' + r.kind + ')을 삭제합니다.').then(function (ok) {
+        if (!ok) return;
+        RPC.db.from('supply_ledger').delete().eq('id', r.id)
+          .then(function (res) { if (res.error) throw res.error; toast('삭제했습니다.'); close(); loadSp(); })
+          .catch(function (e) { toast('삭제 실패: ' + ((e && e.message) || e), 'err'); });
+      });
+    }
+  });
+}
+function spPrintHtml(title, body, landscape) {
+  var w = window.open('', '_blank');
+  if (!w) { toast('팝업이 막혀 있습니다. 팝업을 허용해 주세요.', 'warn'); return; }
+  w.document.write('<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>' + esc(title) + '</title>' +
+    '<style>body{margin:0;background:#eee;padding:20px 0}' + AP_DOC_CSS +
+    '.apdoc.wide{width:1040px}.lg th,.lg td{text-align:center;font-size:11.5px;padding:4px 6px;height:30px}.lg th{background:#f3f3f3}' +
+    '.lg td.l{text-align:left}.lg img{max-height:28px;max-width:90px}.rules{margin-top:0;border:1px solid #333;border-top:0;padding:10px 14px;font-size:12px;line-height:1.8}' +
+    '@media print{body{background:#fff;padding:0}.apdoc{width:auto;padding:0}}@page{size:A4 ' + (landscape ? 'landscape' : 'portrait') + ';margin:10mm}</style></head><body>' +
+    body + '<script>window.onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>');
+  w.document.close();
+}
+/** 종이 대장 모양 출력 : 고른 달(비어 있으면 전체)의 해당 구분 기록을 지급일 순으로 */
+function spPrintLedger(kind) {
+  var rows = spMonthRows().filter(function (r) { return r.kind === kind; }).slice().sort(function (a, b) {
+    return String(a.issue_date).localeCompare(String(b.issue_date)) || String(a.created_at).localeCompare(String(b.created_at));
+  });
+  if (!rows.length) { toast((SP.month ? SP.month + ' ' : '') + kind + ' 지급 기록이 없습니다.', 'warn'); return; }
+  var mLabel = SP.month ? ' (' + (+SP.month.slice(0, 4)) + '년 ' + (+SP.month.slice(5, 7)) + '월)' : '';
+  var rules = '<div class="rules"><b>준수사항</b><ol style="margin:4px 0 0;padding-left:18px">' + SP_RULES[kind].map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') +
+    '</ol><div style="text-align:center;margin-top:6px">' + esc(SP_PLEDGE) + '</div></div>';
+  var html;
+  if (kind === '보호구') {
+    var body = rows.map(function (r, i) {
+      return '<tr><td>' + (i + 1) + '</td><td>' + esc(String(r.issue_date).slice(5).replace('-', '/')) + '</td><td>' + esc(r.dept || '') + '</td><td>' + esc(r.name) + '</td>' +
+        SP_PPE.map(function (p) { return '<td>' + esc(spQty(r, p)) + '</td>'; }).join('') +
+        '<td class="l">' + esc(spEtc(r)) + '</td><td>' + spSigImg(r.sign, 28) + '</td><td>' + esc(r.note || '') + '</td></tr>';
+    });
+    for (var k = rows.length; k < 20; k++) body.push('<tr><td>' + (k + 1) + '</td>' + new Array(11).join('<td></td>') + '</tr>');
+    html = '<div class="apdoc wide"><div class="h"><h1>&lt;안전보호구 지급대장&gt;' + esc(mLabel) + '</h1></div>' +
+      '<table class="lg"><tr><th rowspan="2" style="width:34px">No.</th><th rowspan="2" style="width:70px">지급 일자</th><th rowspan="2">소 속</th><th rowspan="2" style="width:80px">수령인</th>' +
+        '<th colspan="5">보호구 지급 현황</th><th rowspan="2" style="width:100px">서 명</th><th rowspan="2" style="width:80px">비 고</th></tr>' +
+      '<tr>' + SP_PPE.map(function (p) { return '<th style="width:60px">' + esc(p) + '</th>'; }).join('') + '<th>기 타</th></tr>' +
+      body.join('') + '</table>' + rules + '</div>';
+  } else {
+    var mb = rows.map(function (r, i) {
+      var c = spConsult(r) || {};
+      return '<tr><td>' + (i + 1) + '</td><td class="l" style="line-height:1.55;font-size:11px">' +
+          '● 지급일자 : ' + esc(String(c.date || '').replace(/-/g, '.')) + '<br>● 증 상 : ' + esc(c.symptom || '') +
+          '<br>● 기존 질환 보유 여부 : ' + esc(c.disease || '') + (c.diseaseNote ? ' (' + esc(c.diseaseNote) + ')' : '') +
+          '<br>● 복약안내 등 기타사항 : ' + esc(c.guide || '') +
+          '<br>● 담당자 서명 : ' + spSigImg(c.sign, 24) + (c.staff ? ' ' + esc(c.staff) : '') + '</td>' +
+        '<td>' + esc(spItemsText(r)) + '</td><td>' + esc(r.dept || '') + '</td><td>' + esc(r.name) + '</td><td>' + spSigImg(r.sign, 36) + '</td><td>' + esc(r.note || '') + '</td></tr>';
+    });
+    html = '<div class="apdoc wide"><div class="h"><h1>[ 의약품 지급대장 ]' + esc(mLabel) + '</h1></div>' +
+      '<table class="lg"><tr><th style="width:34px">No.</th><th style="width:330px">의료인 상담 내용</th><th>제공 현황 (품명, 수량)</th><th style="width:100px">소속</th>' +
+        '<th style="width:80px">이름</th><th style="width:110px">서명</th><th style="width:70px">비고</th></tr>' + mb.join('') + '</table>' + rules + '</div>';
+  }
+  spPrintHtml(SP_TITLE[kind] + mLabel, html, true);
+}
+
+/* ============================================================
  *  6-5-4. 순회점검일지 (안전 › 순회점검일지)  (schema_patrol.sql 실행 필요)
  *  · 법정 주기 : 2일에 1회 이상 → 토 · 일 · 공휴일(KR_HOLIDAYS)을 뺀 "근무일" 이틀 연속 기록이 없으면 누락으로 표시
  *  · 결재 : ① 작성자(사업장별 고정, 올리면 자동 승인 도장) → ② 안전보건환경팀장(승인 누르면 도장)
@@ -16855,6 +17234,7 @@ function refresh(silent) {
     loadSdy();
     loadAct();
     loadCr();
+    loadSp();
     loadPt();
     loadLg();
     loadAl();
@@ -18448,7 +18828,7 @@ function dciBindBox(box, getIt) {
 /* ============================================================
  *  8. 이벤트 연결
  * ============================================================ */
-var TAB_LIST = ['month', 'week', 'monitor', 'monact', 'kpi', 'safdash', 'safinspect', 'saflegal','safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'heanew', 'heaspc', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'envairlog', 'envact', 'accident', 'budget', 'csa', 'qse', 'svscore', 'aiadv', 'library', 'rules', 'safeday', 'ceoround', 'etcact', 'approval', 'visit', 'visitlog', 'news', 'staff', 'dcmap'];
+var TAB_LIST = ['month', 'week', 'monitor', 'monact', 'kpi', 'safdash', 'safinspect', 'saflegal','safrisk', 'safmeet', 'edu', 'safdevice', 'headash', 'heaact','heaexam', 'heaenv', 'heaedu', 'heanew', 'heaspc', 'envdash', 'envwaste','envghg', 'envwater', 'envair', 'envairlog', 'envact', 'accident', 'budget', 'csa', 'qse', 'svscore', 'aiadv', 'library', 'rules', 'safeday', 'ceoround', 'supply', 'etcact', 'approval', 'visit', 'visitlog', 'news', 'staff', 'dcmap'];
 /** 상단 "공통" · "안전" 버튼이 묶고 있는 게시판들. 그룹을 누르면 아래 두 번째 줄에 이 목록이 펼쳐집니다. */
 var NAV_GROUPS = {
   monitor: { label: '모니터링', sub: [
@@ -18468,6 +18848,8 @@ var NAV_GROUPS = {
     { tab: 'rules', label: 'ISO14001&45001' },
     { tab: 'safeday', label: '안전보건의 날' },
     { tab: 'ceoround', label: '대표님 라운딩' },
+    // 보호구 · 의약품 지급대장 : 구분 체크 → 종이 대장 양식 → 손 서명 제출 (의약품은 제출 후 의료인 상담 내용 따로 작성)
+    { tab: 'supply', label: '보호구 · 의약품 지급대장' },
     // '기타 안전보건 활동'(etcact) 은 메뉴에서 뺐습니다 — 게시판 · 기록은 남아 있어 다시 넣으면 그대로 보입니다
     { tab: 'news', label: '데일리뉴스' },
     { tab: 'visit', label: '방문 서약서' },
@@ -19187,7 +19569,7 @@ function bindLogin() {
   var NAMES = {
     month: ['Schedule', '월간 스케줄'], week: ['Weekly', '주간업무'], monitor: ['Monitoring', '주간/월간'], monact: ['Activity Status', '활동 현황'],
     kpi: ['KPI', 'KPI'], accident: ['Accident', '안전사고'], budget: ['Budget', '예산'],
-    library: ['Library', '자료실'], aiadv: ['AI Advisor', 'AI 어드바이저'], rules: ['ISO 14001 & 45001', 'ISO14001&45001'], safeday: ['Safety Day', '안전보건의 날'], etcact: ['EHS Activities', '기타 안전보건 활동'], ceoround: ['CEO Safety Rounding', '대표님 라운딩'], approval: ['E-Approval', '전자결재'], news: ['Daily News', '데일리뉴스'],
+    library: ['Library', '자료실'], aiadv: ['AI Advisor', 'AI 어드바이저'], rules: ['ISO 14001 & 45001', 'ISO14001&45001'], safeday: ['Safety Day', '안전보건의 날'], etcact: ['EHS Activities', '기타 안전보건 활동'], ceoround: ['CEO Safety Rounding', '대표님 라운딩'], supply: ['PPE & Medicine', '보호구 · 의약품 지급대장'], approval: ['E-Approval', '전자결재'], news: ['Daily News', '데일리뉴스'],
     visit: ['Visitor Pledge', '방문 서약서'], visitlog: ['Visitor Log', '방문 기록대장'],
     safdash: ['Safety Overview', '현황'], headash: ['Health Overview', '현황'], envdash: ['Environment Overview', '현황'],
     safinspect: ['Inspection', '안전점검'], safrisk: ['Risk Assessment', '위험성평가'],
@@ -19204,7 +19586,7 @@ function bindLogin() {
     headash: '보건', envdash: '환경', monitor: '모니터링', monact: '모니터링',
     heaact: '보건', heaexam: '보건', heaenv: '보건', heaedu: '보건', heanew: '보건', heaspc: '보건',
     envwaste: '환경', envghg: '환경', envwater: '환경', envair: '환경', envairlog: '환경', envact: '환경',
-    kpi: '공통', accident: '공통', budget: '공통', library: '공통', aiadv: '공통', rules: '공통', safeday: '공통', ceoround: '공통', etcact: '공통', approval: '공통', news: '공통', visit: '공통', visitlog: '공통',
+    kpi: '공통', accident: '공통', budget: '공통', library: '공통', aiadv: '공통', rules: '공통', safeday: '공통', ceoround: '공통', supply: '공통', etcact: '공통', approval: '공통', news: '공통', visit: '공통', visitlog: '공통',
     qse: '중대재해처벌법', svscore: '중대재해처벌법'
   };
   var big = document.getElementById('hxBig'), crumb = document.getElementById('hxCrumb');
