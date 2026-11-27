@@ -3659,8 +3659,8 @@ window.AI_CONFIG = {
           <p class="acr-note">대시보드 통계(발생 건수 · 그래프)에서는 제외</p>
         </div>
       </div>
-      <p class="acr-foot">* 해당 사항 외에는 별도 집계 관리 (개인질병, 고객사고 등)<br>
-        * 외부 · 협력업체 사고도 위 기준대로 집계하며, 목록에 <span class="b b-partner">협력업체</span>로 따로 표시</p>
+      <p class="acr-foot">* 해당 사항 외에는 별도 집계 관리 (협력업체, 개인질병, 고객사고 등)<br>
+        * 외부 · 협력업체 사고는 통계(발생 건수 · 그래프 · TRIR)에서 제외하며, 목록에 <span class="b b-partner">협력업체</span>로 따로 표시</p>
     </div>
     <div class="sheet-ft">
       <div class="spacer"></div>
@@ -8916,6 +8916,11 @@ function renderAccident() {
   var selY = (state.accMY && years.indexOf(+state.accMY) !== -1) ? +state.accMY : lastY;
   var curr = stat.filter(function (r) { return yearOf(r.발생일) === selY; });
   function cnt(rows, k) { return rows.filter(function (r) { return accKind(r.사고유형) === k; }).length; }
+  // 협력업체 사고 (집계 제외) : 같은 유형(인적 · 물적 · 교통 업무상)인데 소속이 협력업체인 것
+  var partnerN = all.filter(function (r) {
+    var k = accKind(r.사고유형);
+    return yearOf(r.발생일) === selY && accIsPartner(r) && (k === 'human' || k === 'prop' || k === 'work');
+  }).length;
 
   var sanjae = curr.filter(function (r) { return String(r.사고유형).indexOf('산재') !== -1; }).length;
   var injuries = cnt(curr, 'human');
@@ -8927,7 +8932,7 @@ function renderAccident() {
   }
   $('accKpi').innerHTML =
     goKpi('all', kpi(selY + '년 발생', curr.length, '건',
-      curr.filter(accIsPartner).length ? '협력업체 ' + curr.filter(accIsPartner).length + '건 포함' : '', C.ink)) +
+      partnerN ? '협력업체 ' + partnerN + '건 제외' : '', C.ink)) +
     goKpi('human', kpi('인적사고', injuries, '건', '', C.safe)) +
     goKpi('prop', kpi('물적사고', cnt(curr, 'prop'), '건', '', C.health)) +
     goKpi('sanjae', kpi('산재 승인', sanjae, '건', '', sanjae ? C.safe : C.env)) +
@@ -9017,7 +9022,7 @@ function renderAccident() {
         '</span><span class="pc">' + x.total + '</span></span></td></tr>';
     });
   }
-  $('accDistNote').textContent = dLabel + ' · 출퇴근 · 개인질병 제외';
+  $('accDistNote').textContent = dLabel + ' · 출퇴근 · 개인질병 · 협력업체 제외';
   // 유형 · 형태 · 부서를 가로 3칸으로 (좁은 화면에서는 아래로)
   var EMPTY = '<div class="subttl" style="color:var(--ink3)">' + dLabel + ' 사고 없음</div>';
   $('accDist').innerHTML = '<div class="acd-grid">' +
@@ -9043,7 +9048,7 @@ function renderAccident() {
     { k: 'commute', n: '교통사고(출/퇴근)' + (commuteN ? ' (' + commuteN + ')' : ''), f: function (t) { return accKind(t) === 'commute'; } },
     { k: 'etc', n: '기타(개인질병)' + (etcN ? ' (' + etcN + ')' : ''), f: function (t) { return accKind(t) === 'etc'; } },
     { k: 'partner', n: '협력업체', f: function () { return true; } },   /* 소속으로 거름 (아래 renderAccList) */
-    { k: 'allcm', n: '전체 (출퇴근 · 개인질병 포함)', f: function () { return true; } }
+    { k: 'allcm', n: '전체 (출퇴근 · 개인질병 · 협력업체 포함)', f: function () { return true; } }
   ];
   if (!ACC_TYPES.some(function (t) { return t.k === state.accT; })) state.accT = 'all';
   if (years.indexOf(+state.accY) === -1 && state.accY !== 'all') state.accY = String(lastY);
@@ -9071,7 +9076,7 @@ function renderAccident() {
   function renderAccList() {
     var q = state.accQ.trim();
     // '출퇴근' · '기타(개인질병)' 유형을 고르면 따로 관리하는 사고도 보여 줍니다
-    var list = (state.accT === 'allcm' || state.accT === 'commute' || state.accT === 'etc' ? all : stat).filter(function (r) {
+    var list = (state.accT === 'allcm' || state.accT === 'commute' || state.accT === 'etc' || state.accT === 'partner' ? all : stat).filter(function (r) {
       if (!((state.accY === 'all' || yearOf(r.발생일) === +state.accY) &&
             (state.accS === 'all' || r._site === state.accS))) return false;
       var tf = ACC_TYPES.filter(function (t) { return t.k === state.accT; })[0];
@@ -9119,7 +9124,7 @@ function renderAccident() {
           '<td class="dim">' + esc(String(r['위험성평가(개선후)'] || '').replace(/\n/g, ' ')) + '</td>' +
           '<td class="dim">' + esc(String(r.요양일수 || '-').replace(/\n/g, ' ')) + '</td></tr>';
       }), 1220) + '<div class="subttl">' + list.length + '건 표시' +
-      (state.accT === 'allcm' ? ' · 출퇴근 · 개인질병 포함' : state.accT === 'all' ? ' · 출퇴근 · 개인질병 제외' : '') +
+      (state.accT === 'allcm' ? ' · 출퇴근 · 개인질병 · 협력업체 포함' : state.accT === 'all' ? ' · 출퇴근 · 개인질병 · 협력업체 제외' : '') +
       (q ? ' · "' + esc(q) + '" 검색' : '') + '</div>';
   }
   renderAccList();
@@ -9143,7 +9148,7 @@ function accKind(t) {
   if (t.indexOf('교통') === 0) return 'work';
   return 'etc';
 }
-/** 외부 · 협력업체 사고 (2026-11-27) : 집계에는 그대로 넣고, 화면에 '협력업체' 배지로 따로 표시
+/** 외부 · 협력업체 사고 (2026-11-27) : 집계(건수 · 그래프 · TRIR)에서 빼고, 목록 '협력업체' 유형에서 따로 봄
  *  소속에 '외부' · '협력'이 들어가거나, 아래 업체명이 들어가면 협력업체로 봅니다 (업체가 늘면 여기에 추가) */
 var ACC_PARTNER_NAMES = ['흥안', '세현', '프로에스콤', '뉴그린'];
 function accIsPartner(r) {
@@ -9151,9 +9156,12 @@ function accIsPartner(r) {
   if (/외부|협력|협렭/.test(s)) return true;
   return ACC_PARTNER_NAMES.some(function (n) { return s.indexOf(n) !== -1; });
 }
-var ACC_PARTNER_BADGE = '<span class="b b-partner" title="외부 · 협력업체 사고 (집계에 포함)">협력업체</span>';
-/** 통계(건수 · 그래프)에 세는 유형인지 : 인적 · 물적 · 교통(업무상) */
-function accCounted(r) { var k = accKind(r && r.사고유형); return k === 'human' || k === 'prop' || k === 'work'; }
+var ACC_PARTNER_BADGE = '<span class="b b-partner" title="외부 · 협력업체 사고 (집계 제외)">협력업체</span>';
+/** 통계(건수 · 그래프)에 세는 사고인지 : 인적 · 물적 · 교통(업무상), 협력업체 제외 */
+function accCounted(r) {
+  if (accIsPartner(r)) return false;
+  var k = accKind(r && r.사고유형); return k === 'human' || k === 'prop' || k === 'work';
+}
 
 /* ── 안전사고 → TRIR 계산 내용 창 ──
  * TRIR = 인적사고 건수 × 200,000 ÷ 연간 총 근로시간
@@ -9425,11 +9433,7 @@ function renderAccMonthly(stat, years) {
   var L = Math.max(lastM, 1);
   var tot = sum(cur.t, 0, L - 1), hum = sum(cur.h, 0, L - 1), wk = sum(cur.w, 0, L - 1);
   var notes = [];
-  notes.push('<b>' + Y + '년 ' + (lastM === 12 ? '' : '1~' + L + '월 ') + '누계 ' + tot + '건</b> (인적 ' + hum + ' · 물적 ' + (tot - hum - wk) + (wk ? ' · 교통 ' + wk : '') + ') · 월평균 ' + nf(tot / L, 1) + '건' +
-    (function () {
-      var n = rows.filter(function (r) { return yearOf(r.발생일) === Y && monOf(r) >= 1 && monOf(r) <= L && accIsPartner(r); }).length;
-      return n ? ' · <span class="b b-partner">협력업체</span> ' + n + '건 포함' : '';
-    })());
+  notes.push('<b>' + Y + '년 ' + (lastM === 12 ? '' : '1~' + L + '월 ') + '누계 ' + tot + '건</b> (인적 ' + hum + ' · 물적 ' + (tot - hum - wk) + (wk ? ' · 교통 ' + wk : '') + ') · 월평균 ' + nf(tot / L, 1) + '건 · 협력업체 제외');
   if (hasPrev) {
     var pt = sum(prev.t, 0, L - 1), d = tot - pt;
     notes.push('전년 동기(' + (Y - 1) + '년 1~' + L + '월 ' + pt + '건) 대비 ' +
