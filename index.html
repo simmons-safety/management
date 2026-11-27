@@ -501,6 +501,9 @@ window.AI_CONFIG = {
   .b-prop{background:#E6EFFC;border-color:#C6DAF5;color:#1F5FAE}
   .b-sanjae{background:#E5F4EA;border-color:#C2E3CD;color:#2E7D46}
   .b-commute{background:#F1F2F4;border-color:#DDE0E4;color:#5F6670}
+  .b-work{background:#FFF3E0;border-color:#F8D9A8;color:#B25E09}
+  .b-partner{background:#F1ECFD;border-color:#DCD0F8;color:#5B3CC4}
+  td .b-partner{margin-left:5px;vertical-align:1px}
   .b-etc{background:#E4E5E7;border-color:#CFD1D4;color:#1A1A1A}
   button.b{-webkit-appearance:none;appearance:none;font:inherit;cursor:pointer;transition:filter .12s}
   button.b:hover{filter:brightness(.92)}
@@ -1698,6 +1701,21 @@ window.AI_CONFIG = {
   .ds-upd .ds-upd-sh{font-size:11px}
   .ds-upd .reset{font-size:11.5px;padding:5px 12px}
   .ds-upd .reset.de-go{background:var(--ink);color:#fff;border-color:var(--ink)}
+  /* 안전사고 집계 기준 창 */
+  .sheet.acr-sheet{width:min(720px,100%);max-height:92vh;overflow-y:auto;overscroll-behavior:contain}
+  .acr-body{padding:6px 26px 10px}
+  .acr-row{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+  .acr-row:first-of-type{border-top:2px solid var(--ink)}
+  .acr-k{padding-top:2px}
+  .acr-v p{margin:0;font-size:13.5px;line-height:1.65;color:var(--ink);word-break:keep-all}
+  .acr-v b{font-weight:700}
+  .acr-v p.acr-note{margin-top:4px;font-size:12px;color:var(--ink3)}
+  .acr-v p.acr-note::before{content:'└ ';color:var(--ink3)}
+  .acr-foot{margin:14px 0 0;font-size:12px;color:var(--ink3)}
+  @media (max-width:640px){
+    .acr-body{padding:4px 18px 8px}
+    .acr-row{grid-template-columns:1fr;gap:10px}
+  }
   /* 자료 직접 입력 창 */
   .sheet.de-sheet{width:min(1440px,100%);height:min(92vh,1000px);max-height:92vh;display:flex;flex-direction:column;overflow:hidden}
   .de-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:14px 26px;border-bottom:1px solid var(--line)}
@@ -3604,6 +3622,53 @@ window.AI_CONFIG = {
   </div>
 </div>
 
+<!-- 안전사고 → 집계 기준 (자료 업데이트 줄의 'ⓘ 안전사고 집계 기준' 버튼) -->
+<div class="scrim" id="accRuleScrim">
+  <div class="sheet acr-sheet" role="dialog" aria-modal="true" aria-labelledby="accRuleTitle">
+    <div class="sheet-hd">
+      <p class="eyebrow">ACCIDENT CRITERIA</p>
+      <h3 id="accRuleTitle">안전사고 집계 기준</h3>
+    </div>
+    <div class="acr-body">
+      <!-- 배지 글자 · 색은 사고 목록의 사고유형 배지와 같게 (accTypeCls : b-human · b-prop · b-work · b-commute) -->
+      <div class="acr-row">
+        <div class="acr-k"><span class="b b-human">인적사고</span></div>
+        <div class="acr-v">
+          <p>사내 · 외 <b>업무상 사유로 병원 진료</b>를 받은 모든 사고</p>
+          <p class="acr-note">업무상 교통사고 포함</p>
+        </div>
+      </div>
+      <div class="acr-row">
+        <div class="acr-k"><span class="b b-prop">물적사고</span></div>
+        <div class="acr-v">
+          <p>사내 물리적 충격(충돌 · 낙하 · 전도 등) 및 <b>화재에 의한 자산 피해</b></p>
+          <p class="acr-note">인명 피해가 없는 경우 · 수리 · 교체 비용 발생 시</p>
+        </div>
+      </div>
+      <div class="acr-row">
+        <div class="acr-k"><span class="b b-work">교통사고(업무상)</span></div>
+        <div class="acr-v">
+          <p>사외 운행(외근 · 출장 · 배송) 시 발생한 모든 사고</p>
+          <p class="acr-note">인적 피해(병원 진료) 발생 시 ‘인적사고’와 연계 관리</p>
+        </div>
+      </div>
+      <div class="acr-row">
+        <div class="acr-k"><span class="b b-commute">교통사고(출/퇴근)</span></div>
+        <div class="acr-v">
+          <p>출퇴근 시 발생한 사고 (차량, 이륜차, 도보 등)</p>
+          <p class="acr-note">대시보드 통계(발생 건수 · 그래프)에서는 제외</p>
+        </div>
+      </div>
+      <p class="acr-foot">* 해당 사항 외에는 별도 집계 관리 (개인질병, 고객사고 등)<br>
+        * 외부 · 협력업체 사고도 위 기준대로 집계하며, 목록에 <span class="b b-partner">협력업체</span>로 따로 표시</p>
+    </div>
+    <div class="sheet-ft">
+      <div class="spacer"></div>
+      <button class="reset" id="accRuleClose">닫기</button>
+    </div>
+  </div>
+</div>
+
 <div class="scrim" id="storeScrim">
   <div class="sheet store-sheet" role="dialog" aria-modal="true" aria-labelledby="storeShTitle">
     <div class="sheet-hd">
@@ -3789,8 +3854,14 @@ function schSpan(r) {
   var e = schEnd(r);
   return e ? Math.round((parseYmd(e) - parseYmd(r.일자)) / 86400000) + 1 : 1;
 }
-/** 대한민국 공휴일 (2026년 기준 · 대체공휴일 포함, 제헌절 등 비법정 공휴일은 제외) */
+/** 대한민국 공휴일 (2026 · 2027년 · 대체공휴일 포함, 제헌절 등 비법정 공휴일은 제외) */
 var KR_HOLIDAYS = {
+  '2027-01-01': '신정', '2027-02-06': '설날 연휴', '2027-02-07': '설날', '2027-02-08': '설날 연휴',
+  '2027-02-09': '설날 대체공휴일', '2027-03-01': '삼일절', '2027-05-05': '어린이날',
+  '2027-05-13': '부처님오신날', '2027-06-06': '현충일', '2027-08-15': '광복절', '2027-08-16': '광복절 대체공휴일',
+  '2027-09-14': '추석 연휴', '2027-09-15': '추석', '2027-09-16': '추석 연휴',
+  '2027-10-03': '개천절', '2027-10-04': '개천절 대체공휴일', '2027-10-09': '한글날', '2027-10-11': '한글날 대체공휴일',
+  '2027-12-25': '크리스마스', '2027-12-27': '크리스마스 대체공휴일',
   '2026-01-01': '신정', '2026-02-16': '설날 연휴', '2026-02-17': '설날', '2026-02-18': '설날 연휴',
   '2026-03-01': '삼일절', '2026-03-02': '삼일절 대체공휴일', '2026-05-05': '어린이날',
   '2026-05-24': '부처님오신날', '2026-05-25': '부처님오신날 대체공휴일', '2026-06-06': '현충일',
@@ -5178,6 +5249,9 @@ function renderDsUpdated() {
     UPD_SHEETS[tab].forEach(function (n) { var a = dsSheetAt(n); if (a > at) at = a; });
     var d = at ? new Date(at) : null;
     el.innerHTML = '<span>자료 업데이트 <b>' + (d ? d.getFullYear() + '.' + pad(d.getMonth() + 1) + '.' + pad(d.getDate()) : '—') + '</b></span>' +
+      (tab === 'accident'
+        ? '<button type="button" class="reset" data-accrule title="인적 · 물적 · 교통사고를 어떻게 나눠 세는지 봅니다">ⓘ 안전사고 집계 기준</button>'
+        : '') +
       (deSheetsOf(tab).length
         ? '<button type="button" class="reset de-go" data-dsedit="' + tab + '" title="엑셀 없이 이 화면에서 바로 추가 · 수정 · 삭제합니다 (자동 저장)">✎ 직접 입력 · 수정</button>'
         : '');
@@ -6606,7 +6680,8 @@ function renderSafDashPage() {
   // 안전사고 : 올해 발생 (출퇴근 · 집계 제외 뺌 — 안전사고 탭과 같은 기준)
   var accY = new Date().getFullYear();
   var acc = accStatRows().filter(function (r) { return yearOf(r.발생일) === accY; });
-  var accH = acc.filter(function (r) { return String(r.사고유형 || '').trim().indexOf('인적') === 0; }).length;
+  var accH = acc.filter(function (r) { return accKind(r.사고유형) === 'human'; }).length;
+  var accP = acc.filter(function (r) { return accKind(r.사고유형) === 'prop'; }).length;
   $('safDash').innerHTML = sdMeta('안전', 6) +
     '<div class="sd-band b6">' +
       sdRateCell('safinspect', '안전점검', ins.filter(inspIsDone).length, ins.length) +
@@ -6617,7 +6692,7 @@ function renderSafDashPage() {
       sdBandCell('safdevice', '안전장치', dv.length, '건', null,
         '안전검사 대상 <b>' + dv.filter(function (r) { return sdIsInspTarget(r['안전검사 대상']); }).length + '건</b>') +
       sdBandCell('accident', accY + '년 안전사고', acc.length, '건', null,
-        '인적 <b>' + accH + '건</b> · 물적 <b>' + (acc.length - accH) + '건</b>') +
+        '인적 <b>' + accH + '건</b> · 물적 <b>' + accP + '건</b>' + (acc.length - accH - accP ? ' · 교통 <b>' + (acc.length - accH - accP) + '건</b>' : '')) +
     '</div>' +
     '<div class="sd-grid">' +
       sdRateCard({ tab: 'safinspect', en: 'Inspection', name: '안전점검', rows: ins, doneFn: inspIsDone,
@@ -7807,8 +7882,7 @@ function accStatRows() {
   var out = [];
   [{ n: '팩토리움', sheet: '안전사고(팩)' }, { n: '서울사무소', sheet: '안전사고(서울)' }].forEach(function (s) {
     ds(s.sheet).forEach(function (r) {
-      var t = String(r.사고유형 || '').trim();
-      if (t.indexOf('집계 제외') !== -1 || t.indexOf('출/퇴근') === 0) return;
+      if (!accCounted(r)) return;   /* 출/퇴근 · 기타(개인질병) · 집계 제외는 뺌 */
       var o = {}; for (var k in r) o[k] = r[k]; o._site = s.n; out.push(o);
     });
   });
@@ -7845,9 +7919,10 @@ function monAccidentCard() {
   return '<div class="sd-card">' + hd +
       '<span class="mo-dhd">' + (thisMon ? '<span class="cnt">이번 달 ' + thisMon + '건</span>' : '<span class="cnt ok">이번 달 무사고</span>') +
       '<span class="go" aria-hidden="true">→</span></span></button>' +
-    sdSec(Y + '년 1~' + M + '월 발생 (출퇴근 제외)', sdBars(bars)) +
+    sdSec(Y + '년 1~' + M + '월 발생 (출퇴근 · 개인질병 제외)', sdBars(bars)) +
     sdSec('주요 현황', sdChips([
-      sdChip('인적 · 물적', human + ' · ' + (cur.length - human), sdGo('accident', { year: String(Y) })),
+      sdChip('인적 · 물적 · 교통', human + ' · ' + cur.filter(function (r) { return accKind(r.사고유형) === 'prop'; }).length + ' · ' +
+        cur.filter(function (r) { return accKind(r.사고유형) === 'work'; }).length, sdGo('accident', { year: String(Y) })),
       sdChip('전년 동기', prev.length + '건 ' + (d > 0 ? '▲' + d : d < 0 ? '▼' + (-d) : '±0'), sdGo('accident', { year: String(Y - 1) })),
       sdChip('연속 무사고', free > 0 ? free + '개월' : '—', sdGo('accident')),
       sdChip('최근 사고', last ? last.replace(/-/g, '.') : '—', sdGo('accident'))
@@ -7955,7 +8030,7 @@ function storeAccidents(name, site) {
   [{ n: '팩토리움', sheet: '안전사고(팩)' }, { n: '서울사무소', sheet: '안전사고(서울)' }].forEach(function (s) {
     if (site && s.n !== site) return;
     ds(s.sheet).forEach(function (r) {
-      if (String(r.사고유형 || '').indexOf('집계 제외') !== -1) return;
+      if (accKind(r.사고유형) === 'excl') return;
       if (storeNorm(r.소속) !== n) return;
       var o = {}; for (var k in r) o[k] = r[k]; o._site = s.n; out.push(o);
     });
@@ -7985,8 +8060,7 @@ function openStoreDetail(name, site) {
     .sort(function (a, b) { return normDate(b.일자).localeCompare(normDate(a.일자)); });
 
   function clean(v) { v = String(v == null ? '' : v).replace(/\n/g, ' ').trim(); return v && v !== '-' ? v : ''; }
-  var TYPEB = { '인적': 'b-human', '인적(산재)': 'b-sanjae', '출/퇴근(교통)': 'b-commute', '물적': 'b-prop' };
-  var nProp = accs.filter(function (r) { return String(r.사고유형 || '').indexOf('물적') === 0; }).length;
+  var nProp = accs.filter(function (r) { return accKind(r.사고유형) === 'prop'; }).length;
   var riskN = hist.filter(function (r) { return r._sheet === '위험성평가'; }).length;
 
   $('storeShTitle').textContent = (info ? info.매장명 : name) + (info || site === '서울사무소' ? '' : ' · ' + site);
@@ -8828,23 +8902,23 @@ function renderAccident() {
     $('accList').innerHTML = noData('accident');
     return;
   }
-  all = all.filter(function (r) { return String(r.사고유형 || '').indexOf('집계 제외') === -1; });
-  state.accAll = all;   /* 사람별 사고 이력 창에서 씁니다 (출퇴근 포함) */
+  all = all.filter(function (r) { return accKind(r.사고유형) !== 'excl'; });
+  state.accAll = all;   /* 사람별 사고 이력 창에서 씁니다 (출퇴근 · 개인질병 포함) */
 
-  // 통계는 출/퇴근(교통)을 제외합니다 (업무상 재해 중심으로 보기 위함)
-  function isCommute(r) { return String(r.사고유형 || '').trim().indexOf('출/퇴근') === 0; }
-  var stat = all.filter(function (r) { return !isCommute(r); });
-  var commuteN = all.length - stat.length;
+  // 통계는 인적 · 물적 · 교통(업무상)만 셉니다. 교통(출/퇴근) · 기타(개인질병)는 따로 관리 (집계 기준)
+  var stat = all.filter(accCounted);
+  var commuteN = all.filter(function (r) { return accKind(r.사고유형) === 'commute'; }).length;
+  var etcN = all.filter(function (r) { return accKind(r.사고유형) === 'etc'; }).length;
 
   var years = uniq(all.map(function (r) { return yearOf(r.발생일); }).filter(Boolean)).sort();
   var lastY = years[years.length - 1];
   // 상단 카드 · 유형 분포는 '월별 사고 추이'에서 고른 연도를 따라갑니다 (처음엔 최근 연도)
   var selY = (state.accMY && years.indexOf(+state.accMY) !== -1) ? +state.accMY : lastY;
   var curr = stat.filter(function (r) { return yearOf(r.발생일) === selY; });
-  function cnt(rows, kw) { return rows.filter(function (r) { return String(r.사고유형 || '').trim().indexOf(kw) === 0; }).length; }
+  function cnt(rows, k) { return rows.filter(function (r) { return accKind(r.사고유형) === k; }).length; }
 
   var sanjae = curr.filter(function (r) { return String(r.사고유형).indexOf('산재') !== -1; }).length;
-  var injuries = cnt(curr, '인적');
+  var injuries = cnt(curr, 'human');
   var trir = injuries * 200000 / trirHours();   /* 연간 총 근로시간 = 50주 × 40시간 × 근로자 수 (TRIR 창에서 수정) */
   // 카드를 누르면 아래 사고 발생 내역이 그 조건(최근 연도 · 유형)으로 걸러지고 그 자리로 내려갑니다
   function goKpi(type, html) {
@@ -8852,9 +8926,10 @@ function renderAccident() {
       '" style="cursor:pointer" title="' + selY + '년 사고 내역 보기"');
   }
   $('accKpi').innerHTML =
-    goKpi('all', kpi(selY + '년 발생', curr.length, '건', '', C.ink)) +
+    goKpi('all', kpi(selY + '년 발생', curr.length, '건',
+      curr.filter(accIsPartner).length ? '협력업체 ' + curr.filter(accIsPartner).length + '건 포함' : '', C.ink)) +
     goKpi('human', kpi('인적사고', injuries, '건', '', C.safe)) +
-    goKpi('prop', kpi('물적사고', cnt(curr, '물적'), '건', '', C.health)) +
+    goKpi('prop', kpi('물적사고', cnt(curr, 'prop'), '건', '', C.health)) +
     goKpi('sanjae', kpi('산재 승인', sanjae, '건', '', sanjae ? C.safe : C.env)) +
     // 하단 : 목표 1.13 ('25년 1.26 대비 10% ↓) · 달성 여부 (목표 이하 = 달성)
     kpi('TRIR', nf(trir, 2), '', '', C.plan,
@@ -8866,7 +8941,7 @@ function renderAccident() {
       '<div class="kpi" data-acctrir="1" style="cursor:pointer" title="TRIR 계산 내용 보기"');
   // TRIR 카드를 누르면 보여 줄 계산 근거
   state.accTrir = { y: selY, n: injuries, v: trir,
-    rows: curr.filter(function (r) { return String(r.사고유형 || '').trim().indexOf('인적') === 0; })
+    rows: curr.filter(function (r) { return accKind(r.사고유형) === 'human'; })
       .sort(function (a, b) { return normDate(b.발생일).localeCompare(normDate(a.발생일)); }) };
 
   renderAccMonthly(stat, years);
@@ -8891,8 +8966,8 @@ function renderAccident() {
   }
   var d1 = dist('사고유형'), d2 = dist('사고형태');
   var mx = Math.max.apply(null, d1.concat(d2).map(function (x) { return x.v; }).concat([1]));
-  // 그래프와 같은 색 : 인적 = 코랄 레드, 물적 · 그 외 = 쿨 그레이
-  var C_HUM = '#F04452', C_PROP = '#B0B8C1';
+  // 그래프와 같은 색 : 인적 = 코랄 레드, 물적 = 쿨 그레이, 교통(업무상) = 앰버
+  var C_HUM = '#F04452', C_PROP = '#B0B8C1', C_WORK = '#F5A524';
   // 사고형태 : 건수가 많을수록 진한 그레이 (가장 많은 형태 = 차콜 #4E5968, 적을수록 #D1D6DB 쪽으로 옅게)
   function shadeOf(list) {
     var top = list.length ? list[0].v : 1, lo = [209, 214, 219], hi = [78, 89, 104];
@@ -8920,13 +8995,14 @@ function renderAccident() {
     dRows.forEach(function (r) {
       var v = String(r.소속 || '-').trim();
       if (!v || v === '-') return;
-      if (!m[v]) m[v] = { 인적: 0, 물적: 0 };
-      var t = String(r.사고유형 || '').trim();
-      if (t.indexOf('인적') === 0) m[v].인적++;
-      else if (t.indexOf('물적') === 0) m[v].물적++;
+      if (!m[v]) m[v] = { 인적: 0, 물적: 0, 교통: 0 };
+      var t = accKind(r.사고유형);
+      if (t === 'human') m[v].인적++;
+      else if (t === 'prop') m[v].물적++;
+      else if (t === 'work') m[v].교통++;
     });
     return Object.keys(m).map(function (k) {
-      return { k: k, 인적: m[k].인적, 물적: m[k].물적, total: m[k].인적 + m[k].물적 };
+      return { k: k, 인적: m[k].인적, 물적: m[k].물적, 교통: m[k].교통, total: m[k].인적 + m[k].물적 + m[k].교통 };
     }).sort(function (a, b) { return b.total - a.total; }).slice(0, limit || 10);
   }
   var d3 = deptDist(10);
@@ -8937,17 +9013,18 @@ function renderAccident() {
         '<span class="gz"><span class="tr">' +
         (x.인적 > 0 ? '<span class="fl" style="width:' + (x.인적 / dmx * 100) + '%;background:' + C_HUM + '"></span>' : '') +
         (x.물적 > 0 ? '<span class="fl" style="width:' + (x.물적 / dmx * 100) + '%;background:' + C_PROP + '"></span>' : '') +
+        (x.교통 > 0 ? '<span class="fl" style="width:' + (x.교통 / dmx * 100) + '%;background:' + C_WORK + '"></span>' : '') +
         '</span><span class="pc">' + x.total + '</span></span></td></tr>';
     });
   }
-  $('accDistNote').textContent = dLabel + ' · 출퇴근 제외';
+  $('accDistNote').textContent = dLabel + ' · 출퇴근 · 개인질병 제외';
   // 유형 · 형태 · 부서를 가로 3칸으로 (좁은 화면에서는 아래로)
   var EMPTY = '<div class="subttl" style="color:var(--ink3)">' + dLabel + ' 사고 없음</div>';
   $('accDist').innerHTML = '<div class="acd-grid">' +
-    '<div><div class="subttl">사고유형</div>' + (d1.length ? tbl([{ t: '유형' }, { t: '건수' }], rowsOf(d1, function (x) { return x.k.indexOf('인적') === 0 ? C_HUM : C_PROP; }, '사고유형'), 240) : EMPTY) + '</div>' +
+    '<div><div class="subttl">사고유형</div>' + (d1.length ? tbl([{ t: '유형' }, { t: '건수' }], rowsOf(d1, function (x) { var k = accKind(x.k); return k === 'human' ? C_HUM : k === 'work' ? C_WORK : C_PROP; }, '사고유형'), 240) : EMPTY) + '</div>' +
     '<div><div class="subttl">사고형태</div>' + (d2.length ? tbl([{ t: '형태' }, { t: '건수' }], rowsOf(d2, shadeOf(d2), '사고형태'), 240) : EMPTY) + '</div>' +
     '<div><div class="subttl">부서별 사고현황</div>' + (d3.length ? tbl([{ t: '부서' }, { t: '건수' }], deptRows(d3), 240) : EMPTY) +
-      legend([{ c: C_HUM, n: '인적' }, { c: C_PROP, n: '물적' }]) + '</div>' +
+      legend([{ c: C_HUM, n: '인적' }, { c: C_PROP, n: '물적' }, { c: C_WORK, n: '교통(업무상)' }]) + '</div>' +
     '</div>';
 
   // 필터 + 검색 + 목록
@@ -8956,16 +9033,17 @@ function renderAccident() {
   state.accQ = state.accQ || '';
   state.accT = state.accT || 'all';
   if (state.accCM) { state.accT = 'allcm'; state.accCM = false; }   /* 예전 '출퇴근 포함' 버튼 상태 → 유형 목록으로 옮김 */
-  function accTypeMain(t) { return t.indexOf('인적') === 0 || t.indexOf('물적') === 0 || t.indexOf('출/퇴근') === 0; }
-  // 유형 목록 (펼쳐서 고름) : 'all' 은 출퇴근 제외, 'allcm' 은 출퇴근까지 전부
+  // 유형 목록 (펼쳐서 고름) : 'all' 은 집계 대상(인적 · 물적 · 교통 업무상)만, 'allcm' 은 출퇴근 · 개인질병까지 전부
   var ACC_TYPES = [
     { k: 'all', n: '전체 유형', f: function () { return true; } },
-    { k: 'human', n: '인적', f: function (t) { return t.indexOf('인적') === 0; } },
+    { k: 'human', n: '인적사고', f: function (t) { return accKind(t) === 'human'; } },
     { k: 'sanjae', n: '산재', f: function (t) { return t.indexOf('산재') !== -1; } },
-    { k: 'prop', n: '물적', f: function (t) { return t.indexOf('물적') === 0; } },
-    { k: 'commute', n: '출퇴근' + (commuteN ? ' (' + commuteN + ')' : ''), f: function (t) { return t.indexOf('출/퇴근') === 0; } },
-    { k: 'etc', n: '기타', f: function (t) { return !accTypeMain(t); } },
-    { k: 'allcm', n: '전체 (출퇴근 포함)', f: function () { return true; } }
+    { k: 'prop', n: '물적사고', f: function (t) { return accKind(t) === 'prop'; } },
+    { k: 'work', n: '교통사고(업무상)', f: function (t) { return accKind(t) === 'work'; } },
+    { k: 'commute', n: '교통사고(출/퇴근)' + (commuteN ? ' (' + commuteN + ')' : ''), f: function (t) { return accKind(t) === 'commute'; } },
+    { k: 'etc', n: '기타(개인질병)' + (etcN ? ' (' + etcN + ')' : ''), f: function (t) { return accKind(t) === 'etc'; } },
+    { k: 'partner', n: '협력업체', f: function () { return true; } },   /* 소속으로 거름 (아래 renderAccList) */
+    { k: 'allcm', n: '전체 (출퇴근 · 개인질병 포함)', f: function () { return true; } }
   ];
   if (!ACC_TYPES.some(function (t) { return t.k === state.accT; })) state.accT = 'all';
   if (years.indexOf(+state.accY) === -1 && state.accY !== 'all') state.accY = String(lastY);
@@ -8990,20 +9068,20 @@ function renderAccident() {
   $('accTSel').onchange = function () { state.accT = this.value; renderAccList(); };
   $('accSearch').oninput = function () { state.accQ = this.value; renderAccList(); };
 
-  var TYPEB = { '인적': 'b-human', '인적(산재)': 'b-sanjae', '출/퇴근(교통)': 'b-commute', '물적': 'b-prop' };
   function renderAccList() {
     var q = state.accQ.trim();
-    // '출퇴근' 유형을 고르면 출퇴근 포함을 켜지 않아도 출퇴근 사고를 보여 줍니다
-    var list = (state.accT === 'allcm' || state.accT === 'commute' ? all : stat).filter(function (r) {
+    // '출퇴근' · '기타(개인질병)' 유형을 고르면 따로 관리하는 사고도 보여 줍니다
+    var list = (state.accT === 'allcm' || state.accT === 'commute' || state.accT === 'etc' ? all : stat).filter(function (r) {
       if (!((state.accY === 'all' || yearOf(r.발생일) === +state.accY) &&
             (state.accS === 'all' || r._site === state.accS))) return false;
       var tf = ACC_TYPES.filter(function (t) { return t.k === state.accT; })[0];
       if (tf && !tf.f(String(r.사고유형 || '').replace(/\s+/g, ''))) return false;
+      if (state.accT === 'partner' && !accIsPartner(r)) return false;
       // 위 유형 · 형태 · 부서 분포에서 고른 값 (분포와 같은 셈법 : 앞뒤 공백 무시, 부서는 인적 · 물적만)
       if (state.accDF) {
         // 엑셀 값의 줄바꿈(\r\n) · 연속 공백은 화면 속성에서 바뀌므로 공백을 하나로 맞춰 비교
         if (String(r[state.accDF.k] || '-').replace(/\s+/g, ' ').trim() !== String(state.accDF.v).replace(/\s+/g, ' ').trim()) return false;
-        if (state.accDF.k === '소속' && !/^(인적|물적)/.test(String(r.사고유형 || '').trim())) return false;
+        if (state.accDF.k === '소속' && !accCounted(r)) return false;
         if (state.accY === 'all' && state.accDFYs && state.accDFYs.indexOf(yearOf(r.발생일)) === -1) return false;
       }
       if (!q) return true;
@@ -9025,10 +9103,10 @@ function renderAccident() {
         return '<tr><td class="n">' + esc(String(r.발생일).slice(0, 10)) + '</td>' +
           '<td class="dim">' + esc(r._site) + '</td>' +
           '<td class="dim">' + (dept && dept !== '-'
-            ? (String(r.사고유형 || '').indexOf('물적') === 0
+            ? (accKind(r.사고유형) === 'prop'
               ? '<span class="acp-name" data-storeopen="' + esc(dept) + '" data-storesite="' + esc(r._site) + '" title="' + esc(dept) + ' 사고 · 점검 이력 보기">' + esc(dept) + '</span>'
               : esc(dept))
-            : '—') + '</td>' +
+            : '—') + (accIsPartner(r) ? ACC_PARTNER_BADGE : '') + '</td>' +
           '<td class="k">' + (name && name !== '-'
             ? '<span class="acp-name" data-accperson="' + esc(name) + '" title="' + esc(name) + ' 사고 이력 보기">' + esc(name) + '</span>'
             : '—') + '</td>' +
@@ -9041,7 +9119,7 @@ function renderAccident() {
           '<td class="dim">' + esc(String(r['위험성평가(개선후)'] || '').replace(/\n/g, ' ')) + '</td>' +
           '<td class="dim">' + esc(String(r.요양일수 || '-').replace(/\n/g, ' ')) + '</td></tr>';
       }), 1220) + '<div class="subttl">' + list.length + '건 표시' +
-      (state.accT === 'allcm' ? ' · 출퇴근(교통) 포함' : state.accT === 'all' ? ' · 출퇴근(교통) 제외' : '') +
+      (state.accT === 'allcm' ? ' · 출퇴근 · 개인질병 포함' : state.accT === 'all' ? ' · 출퇴근 · 개인질병 제외' : '') +
       (q ? ' · "' + esc(q) + '" 검색' : '') + '</div>';
   }
   renderAccList();
@@ -9049,13 +9127,33 @@ function renderAccident() {
 
 /** 안전사고 유형 → 배지 색. 엑셀 값에 공백·줄바꿈이 섞여 있어도 앞글자로 판단합니다 */
 function accTypeCls(t) {
-  t = String(t || '').replace(/\s+/g, '');
-  if (t.indexOf('산재') !== -1) return 'b-sanjae';
-  if (t.indexOf('인적') === 0) return 'b-human';
-  if (t.indexOf('물적') === 0) return 'b-prop';
-  if (t.indexOf('출/퇴근') === 0 || t.indexOf('출퇴근') === 0) return 'b-commute';
-  return 'b-etc';
+  var k = accKind(t);
+  if (String(t || '').indexOf('산재') !== -1) return 'b-sanjae';
+  return { human: 'b-human', prop: 'b-prop', work: 'b-work', commute: 'b-commute' }[k] || 'b-etc';
 }
+/** 안전사고 유형 분류 (2026-11-27 집계 기준 정리)
+ *  인적사고 · 물적사고 · 교통사고(업무상) = 통계에 셈 / 교통사고(출/퇴근) · 기타(개인질병) · 집계 제외 = 따로 관리
+ *  예전 표기(인적 · 물적 · 출/퇴근(교통) · 기타)도 같은 갈래로 읽습니다 */
+function accKind(t) {
+  t = String(t || '').replace(/\s+/g, '');
+  if (t.indexOf('집계제외') !== -1 || t.indexOf('고객') !== -1) return 'excl';   /* 기타(고객사고) = 예전 '집계 제외' */
+  if (t.indexOf('인적') === 0) return 'human';
+  if (t.indexOf('물적') === 0) return 'prop';
+  if (/출\/?퇴근/.test(t)) return 'commute';
+  if (t.indexOf('교통') === 0) return 'work';
+  return 'etc';
+}
+/** 외부 · 협력업체 사고 (2026-11-27) : 집계에는 그대로 넣고, 화면에 '협력업체' 배지로 따로 표시
+ *  소속에 '외부' · '협력'이 들어가거나, 아래 업체명이 들어가면 협력업체로 봅니다 (업체가 늘면 여기에 추가) */
+var ACC_PARTNER_NAMES = ['흥안', '세현', '프로에스콤', '뉴그린'];
+function accIsPartner(r) {
+  var s = String((r && r.소속) || '').replace(/\s+/g, '');
+  if (/외부|협력|협렭/.test(s)) return true;
+  return ACC_PARTNER_NAMES.some(function (n) { return s.indexOf(n) !== -1; });
+}
+var ACC_PARTNER_BADGE = '<span class="b b-partner" title="외부 · 협력업체 사고 (집계에 포함)">협력업체</span>';
+/** 통계(건수 · 그래프)에 세는 유형인지 : 인적 · 물적 · 교통(업무상) */
+function accCounted(r) { var k = accKind(r && r.사고유형); return k === 'human' || k === 'prop' || k === 'work'; }
 
 /* ── 안전사고 → TRIR 계산 내용 창 ──
  * TRIR = 인적사고 건수 × 200,000 ÷ 연간 총 근로시간
@@ -9157,11 +9255,9 @@ function openAccPerson(name) {
     .sort(function (a, b) { return normDate(b.발생일).localeCompare(normDate(a.발생일)); });
   var latest = rows[0] || {};
   function clean(v) { v = String(v == null ? '' : v).replace(/\n/g, ' ').trim(); return v && v !== '-' ? v : ''; }
-  var nHuman = rows.filter(function (r) { return String(r.사고유형 || '').indexOf('인적') === 0; }).length;
-  var nProp = rows.filter(function (r) { return String(r.사고유형 || '').indexOf('물적') === 0; }).length;
-  var nCm = rows.filter(function (r) { return String(r.사고유형 || '').indexOf('출/퇴근') === 0; }).length;
+  function nOf(k) { return rows.filter(function (r) { return accKind(r.사고유형) === k; }).length; }
+  var nHuman = nOf('human'), nProp = nOf('prop'), nWork = nOf('work'), nCm = nOf('commute');
   var nSj = rows.filter(accIsSanjae).length;
-  var TYPEB = { '인적': 'b-human', '인적(산재)': 'b-sanjae', '출/퇴근(교통)': 'b-commute', '물적': 'b-prop' };
 
   $('accPersonTitle').textContent = name + ' · 사고 이력 ' + rows.length + '건';
   $('accPersonBody').innerHTML =
@@ -9170,7 +9266,7 @@ function openAccPerson(name) {
         (clean(latest.소속) ? '<div class="dim" style="font-size:11.5px;margin-top:3px">' + esc(clean(latest.소속)) + '</div>' : '') + '</div>' +
       '<div><label>직무</label><b>' + esc(clean(latest.직무) || '—') + '</b></div>' +
       '<div><label>사고 건수</label><b>' + rows.length + '건</b>' +
-        '<div class="dim" style="font-size:11.5px;margin-top:3px">인적 ' + nHuman + ' · 물적 ' + nProp + (nCm ? ' · 출퇴근 ' + nCm : '') + '</div></div>' +
+        '<div class="dim" style="font-size:11.5px;margin-top:3px">인적 ' + nHuman + ' · 물적 ' + nProp + (nWork ? ' · 교통(업무) ' + nWork : '') + (nCm ? ' · 출퇴근 ' + nCm : '') + '</div></div>' +
       '<div><label>산재</label><b style="color:' + (nSj ? '#C5221F' : 'var(--ink)') + '">' + (nSj ? nSj + '건' : '없음') + '</b>' +
         '<div class="dim" style="font-size:11.5px;margin-top:3px">최근 사고 ' + esc(String(latest.발생일 || '').slice(0, 10) || '—') + '</div></div>' +
     '</div>' +
@@ -9179,7 +9275,7 @@ function openAccPerson(name) {
       [{ t: '사고일자', w: '92px' }, { t: '내용' }, { t: '산재 여부', w: '78px' }, { t: '비고 (치료 경과 · 면담 · 종결 등)', w: '310px' }],
       rows.map(function (r) {
         var d = String(r.발생일 || '').slice(0, 10), dObj = parseYmd(d);
-        var key = accMemoKey(r), sj = accIsSanjae(r), human = String(r.사고유형 || '').indexOf('물적') !== 0;
+        var key = accMemoKey(r), sj = accIsSanjae(r), human = accKind(r.사고유형) !== 'prop';
         var how = clean(r['발생경위(육하원칙)']), fix = clean(r['위험성평가(개선후)']), care = clean(r.요양일수);
         return '<tr>' +
           '<td class="acp-date"><b>' + esc(d || '—') + '</b><i>' + (dObj ? DOW[dObj.getDay()] + '요일 · ' : '') + esc(r._site) + '</i></td>' +
@@ -9257,6 +9353,10 @@ function bindAccPerson() {
     closeAccPerson();
   };
   bindOverlayClose($('accPersonScrim'), closeAccPerson);
+  // 안전사고 집계 기준 창 : 닫기 버튼 · 바깥 누르기
+  function closeAccRule() { $('accRuleScrim').classList.remove('on'); }
+  $('accRuleClose').onclick = closeAccRule;
+  bindOverlayClose($('accRuleScrim'), closeAccRule);
 }
 
 /** 안전사고 → 월별 사고 추이 (전사 · 서울 · 팩토리움)
@@ -9272,16 +9372,17 @@ function renderAccMonthly(stat, years) {
   var Y = +state.accMY;
   function monOf(r) { var m = /^\d{4}-(\d{2})/.exec(normDate(r.발생일)); return m ? +m[1] : 0; }
   function scopeRows(k) { return stat.filter(function (r) { return k === 'all' || r._site === k; }); }
-  function isHuman(r) { return String(r.사고유형 || '').indexOf('인적') === 0; }
+  function isHuman(r) { return accKind(r.사고유형) === 'human'; }
   function monthly(rows, y) {
-    var t = [], h = [], p = [];
-    for (var m = 1; m <= 12; m++) { t.push(0); h.push(0); p.push(0); }
+    var t = [], h = [], p = [], w = [];
+    for (var m = 1; m <= 12; m++) { t.push(0); h.push(0); p.push(0); w.push(0); }
     rows.forEach(function (r) {
       if (yearOf(r.발생일) !== y) return;
       var m = monOf(r); if (!m) return;
-      t[m - 1]++; if (isHuman(r)) h[m - 1]++; else p[m - 1]++;
+      var k = accKind(r.사고유형);
+      t[m - 1]++; if (k === 'human') h[m - 1]++; else if (k === 'work') w[m - 1]++; else p[m - 1]++;
     });
-    return { t: t, h: h, p: p };
+    return { t: t, h: h, p: p, w: w };
   }
   function sum(a, from, to) { var s = 0; for (var i = from; i <= to; i++) s += a[i] || 0; return s; }
   // 이 연도에서 "지난 달"까지만 비교합니다 (올해는 이번 달까지, 지난 해는 12월까지)
@@ -9307,8 +9408,8 @@ function renderAccMonthly(stat, years) {
 
   var scope = SCOPES.filter(function (s) { return s.k === state.accMS; })[0];
   var rows = scopeRows(scope.k);
-  // 인적 = 코랄 레드(주의), 물적 = 쿨 그레이, 합계 추이선 = 블루
-  var SER = [{ c: '#F04452', n: '인적' }, { c: '#B0B8C1', n: '물적' }];
+  // 인적 = 코랄 레드(주의), 물적 = 쿨 그레이, 교통(업무상) = 앰버, 합계 추이선 = 블루
+  var SER = [{ c: '#F04452', n: '인적' }, { c: '#B0B8C1', n: '물적' }, { c: '#F5A524', n: '교통(업무상)' }];
   var TOT_LGD = { c: '#8B95A1', n: '합계 추이' };
 
   if (isYear) { renderAccYearly(rows, years, scope, SER, TOT_LGD, isHuman, thisY, now); return; }
@@ -9316,15 +9417,19 @@ function renderAccMonthly(stat, years) {
   var cur = monthly(rows, Y), prev = monthly(rows, Y - 1);
   var hasPrev = rows.some(function (r) { return yearOf(r.발생일) === Y - 1; });
   var chart = '<div class="acm-chart">' + svgBars(cur.t.map(function (_, i) {
-    return { k: (i + 1) + '월', v: [cur.h[i], cur.p[i]] };
+    return { k: (i + 1) + '월', v: [cur.h[i], cur.p[i], cur.w[i]] };
   }), SER, { h2: 250, showVal: true, trend: cur.t.map(function (v, i) { return i + 1 > lastM ? null : v; }) }) +
     legend(SER.concat([TOT_LGD])) + '</div>';
 
   // ── 분석 ──
   var L = Math.max(lastM, 1);
-  var tot = sum(cur.t, 0, L - 1), hum = sum(cur.h, 0, L - 1);
+  var tot = sum(cur.t, 0, L - 1), hum = sum(cur.h, 0, L - 1), wk = sum(cur.w, 0, L - 1);
   var notes = [];
-  notes.push('<b>' + Y + '년 ' + (lastM === 12 ? '' : '1~' + L + '월 ') + '누계 ' + tot + '건</b> (인적 ' + hum + ' · 물적 ' + (tot - hum) + ') · 월평균 ' + nf(tot / L, 1) + '건');
+  notes.push('<b>' + Y + '년 ' + (lastM === 12 ? '' : '1~' + L + '월 ') + '누계 ' + tot + '건</b> (인적 ' + hum + ' · 물적 ' + (tot - hum - wk) + (wk ? ' · 교통 ' + wk : '') + ') · 월평균 ' + nf(tot / L, 1) + '건' +
+    (function () {
+      var n = rows.filter(function (r) { return yearOf(r.발생일) === Y && monOf(r) >= 1 && monOf(r) <= L && accIsPartner(r); }).length;
+      return n ? ' · <span class="b b-partner">협력업체</span> ' + n + '건 포함' : '';
+    })());
   if (hasPrev) {
     var pt = sum(prev.t, 0, L - 1), d = tot - pt;
     notes.push('전년 동기(' + (Y - 1) + '년 1~' + L + '월 ' + pt + '건) 대비 ' +
@@ -9367,14 +9472,19 @@ function renderAccYearly(rows, years, scope, SER, TOT_LGD, isHuman, thisY, now) 
   if (!ys.length) ys = years.slice(-4);
   function isSanjae(r) { return String(r.사고유형 || '').indexOf('산재') !== -1; }
   var data = ys.map(function (y) {
-    var h = 0, p = 0, sj = 0;
-    rows.forEach(function (r) { if (yearOf(r.발생일) === y) { if (isHuman(r)) h++; else p++; if (isSanjae(r)) sj++; } });
-    return { y: y, h: h, p: p, t: h + p, s: sj };
+    var h = 0, p = 0, w = 0, sj = 0;
+    rows.forEach(function (r) {
+      if (yearOf(r.발생일) !== y) return;
+      var k = accKind(r.사고유형);
+      if (k === 'human') h++; else if (k === 'work') w++; else p++;
+      if (isSanjae(r)) sj++;
+    });
+    return { y: y, h: h, p: p, w: w, t: h + p + w, s: sj };
   });
   // 막대를 누르면 위 카드(발생 · 인적 · 물적 · 산재 · TRIR)가 그 연도로 바뀝니다 → 고른 연도는 강조
   var selI = -1; data.forEach(function (d, i) { if (String(d.y) === String(state.accMY)) selI = i; });
   var chart = '<div class="acm-chart acm-year">' + svgBars(data.map(function (d) {
-    return { k: d.y + '년' + (d.y === thisY ? ' (~' + (now.getMonth() + 1) + '월)' : ''), v: [d.h, d.p] };
+    return { k: d.y + '년' + (d.y === thisY ? ' (~' + (now.getMonth() + 1) + '월)' : ''), v: [d.h, d.p, d.w] };
   }), SER, { h2: 250, showVal: true, trend: data.map(function (d) { return d.t; }),
     sel: selI, badge: data.map(function (d) { return d.s ? '산재 ' + d.s : ''; }),
     gattr: function (i) { return 'data-accyear="' + data[i].y + '" title="' + data[i].y + '년 — 누르면 위 카드가 이 연도로 바뀝니다"'; } }) +
@@ -9382,18 +9492,18 @@ function renderAccYearly(rows, years, scope, SER, TOT_LGD, isHuman, thisY, now) 
     '<div class="acm-hint">막대를 누르면 위 카드가 그 연도로 바뀝니다' + (data.some(function (d) { return d.s; }) ? ' · <i class="bc-badge sm">산재</i> 산재 발생 연도' : '') + '</div></div>';
 
   // 오른쪽 : 연도별 숫자 요약 + 분석
-  var tbl2 = '<table class="acm-ytbl"><thead><tr><th>연도</th><th>인적</th><th>물적</th><th>합계</th><th>산재</th><th>전년 대비</th></tr></thead><tbody>' +
+  var tbl2 = '<table class="acm-ytbl"><thead><tr><th>연도</th><th>인적</th><th>물적</th><th>교통</th><th>합계</th><th>산재</th><th>전년 대비</th></tr></thead><tbody>' +
     data.slice().reverse().map(function (d) {
       var pv = data.filter(function (x) { return x.y === d.y - 1; })[0], diff = pv ? d.t - pv.t : null;
       return '<tr' + (String(d.y) === String(state.accMY) ? ' class="sel"' : '') + ' data-accyear="' + d.y + '" style="cursor:pointer"><td>' + d.y + (d.y === thisY ? '<small> ~' + (now.getMonth() + 1) + '월</small>' : '') + '</td>' +
-        '<td class="h">' + d.h + '</td><td class="p">' + d.p + '</td><td class="t">' + d.t + '</td>' +
+        '<td class="h">' + d.h + '</td><td class="p">' + d.p + '</td><td class="p">' + d.w + '</td><td class="t">' + d.t + '</td>' +
         '<td class="s">' + (d.s ? d.s : '<span style="color:var(--ink3)">—</span>') + '</td>' +
         '<td class="d">' + (diff == null ? '—' : diff === 0 ? '0' :
           '<span class="' + (diff > 0 ? 'up' : 'dn') + '">' + (diff > 0 ? '▲ ' : '▼ ') + Math.abs(diff) + '</span>') + '</td></tr>';
     }).join('') + '</tbody></table>';
   var notes = [];
-  var sumT = 0, sumH = 0; data.forEach(function (d) { sumT += d.t; sumH += d.h; });
-  notes.push('<b>' + data[0].y + '~' + data[data.length - 1].y + '년 누계 ' + sumT + '건</b> (인적 ' + sumH + ' · 물적 ' + (sumT - sumH) + ')' +
+  var sumT = 0, sumH = 0, sumW = 0; data.forEach(function (d) { sumT += d.t; sumH += d.h; sumW += d.w; });
+  notes.push('<b>' + data[0].y + '~' + data[data.length - 1].y + '년 누계 ' + sumT + '건</b> (인적 ' + sumH + ' · 물적 ' + (sumT - sumH - sumW) + (sumW ? ' · 교통 ' + sumW : '') + ')' +
     (sumT ? ' · 인적 비율 ' + Math.round(sumH / sumT * 100) + '%' : ''));
   // 최다 발생 연도 : 올해(진행 중)까지 포함해 합계 · 인적 · 물적을 따로 (같은 건수면 모두 표시)
   function topYears(key) {
@@ -19106,6 +19216,7 @@ function bind() {
     if (e.target.closest('#heaExamPinGo')) { tryHeaExamPin(); return; }
 
     if (e.target.closest('[data-import]')) { $('xlsxFile').dataset.only = ''; $('xlsxFile').click(); return; }
+    if (e.target.closest('[data-accrule]')) { $('accRuleScrim').classList.add('on'); return; }
     var dse = e.target.closest('[data-dsedit]');
     if (dse) { deOpen(dse.dataset.dsedit); return; }
     var dsx = e.target.closest('[data-dsexport]');
@@ -19319,6 +19430,7 @@ function bind() {
     if (e.key === 'Escape' && $('scrim').classList.contains('on')) closeSheet();
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && $('scrim').classList.contains('on')) submitSheet();
     if (e.key === 'Escape' && $('storeScrim').classList.contains('on')) $('storeScrim').classList.remove('on');
+    if (e.key === 'Escape' && $('accRuleScrim').classList.contains('on')) $('accRuleScrim').classList.remove('on');
     if (e.key === 'Escape' && $('planScrim').classList.contains('on')) closePlan();
     if (e.key === 'Escape' && $('popupEditor').classList.contains('on')) closePopupEditor();
     if (e.key === 'Escape' && $('aiKeyEditor').classList.contains('on')) closeAiKeyEditor();
